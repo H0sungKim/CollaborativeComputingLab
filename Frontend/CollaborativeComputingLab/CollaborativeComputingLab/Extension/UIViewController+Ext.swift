@@ -10,7 +10,7 @@ import UIKit
 extension UIViewController {
     class func create<T: UIViewController>() -> T {
         let identifier: String = String(describing: T.self)
-        let sb = UIStoryboard(name: identifier, bundle: Bundle.presentation)
+        let sb = UIStoryboard(name: identifier, bundle: nil)
         let vc = sb.instantiateViewController(withIdentifier: identifier) as! T
         return vc
     }

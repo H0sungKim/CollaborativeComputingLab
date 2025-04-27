@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="iPad13_0rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
+    <device id="iPad13_0rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
@@ -9,23 +9,23 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Meeting Room View Controller-->
+        <!--Room View Controller-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController storyboardIdentifier="MeetingRoomViewController" id="Y6W-OH-hqX" customClass="MeetingRoomViewController" customModule="Presentation" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RoomViewController" id="Y6W-OH-hqX" customClass="RoomViewController" customModule="CollaborativeComputingLab" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
-                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1032" height="1376"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mfc-ej-jmd">
-                                <rect key="frame" x="0.0" y="932" width="1376" height="100"/>
+                                <rect key="frame" x="0.0" y="1276" width="1032" height="100"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="nbW-1W-DRN"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="M8A-XE-9V2">
-                                <rect key="frame" x="0.0" y="24" width="1376" height="64"/>
+                                <rect key="frame" x="0.0" y="24" width="1032" height="64"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="김호성 님의 회의실" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oUw-qf-wwy">
                                         <rect key="frame" x="16" y="17.5" width="177" height="29"/>
@@ -42,14 +42,54 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AKZ-Cc-g31">
-                                <rect key="frame" x="0.0" y="88" width="1136" height="844"/>
+                                <rect key="frame" x="0.0" y="88" width="792" height="1188"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NeW-e7-MDf">
-                                <rect key="frame" x="1136" y="88" width="240" height="844"/>
+                                <rect key="frame" x="792" y="88" width="240" height="1188"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="osv-un-gT0">
+                                        <rect key="frame" x="0.0" y="1124" width="240" height="64"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aYO-la-c15">
+                                                <rect key="frame" x="181" y="15" width="51" height="34"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain" image="paperplane" catalog="system"/>
+                                                <connections>
+                                                    <action selector="onClickChatSend:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="GER-Da-UlE"/>
+                                                </connections>
+                                            </button>
+                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="htA-P6-K08">
+                                                <rect key="frame" x="8" y="15" width="165" height="34"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                            </textField>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstItem="htA-P6-K08" firstAttribute="leading" secondItem="osv-un-gT0" secondAttribute="leading" constant="8" id="GSE-P9-S9y"/>
+                                            <constraint firstAttribute="trailing" secondItem="aYO-la-c15" secondAttribute="trailing" constant="8" id="Juw-Ew-vNd"/>
+                                            <constraint firstItem="aYO-la-c15" firstAttribute="leading" secondItem="htA-P6-K08" secondAttribute="trailing" constant="8" id="Py9-n9-H8h"/>
+                                            <constraint firstItem="htA-P6-K08" firstAttribute="centerY" secondItem="osv-un-gT0" secondAttribute="centerY" id="WU2-Fn-S00"/>
+                                            <constraint firstItem="aYO-la-c15" firstAttribute="centerY" secondItem="osv-un-gT0" secondAttribute="centerY" id="X5x-HT-FX9"/>
+                                            <constraint firstAttribute="height" constant="64" id="d5t-Ez-oOx"/>
+                                        </constraints>
+                                    </view>
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="uBO-O2-csA">
+                                        <rect key="frame" x="0.0" y="0.0" width="240" height="1124"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    </tableView>
+                                </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
+                                    <constraint firstItem="osv-un-gT0" firstAttribute="top" secondItem="uBO-O2-csA" secondAttribute="bottom" id="4Gz-fn-x7w"/>
                                     <constraint firstAttribute="width" constant="240" id="83f-tP-e9A"/>
+                                    <constraint firstItem="osv-un-gT0" firstAttribute="leading" secondItem="NeW-e7-MDf" secondAttribute="leading" id="8b0-RS-H1y"/>
+                                    <constraint firstItem="uBO-O2-csA" firstAttribute="leading" secondItem="NeW-e7-MDf" secondAttribute="leading" id="XBs-bl-gVZ"/>
+                                    <constraint firstAttribute="bottom" secondItem="osv-un-gT0" secondAttribute="bottom" id="e7o-kR-dwE"/>
+                                    <constraint firstItem="uBO-O2-csA" firstAttribute="top" secondItem="NeW-e7-MDf" secondAttribute="top" id="rpg-bQ-KFJ"/>
+                                    <constraint firstAttribute="trailing" secondItem="uBO-O2-csA" secondAttribute="trailing" id="vKu-C6-XtO"/>
+                                    <constraint firstAttribute="trailing" secondItem="osv-un-gT0" secondAttribute="trailing" id="xDN-Z3-MCe"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -71,6 +111,11 @@
                             <constraint firstItem="M8A-XE-9V2" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" id="zUN-ld-jTy"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="chatButton" destination="aYO-la-c15" id="z4G-Wy-pfO"/>
+                        <outlet property="chatTableView" destination="uBO-O2-csA" id="Jsh-Op-bdS"/>
+                        <outlet property="chatTextField" destination="htA-P6-K08" id="3xz-ZB-h5W"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -78,6 +123,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="paperplane" catalog="system" width="128" height="119"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

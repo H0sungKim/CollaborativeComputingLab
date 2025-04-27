@@ -5,8 +5,6 @@
 //  Created by 김호성 on 2025.04.26.
 //
 
-import Presentation
-
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -22,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        let navigationController: DINavigationController = DINavigationController(viewControllerFactory: appDIProvider ,rootViewController: appDIProvider.createMeetingRoomViewController())
+        let navigationController: DINavigationController = DINavigationController(viewControllerFactory: appDIProvider ,rootViewController: appDIProvider.createRoomViewController())
         navigationController.navigationBar.isHidden = true
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
