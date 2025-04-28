@@ -59,6 +59,7 @@ public class RoomViewController: UIViewController {
     
     private func chatTableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: ChatTableViewCell = ChatTableViewCell.create(tableView: tableView, indexPath: indexPath)
+        cell.senderLabel.text = chatViewModel.chats.value[indexPath.row].sender
         cell.messageLabel.text = chatViewModel.chats.value[indexPath.row].message
         return cell
     }
