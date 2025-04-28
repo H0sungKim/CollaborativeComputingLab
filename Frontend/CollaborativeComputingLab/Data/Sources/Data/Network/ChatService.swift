@@ -37,10 +37,9 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
     }
     
     private func ping() {
-        NSLog("PING")
         webSocket?.sendPing(pongReceiveHandler: { error in
             if let error = error {
-                NSLog(error.localizedDescription)
+                NSLog("Chat Service Ping Error - \(error.localizedDescription)")
             }
         })
     }
@@ -72,7 +71,7 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
     public func send(message: String) {
         webSocket?.send(URLSessionWebSocketTask.Message.string(message), completionHandler: { error in
             if let error = error {
-                NSLog(error.localizedDescription)
+                NSLog("Chat Service Send Error - \(error.localizedDescription)")
             }
         })
     }

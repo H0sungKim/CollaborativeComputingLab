@@ -12,7 +12,7 @@ public enum CCLError: Error {
     case decodeFailed(string: String)
     case encodeFailed(string: String)
     
-    var description: String {
+    var localizedDescription: String {
         switch self {
         case .dataFailed(let string):
             return "Data Error - \(string)"

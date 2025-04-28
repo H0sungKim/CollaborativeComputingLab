@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        let navigationController: DINavigationController = DINavigationController(viewControllerFactory: appDIProvider ,rootViewController: appDIProvider.createRoomViewController())
+        let navigationController: DINavigationController = DINavigationController(viewControllerFactory: appDIProvider ,rootViewController: appDIProvider.createHomeViewController())
         navigationController.navigationBar.isHidden = true
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()

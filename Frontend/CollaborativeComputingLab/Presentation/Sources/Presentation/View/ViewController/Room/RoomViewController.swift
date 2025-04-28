@@ -10,6 +10,8 @@ import Combine
 
 public class RoomViewController: UIViewController {
     
+    @IBOutlet weak var titleLabel: UILabel!
+    
     @IBOutlet weak var chatTableView: UITableView!
     @IBOutlet weak var chatTextField: UITextField!
     @IBOutlet weak var chatButton: UIButton!
@@ -41,6 +43,7 @@ public class RoomViewController: UIViewController {
         
         bind(chatViewModel: chatViewModel)
         configureChatTableView()
+        titleLabel.text = "\(id ?? "") 님의 회의실"
     }
     
     private func configureChatTableView() {
@@ -64,6 +67,7 @@ public class RoomViewController: UIViewController {
         return cell
     }
     @IBAction func onClickChatSend(_ sender: Any) {
-        chatViewModel.sendChat(sender: "hosung", message: chatTextField.text ?? "")
+        chatViewModel.sendChat(sender: id, message: chatTextField.text ?? "")
+        chatTextField.text = ""
     }
 }

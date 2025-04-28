@@ -9,7 +9,7 @@ import Domain
 
 import Foundation
 
-protocol DTO {
+protocol DTO: Codable {
     associatedtype EntityType: Entity
     var entity: EntityType { get }
 }

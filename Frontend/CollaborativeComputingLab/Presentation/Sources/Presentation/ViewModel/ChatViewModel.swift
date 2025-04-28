@@ -34,13 +34,11 @@ public class DefaultChatViewModel: ChatViewModel {
     
     private func bind() {
         chatUseCase.chatStream
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { _ in
-            
-        }, receiveValue: { [weak self] chatEntity in
-            self?.chats.value.append(chatEntity)
-        })
-        .store(in: &cancellable)
+            .manageThread()
+            .sinkHandledCompletion(receiveValue: { [weak self] chatEntity in
+                self?.chats.value.append(chatEntity)
+            })
+            .store(in: &cancellable)
     }
     
     public func sendChat(sender: String, message: String) {

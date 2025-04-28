@@ -9,12 +9,10 @@ import Domain
 
 import Foundation
 
-public struct ChatDTO: Codable {
+public struct ChatDTO: DTO {
     let sender: String?
     let message: String?
-}
-
-extension ChatDTO: DTO {
+    
     var entity: ChatEntity {
         get {
             return ChatEntity(

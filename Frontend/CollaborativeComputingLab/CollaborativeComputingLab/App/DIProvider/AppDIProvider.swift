@@ -22,9 +22,14 @@ class AppDIProvider: ViewControllerFactory {
         self.chatDIProvider = chatDIProvider
     }
     
-    func createRoomViewController(chatViewModel: ChatViewModel? = nil) -> RoomViewController {
+    func createHomeViewController() -> HomeViewController {
+        let viewController: HomeViewController = HomeViewController.create()
+        return viewController
+    }
+    
+    func createRoomViewController(id: String, chatViewModel: ChatViewModel? = nil) -> RoomViewController {
         let viewController: RoomViewController = RoomViewController.create()
-        viewController.inject(id: "HOSUNG", chatViewModel: chatViewModel ?? chatDIProvider.makeChatViewModel())
+        viewController.inject(id: id, chatViewModel: chatViewModel ?? chatDIProvider.makeChatViewModel())
         return viewController
     }
 }
