@@ -17,11 +17,13 @@ public class RoomViewController: UIViewController {
     private var chatTableViewDelegate: TableViewDelegate?
     private var chatTableViewDataSource: TableViewDataSource?
     
+    private var id: String!
     private var chatViewModel: ChatViewModel!
     
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
-    public func inject(chatViewModel: ChatViewModel) {
+    public func inject(id: String!, chatViewModel: ChatViewModel) {
+        self.id = id
         self.chatViewModel = chatViewModel
     }
     
@@ -30,7 +32,6 @@ public class RoomViewController: UIViewController {
             Task { @MainActor in
                 self?.chatTableView.reloadData()
             }
-            
         })
         .store(in: &cancellable)
     }
@@ -49,7 +50,7 @@ public class RoomViewController: UIViewController {
         chatTableView.delegate = chatTableViewDelegate
         chatTableView.dataSource = chatTableViewDataSource
         
-        chatTableView.register(UINib(nibName: String(describing: ChatTableViewCell.self), bundle: nil), forCellReuseIdentifier: String(describing: ChatTableViewCell.self))
+        chatTableView.register(UINib(nibName: String(describing: ChatTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: ChatTableViewCell.self))
     }
     
     private func chatTableViewNumberOfRowsInSection(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -58,10 +59,10 @@ public class RoomViewController: UIViewController {
     
     private func chatTableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: ChatTableViewCell = ChatTableViewCell.create(tableView: tableView, indexPath: indexPath)
-        cell.messageLabel.text = chatViewModel.chats.value[indexPath.row]
+        cell.messageLabel.text = chatViewModel.chats.value[indexPath.row].message
         return cell
     }
     @IBAction func onClickChatSend(_ sender: Any) {
-        chatViewModel.sendMessage(message: chatTextField.text ?? "")
+        chatViewModel.sendChat(sender: "hosung", message: chatTextField.text ?? "")
     }
 }

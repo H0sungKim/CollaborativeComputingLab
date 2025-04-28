@@ -5,23 +5,26 @@
 //  Created by 김호성 on 2025.03.04.
 //
 
+import Presentation
+
 import Foundation
 import UIKit
 
-public protocol ViewControllerFactory {
-    func createRoomViewController(chatViewModel: ChatViewModel?) -> RoomViewController
-}
-
-
 class AppDIProvider: ViewControllerFactory {
     
+    private let chatDIProvider: ChatDIProvider
+    
     init() {
-        
+        self.chatDIProvider = DefaultChatDIProvider()
+    }
+    
+    init(chatDIProvider: ChatDIProvider) {
+        self.chatDIProvider = chatDIProvider
     }
     
     func createRoomViewController(chatViewModel: ChatViewModel? = nil) -> RoomViewController {
         let viewController: RoomViewController = RoomViewController.create()
-        viewController.inject(chatViewModel: DefaultChatViewModel(chatService: DefaultChatService()))
+        viewController.inject(id: "HOSUNG", chatViewModel: chatViewModel ?? chatDIProvider.makeChatViewModel())
         return viewController
     }
 }

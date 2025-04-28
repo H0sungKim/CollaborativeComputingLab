@@ -6,8 +6,17 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		9610C9662DBE71F9006B9AA2 /* Data in Frameworks */ = {isa = PBXBuildFile; productRef = 9610C9652DBE71F9006B9AA2 /* Data */; };
+		9610C9682DBE71F9006B9AA2 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 9610C9672DBE71F9006B9AA2 /* Domain */; };
+		9610C96A2DBE71F9006B9AA2 /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 9610C9692DBE71F9006B9AA2 /* Presentation */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		9610C8712DBCA39D006B9AA2 /* CollaborativeComputingLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CollaborativeComputingLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9610C9612DBE6EF1006B9AA2 /* Presentation */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Presentation; sourceTree = "<group>"; };
+		9610C9622DBE6FFE006B9AA2 /* Domain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Domain; sourceTree = "<group>"; };
+		9610C9632DBE7010006B9AA2 /* Data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Data; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +45,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9610C9682DBE71F9006B9AA2 /* Domain in Frameworks */,
+				9610C96A2DBE71F9006B9AA2 /* Presentation in Frameworks */,
+				9610C9662DBE71F9006B9AA2 /* Data in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,7 +57,11 @@
 		9610C8682DBCA39D006B9AA2 = {
 			isa = PBXGroup;
 			children = (
+				9610C9632DBE7010006B9AA2 /* Data */,
+				9610C9622DBE6FFE006B9AA2 /* Domain */,
+				9610C9612DBE6EF1006B9AA2 /* Presentation */,
 				9610C8732DBCA39D006B9AA2 /* CollaborativeComputingLab */,
+				9610C9642DBE71F9006B9AA2 /* Frameworks */,
 				9610C8722DBCA39D006B9AA2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +72,13 @@
 				9610C8712DBCA39D006B9AA2 /* CollaborativeComputingLab.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		9610C9642DBE71F9006B9AA2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -78,6 +101,9 @@
 			);
 			name = CollaborativeComputingLab;
 			packageProductDependencies = (
+				9610C9652DBE71F9006B9AA2 /* Data */,
+				9610C9672DBE71F9006B9AA2 /* Domain */,
+				9610C9692DBE71F9006B9AA2 /* Presentation */,
 			);
 			productName = CollaborativeComputingLab;
 			productReference = 9610C8712DBCA39D006B9AA2 /* CollaborativeComputingLab.app */;
@@ -333,6 +359,21 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9610C9652DBE71F9006B9AA2 /* Data */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Data;
+		};
+		9610C9672DBE71F9006B9AA2 /* Domain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Domain;
+		};
+		9610C9692DBE71F9006B9AA2 /* Presentation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Presentation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9610C8692DBCA39D006B9AA2 /* Project object */;
 }

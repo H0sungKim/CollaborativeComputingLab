@@ -10,27 +10,30 @@ import Combine
 import UIKit
 
 public protocol ChatService: URLSessionWebSocketDelegate {
-    var webSocket: URLSessionWebSocketTask? { get }
+    var chatStream: PassthroughSubject<ChatDTO, Error> { get }
     
     func send(message: String)
 }
 
 public final class DefaultChatService: NSObject, ChatService, @unchecked Sendable {
     
-    public var webSocket: URLSessionWebSocketTask?
+    private var webSocket: URLSessionWebSocketTask?
     private var timer: Timer?
+    
+    public var chatStream: PassthroughSubject<ChatDTO, Error> = .init()
     
     public override init() {
         super.init()
         
         let session: URLSession = URLSession(configuration: .default, delegate: self, delegateQueue: OperationQueue())
-        guard let url = URL(string: "ws://localhost:8080/websocket") else { return }
+        guard let url = URL(string: "ws://localhost:8080/websocket/chat") else { return }
         
         webSocket = session.webSocketTask(with: url)
         webSocket?.resume()
         timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true, block: { [weak self] _ in
             self?.ping()
         })
+        receive()
     }
     
     private func ping() {
@@ -42,8 +45,31 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
         })
     }
     
+    private func receive() {
+        webSocket?.receive(completionHandler: { [weak self] result in
+            switch result {
+            case .success(let message):
+                switch message {
+                case .data(let data):
+                    break
+                case .string(let string):
+                    do {
+                        let dto = try JSONManager.shared.decode(string: string, type: ChatDTO.self)
+                        self?.chatStream.send(dto)
+                    } catch {
+                        self?.chatStream.send(completion: .failure(error))
+                    }
+                @unknown default:
+                    break
+                }
+            case .failure(let error):
+                self?.chatStream.send(completion: .failure(error))
+            }
+            self?.receive()
+        })
+    }
+    
     public func send(message: String) {
-        print("Service SEND")
         webSocket?.send(URLSessionWebSocketTask.Message.string(message), completionHandler: { error in
             if let error = error {
                 NSLog(error.localizedDescription)
@@ -57,10 +83,10 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
     }
     
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        print("OPEN ==")
+        print("OPEN")
     }
 
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        print("CLOSE ==")
+        print("CLOSE")
     }
 }
