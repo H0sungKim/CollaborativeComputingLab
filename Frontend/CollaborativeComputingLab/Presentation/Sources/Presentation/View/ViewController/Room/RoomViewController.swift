@@ -7,10 +7,13 @@
 
 import UIKit
 import Combine
+import PDFKit
 
 public class RoomViewController: UIViewController {
     
     @IBOutlet weak var titleLabel: UILabel!
+    
+    @IBOutlet weak var pdfView: PDFView!
     
     @IBOutlet weak var chatTableView: UITableView!
     @IBOutlet weak var chatTextField: UITextField!
@@ -66,8 +69,20 @@ public class RoomViewController: UIViewController {
         cell.messageLabel.text = chatViewModel.chats.value[indexPath.row].message
         return cell
     }
+    @IBAction func onClickFile(_ sender: Any) {
+        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.pdf])
+        documentPicker.delegate = self
+        present(documentPicker, animated: true)
+    }
     @IBAction func onClickChatSend(_ sender: Any) {
         chatViewModel.sendChat(sender: id, message: chatTextField.text ?? "")
         chatTextField.text = ""
+    }
+}
+
+extension RoomViewController: UIDocumentPickerDelegate {
+    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        print(urls)
+        pdfView.document = PDFDocument(url: urls.first!)
     }
 }
