@@ -47,6 +47,7 @@ public class RoomViewController: UIViewController {
         bind(chatViewModel: chatViewModel)
         configureChatTableView()
         titleLabel.text = "\(id ?? "") 님의 회의실"
+        pdfView.displayMode = .singlePage
     }
     
     private func configureChatTableView() {
@@ -77,6 +78,17 @@ public class RoomViewController: UIViewController {
     @IBAction func onClickChatSend(_ sender: Any) {
         chatViewModel.sendChat(sender: id, message: chatTextField.text ?? "")
         chatTextField.text = ""
+    }
+    
+    @IBAction func onClickPrevious(_ sender: Any) {
+        pdfView.goToPreviousPage(nil)
+    }
+    @IBAction func onClickNext(_ sender: Any) {
+        pdfView.goToNextPage(nil)
+    }
+    
+    @IBAction func onClickBack(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
     }
 }
 
