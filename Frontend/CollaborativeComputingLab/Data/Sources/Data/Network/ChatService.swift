@@ -25,15 +25,11 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
     public override init() {
         super.init()
         
-        let session: URLSession = URLSession(configuration: .default, delegate: self, delegateQueue: OperationQueue())
-        guard let url = URL(string: "ws://localhost:8080/websocket/chat") else { return }
-        
-        webSocket = session.webSocketTask(with: url)
-        webSocket?.resume()
-        timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true, block: { [weak self] _ in
-            self?.ping()
-        })
-        receive()
+        connect()
+    }
+    
+    deinit {
+        disconnect()
     }
     
     private func ping() {
@@ -76,9 +72,22 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
         })
     }
     
-    public func close() {
+    public func connect() {
+        let session: URLSession = URLSession(configuration: .default, delegate: self, delegateQueue: OperationQueue())
+        guard let url = URL(string: "\(Bundle.module.baseURL ?? "")/websocket/chat") else { return }
+        webSocket = session.webSocketTask(with: url)
+        webSocket?.resume()
+        timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true, block: { [weak self] _ in
+            self?.ping()
+        })
+        receive()
+    }
+    
+    public func disconnect() {
         webSocket?.cancel(with: .goingAway, reason: nil)
+        webSocket = nil
         timer?.invalidate()
+        timer = nil
     }
     
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {

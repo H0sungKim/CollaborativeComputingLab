@@ -14,6 +14,7 @@ public class RoomViewController: UIViewController {
     @IBOutlet weak var titleLabel: UILabel!
     
     @IBOutlet weak var pdfView: PDFView!
+    private let canvasProvider: CanvasProvider = CanvasProvider()
     
     @IBOutlet weak var chatTableView: UITableView!
     @IBOutlet weak var chatTextField: UITextField!
@@ -47,7 +48,10 @@ public class RoomViewController: UIViewController {
         bind(chatViewModel: chatViewModel)
         configureChatTableView()
         titleLabel.text = "\(id ?? "") 님의 회의실"
-        pdfView.displayMode = .singlePage
+        pdfView.displayMode = .singlePageContinuous
+        pdfView.pageOverlayViewProvider = canvasProvider
+        pdfView.isInMarkupMode = true
+        pdfView.isScrollEnabled = true
     }
     
     private func configureChatTableView() {
@@ -80,12 +84,11 @@ public class RoomViewController: UIViewController {
         chatTextField.text = ""
     }
     
-    @IBAction func onClickPrevious(_ sender: Any) {
-        pdfView.goToPreviousPage(nil)
+    @IBAction func onClickCanvas(_ sender: UIButton) {
+        pdfView.isScrollEnabled?.toggle()
+        sender.setImage(UIImage(systemName: pdfView.isScrollEnabled ?? true ? "pencil.tip.crop.circle" : "pencil.tip.crop.circle.fill"), for: .normal)
     }
-    @IBAction func onClickNext(_ sender: Any) {
-        pdfView.goToNextPage(nil)
-    }
+    
     
     @IBAction func onClickBack(_ sender: Any) {
         navigationController?.popViewController(animated: true)
@@ -94,7 +97,6 @@ public class RoomViewController: UIViewController {
 
 extension RoomViewController: UIDocumentPickerDelegate {
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        print(urls)
         pdfView.document = PDFDocument(url: urls.first!)
     }
 }

@@ -24,7 +24,8 @@ let package = Package(
             name: "Data",
             dependencies: [
                 "Domain"
-            ]
+            ],
+            resources: [.process("Secret.plist")]
         ),
     ]
 )
