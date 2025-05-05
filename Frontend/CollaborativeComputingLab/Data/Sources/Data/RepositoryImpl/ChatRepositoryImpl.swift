@@ -13,7 +13,6 @@ import Combine
 public class DefaultChatRepository: ChatRepository {
     
     private let chatService: ChatService
-    private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
     public init(chatService: ChatService) {
         self.chatService = chatService
@@ -26,9 +25,14 @@ public class DefaultChatRepository: ChatRepository {
     }
     
     public func sendChat(chatEntity: ChatEntity) {
-        if let encoded = try? JSONManager.shared.encode(codable: chatEntity) {
-            chatService.send(message: encoded)
-        }
+        chatService.send(chatDTO: ChatDTO(entity: chatEntity))
     }
-
+    
+    public func connectWebSocket() {
+        chatService.connectWebSocket()
+    }
+    
+    public func disconnectWebSocket() {
+        chatService.disconnectWebSocket()
+    }
 }

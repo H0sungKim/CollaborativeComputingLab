@@ -13,6 +13,16 @@ public struct ChatDTO: DTO {
     let sender: String?
     let message: String?
     
+    init(sender: String?, message: String?) {
+        self.sender = sender
+        self.message = message
+    }
+    
+    init(entity: ChatEntity) {
+        self.sender = entity.sender
+        self.message = entity.message
+    }
+    
     var entity: ChatEntity {
         get {
             return ChatEntity(

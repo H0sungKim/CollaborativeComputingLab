@@ -8,93 +8,90 @@
 import Foundation
 import Combine
 import UIKit
+import SwiftStomp
 
 public protocol ChatService: URLSessionWebSocketDelegate {
     var chatStream: PassthroughSubject<ChatDTO, Error> { get }
     
-    func send(message: String)
+    func send(chatDTO: ChatDTO)
+    func connectWebSocket()
+    func disconnectWebSocket()
 }
 
 public final class DefaultChatService: NSObject, ChatService, @unchecked Sendable {
     
-    private var webSocket: URLSessionWebSocketTask?
-    private var timer: Timer?
+    public var chatStream: PassthroughSubject<ChatDTO, any Error> = .init()
+    private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
-    public var chatStream: PassthroughSubject<ChatDTO, Error> = .init()
+    private var swiftStomp = SwiftStomp(host: URL(string: "\(Bundle.module.baseURL ?? "")/ws")!)
     
     public override init() {
         super.init()
+        configure()
+        bind()
+    }
+    
+    private func configure() {
+        self.swiftStomp.enableLogging = true
+        self.swiftStomp.autoReconnect = true
         
-        connect()
+        self.swiftStomp.enableAutoPing()
     }
     
-    deinit {
-        disconnect()
-    }
-    
-    private func ping() {
-        webSocket?.sendPing(pongReceiveHandler: { error in
-            if let error = error {
-                NSLog("Chat Service Ping Error - \(error.localizedDescription)")
-            }
-        })
-    }
-    
-    private func receive() {
-        webSocket?.receive(completionHandler: { [weak self] result in
-            switch result {
-            case .success(let message):
-                switch message {
-                case .data(let data):
-                    break
-                case .string(let string):
-                    do {
-                        let dto = try JSONManager.shared.decode(string: string, type: ChatDTO.self)
-                        self?.chatStream.send(dto)
-                    } catch {
-                        self?.chatStream.send(completion: .failure(error))
+    private func bind() {
+        swiftStomp.eventsUpstream
+            .sink { [weak self] event in
+                guard let self else { return }
+                
+                switch event {
+                case let .connected(type):
+                    if type == .toStomp {
+                        swiftStomp.subscribe(to: "/chat/chat")
                     }
-                @unknown default:
                     break
+                case .disconnected(_):
+                    break
+                case let .error(error):
+                    print("Error: \(error)")
                 }
-            case .failure(let error):
-                self?.chatStream.send(completion: .failure(error))
             }
-            self?.receive()
-        })
-    }
-    
-    public func send(message: String) {
-        webSocket?.send(URLSessionWebSocketTask.Message.string(message), completionHandler: { error in
-            if let error = error {
-                NSLog("Chat Service Send Error - \(error.localizedDescription)")
+            .store(in: &cancellable)
+        
+        swiftStomp.messagesUpstream
+            .sink { [weak self] message in
+                guard let self else { return }
+                switch message {
+                case let .text(message, messageId, destination, _):
+                    guard let dto = try? JSONManager.shared.decode(string: message, type: ChatDTO.self) else { return }
+                    chatStream.send(dto)
+                    print(message)
+                case let .data(data, messageId, destination, _):
+                    print("data")
+                    print(data)
+                }
             }
-        })
+            .store(in: &cancellable)
+        
+        swiftStomp.receiptUpstream
+            .sink { receiptId in
+                print("SwiftStop: Receipt received: \(receiptId)")
+            }
+            .store(in: &cancellable)
     }
     
-    public func connect() {
-        let session: URLSession = URLSession(configuration: .default, delegate: self, delegateQueue: OperationQueue())
-        guard let url = URL(string: "\(Bundle.module.baseURL ?? "")/websocket/chat") else { return }
-        webSocket = session.webSocketTask(with: url)
-        webSocket?.resume()
-        timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true, block: { [weak self] _ in
-            self?.ping()
-        })
-        receive()
+    public func send(chatDTO: ChatDTO) {
+        swiftStomp.send(body: chatDTO, to: "/app/chat", headers: [:])
     }
     
-    public func disconnect() {
-        webSocket?.cancel(with: .goingAway, reason: nil)
-        webSocket = nil
-        timer?.invalidate()
-        timer = nil
+    public func connectWebSocket() {
+        if !swiftStomp.isConnected{
+            swiftStomp.connect()
+        }
     }
     
-    public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        print("OPEN")
-    }
-
-    public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        print("CLOSE")
+    public func disconnectWebSocket() {
+        if swiftStomp.isConnected{
+            swiftStomp.disconnect()
+        }
     }
 }

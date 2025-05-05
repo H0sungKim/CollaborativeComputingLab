@@ -12,6 +12,8 @@ public protocol ChatUseCase {
     var chatStream: AnyPublisher<ChatEntity, Error> { get }
     
     func sendChat(chatEntity: ChatEntity)
+    func connectWebSocket()
+    func disconnectWebSocket()
 }
 
 public class DefaultChatUseCase: ChatUseCase {
@@ -29,4 +31,13 @@ public class DefaultChatUseCase: ChatUseCase {
     public func sendChat(chatEntity: ChatEntity) {
         chatRepository.sendChat(chatEntity: chatEntity)
     }
+    
+    public func connectWebSocket() {
+        chatRepository.connectWebSocket()
+    }
+    
+    public func disconnectWebSocket() {
+        chatRepository.disconnectWebSocket()
+    }
+    
 }

@@ -12,4 +12,6 @@ public protocol ChatRepository {
     var chatStream: AnyPublisher<ChatEntity, Error> { get }
     
     func sendChat(chatEntity: ChatEntity)
+    func connectWebSocket()
+    func disconnectWebSocket()
 }

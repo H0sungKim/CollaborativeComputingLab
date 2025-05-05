@@ -54,6 +54,14 @@ public class RoomViewController: UIViewController {
         pdfView.isScrollEnabled = true
     }
     
+    public override func viewDidAppear(_ animated: Bool) {
+        chatViewModel.connectWebSocket()
+    }
+    
+    public override func viewDidDisappear(_ animated: Bool) {
+        chatViewModel.disconnectWebSocket()
+    }
+    
     private func configureChatTableView() {
         chatTableViewDelegate = TableViewDelegate()
         chatTableViewDataSource = TableViewDataSource(numberOfRowsInSection: chatTableViewNumberOfRowsInSection(_:numberOfRowsInSection:), cellForRowAt: chatTableView(_:cellForRowAt:))
