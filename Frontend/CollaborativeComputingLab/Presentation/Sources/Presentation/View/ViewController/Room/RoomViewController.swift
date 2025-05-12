@@ -5,9 +5,13 @@
 //  Created by 김호성 on 2025.04.26.
 //
 
+import Domain
+
 import UIKit
 import Combine
 import PDFKit
+import HaishinKit
+import AVFoundation
 
 public class RoomViewController: UIViewController {
     
@@ -20,17 +24,30 @@ public class RoomViewController: UIViewController {
     @IBOutlet weak var chatTextField: UITextField!
     @IBOutlet weak var chatButton: UIButton!
     
+    @IBOutlet weak var streamView: MTHKView!
+    
     private var chatTableViewDelegate: TableViewDelegate?
     private var chatTableViewDataSource: TableViewDataSource?
     
     private var id: String!
+    private var role: RoomRole!
     private var chatViewModel: ChatViewModel!
+    private var streamViewModel: StreamViewModel!
+    
+    @ScreenActor private var videoScreenObject = VideoTrackScreenObject()
+    private lazy var audioCapture: AudioCapture = {
+        let audioCapture = AudioCapture()
+        audioCapture.delegate = self
+        return audioCapture
+    }()
     
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
-    public func inject(id: String!, chatViewModel: ChatViewModel) {
+    public func inject(id: String!, role: RoomRole, chatViewModel: ChatViewModel, streamViewModel: StreamViewModel) {
         self.id = id
+        self.role = role
         self.chatViewModel = chatViewModel
+        self.streamViewModel = streamViewModel
     }
     
     private func bind(chatViewModel: ChatViewModel) {
@@ -52,14 +69,72 @@ public class RoomViewController: UIViewController {
         pdfView.pageOverlayViewProvider = canvasProvider
         pdfView.isInMarkupMode = true
         pdfView.isScrollEnabled = true
+        
+        Task {
+            // If you want to use the multi-camera feature, please make create a MediaMixer with a multiCamSession mode.
+            // let mixer = MediaMixer(multiCamSessionEnabled: true)
+            if let orientation = DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) {
+                await streamViewModel.mixer.setVideoOrientation(orientation)
+            }
+            await streamViewModel.mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
+            var videoMixerSettings = await streamViewModel.mixer.videoMixerSettings
+            videoMixerSettings.mode = .offscreen
+            await streamViewModel.mixer.setVideoMixerSettings(videoMixerSettings)
+            await streamViewModel.addOutputStreamToMixer()
+            await streamViewModel.addOutputView(streamView)
+        }
+
+        Task { @ScreenActor in
+            videoScreenObject.cornerRadius = 16.0
+            videoScreenObject.track = 1
+            videoScreenObject.horizontalAlignment = .right
+            videoScreenObject.layoutMargin = .init(top: 16, left: 0, bottom: 0, right: 16)
+            videoScreenObject.size = .init(width: 160 * 2, height: 90 * 2)
+            await streamViewModel.mixer.screen.size = .init(width: 720, height: 1280)
+            await streamViewModel.mixer.screen.backgroundColor = UIColor.black.cgColor
+            try? await streamViewModel.mixer.screen.addChild(videoScreenObject)
+        }
     }
     
-    public override func viewDidAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         chatViewModel.connectWebSocket()
+        Task {
+            try? await streamViewModel.mixer.attachAudio(AVCaptureDevice.default(for: .audio))
+            let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+            try? await streamViewModel.mixer.attachVideo(front, track: 0) { videoUnit in
+                videoUnit.isVideoMirrored = true
+            }
+            await streamViewModel.mixer.startRunning()
+            await streamViewModel.open(method: role.streamRole)
+        }
+        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRouteChangeNotification(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
     }
     
-    public override func viewDidDisappear(_ animated: Bool) {
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         chatViewModel.disconnectWebSocket()
+        Task {
+            await streamViewModel.close()
+            await streamViewModel.mixer.stopRunning()
+            try? await streamViewModel.mixer.attachAudio(nil)
+            try? await streamViewModel.mixer.attachVideo(nil, track: 0)
+            try? await streamViewModel.mixer.attachVideo(nil, track: 1)
+            await streamViewModel.close()
+        }
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    public override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        Task { @ScreenActor in
+            if await UIDevice.current.orientation.isLandscape {
+                await streamViewModel.mixer.screen.size = .init(width: 1280, height: 720)
+            } else {
+                await streamViewModel.mixer.screen.size = .init(width: 720, height: 1280)
+            }
+        }
     }
     
     private func configureChatTableView() {
@@ -101,10 +176,58 @@ public class RoomViewController: UIViewController {
     @IBAction func onClickBack(_ sender: Any) {
         navigationController?.popViewController(animated: true)
     }
+    
+    @objc private func didRouteChangeNotification(_ notification: Notification) {
+        if AVAudioSession.sharedInstance().inputDataSources?.isEmpty == true {
+            setEnabledPreferredInputBuiltInMic(false)
+        } else {
+            setEnabledPreferredInputBuiltInMic(true)
+        }
+        Task {
+            if DeviceUtil.isHeadphoneDisconnected(notification) {
+                await streamViewModel.mixer.setMonitoringEnabled(false)
+            } else {
+                await streamViewModel.mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
+            }
+        }
+    }
+    
+    @objc private func orientationDidChange(_ notification: Notification) {
+        guard let orientation = DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) else {
+            return
+        }
+        Task {
+            await streamViewModel.mixer.setVideoOrientation(orientation)
+        }
+    }
+    
+    private func setEnabledPreferredInputBuiltInMic(_ isEnabled: Bool) {
+        let session = AVAudioSession.sharedInstance()
+        do {
+            if isEnabled {
+                guard
+                    let availableInputs = session.availableInputs,
+                    let builtInMicInput = availableInputs.first(where: { $0.portType == .builtInMic }) else {
+                    return
+                }
+                try session.setPreferredInput(builtInMicInput)
+            } else {
+                try session.setPreferredInput(nil)
+            }
+        } catch {
+        }
+    }
 }
 
 extension RoomViewController: UIDocumentPickerDelegate {
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         pdfView.document = PDFDocument(url: urls.first!)
+    }
+}
+
+extension RoomViewController: AudioCaptureDelegate {
+    // MARK: AudioCaptureDelegate
+    nonisolated func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime) {
+        Task { await streamViewModel.mixer.append(buffer, when: time) }
     }
 }

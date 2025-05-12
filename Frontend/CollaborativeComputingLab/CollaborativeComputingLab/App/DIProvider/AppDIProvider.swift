@@ -13,13 +13,16 @@ import UIKit
 class AppDIProvider: ViewControllerFactory {
     
     private let chatDIProvider: ChatDIProvider
+    private let streamDIProvider: StreamDIProvider
     
     init() {
         self.chatDIProvider = DefaultChatDIProvider()
+        self.streamDIProvider = DefaultStreamDIProvider()
     }
     
-    init(chatDIProvider: ChatDIProvider) {
+    init(chatDIProvider: ChatDIProvider, streamDIProvider: StreamDIProvider) {
         self.chatDIProvider = chatDIProvider
+        self.streamDIProvider = streamDIProvider
     }
     
     func createHomeViewController() -> HomeViewController {
@@ -27,9 +30,9 @@ class AppDIProvider: ViewControllerFactory {
         return viewController
     }
     
-    func createRoomViewController(id: String, chatViewModel: ChatViewModel? = nil) -> RoomViewController {
+    func createRoomViewController(id: String, role: RoomRole, chatViewModel: ChatViewModel? = nil, streamViewModel: StreamViewModel? = nil) -> RoomViewController {
         let viewController: RoomViewController = RoomViewController.create()
-        viewController.inject(id: id, chatViewModel: chatViewModel ?? chatDIProvider.makeChatViewModel())
+        viewController.inject(id: id, role: role, chatViewModel: chatViewModel ?? chatDIProvider.makeChatViewModel(), streamViewModel: streamViewModel ?? streamDIProvider.makeStreamViewModel())
         return viewController
     }
 }

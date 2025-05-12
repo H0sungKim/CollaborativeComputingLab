@@ -1,6 +1,7 @@
 package com.ccl.collaborativecomputinglab.Controller;
 
-import com.ccl.collaborativecomputinglab.Model.ChatDTO;
+import com.ccl.collaborativecomputinglab.Model.IceCandidate;
+import com.ccl.collaborativecomputinglab.Model.SDP;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -11,9 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SignalingController {
 
-//    @MessageMapping("/chat")
-//    @SendTo("/chat/chat")
-//    public ChatDTO sendChat(@Payload ChatDTO chatDTO) {
-//        return chatDTO;
-//    }
+    @MessageMapping("/sdp")
+    @SendTo("/signaling/sdp")
+    public SDP sendSDP(@Payload SDP sdp) {
+        return sdp;
+    }
+
+    @MessageMapping("/ice")
+    @SendTo("/signaling/ice")
+    public IceCandidate sendIceCandidate(@Payload IceCandidate iceCandidate) {
+        return iceCandidate;
+    }
 }

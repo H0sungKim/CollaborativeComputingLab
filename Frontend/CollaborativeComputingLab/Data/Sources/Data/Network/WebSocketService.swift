@@ -10,7 +10,7 @@ import Combine
 import UIKit
 import SwiftStomp
 
-public protocol ChatService: URLSessionWebSocketDelegate {
+public protocol WebSocketService: URLSessionWebSocketDelegate {
     var chatStream: PassthroughSubject<ChatDTO, Error> { get }
     
     func send(chatDTO: ChatDTO)
@@ -18,12 +18,24 @@ public protocol ChatService: URLSessionWebSocketDelegate {
     func disconnectWebSocket()
 }
 
-public final class DefaultChatService: NSObject, ChatService, @unchecked Sendable {
+public final class DefaultWebSocketService: NSObject, WebSocketService, @unchecked Sendable {
+    
+    private enum Destination: String {
+        case chat = "/chat/chat"
+        
+        var sendTo: String {
+            switch self {
+            case .chat:
+                return "/app/chat"
+            }
+        }
+    }
     
     public var chatStream: PassthroughSubject<ChatDTO, any Error> = .init()
+    
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
-    private var swiftStomp = SwiftStomp(host: URL(string: "\(Bundle.module.baseURL ?? "")/ws")!)
+    private var swiftStomp = SwiftStomp(host: URL(string: "ws://\(Bundle.module.uri ?? ""):8080/ws")!)
     
     public override init() {
         super.init()
@@ -46,7 +58,7 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
                 switch event {
                 case let .connected(type):
                     if type == .toStomp {
-                        swiftStomp.subscribe(to: "/chat/chat")
+                        swiftStomp.subscribe(to: Destination.chat.rawValue)
                     }
                     break
                 case .disconnected(_):
@@ -62,8 +74,13 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
                 guard let self else { return }
                 switch message {
                 case let .text(message, messageId, destination, _):
-                    guard let dto = try? JSONManager.shared.decode(string: message, type: ChatDTO.self) else { return }
-                    chatStream.send(dto)
+                    switch Destination(rawValue: destination) {
+                    case .chat:
+                        guard let dto = try? JSONManager.shared.decode(string: message, type: ChatDTO.self) else { return }
+                        chatStream.send(dto)
+                    case .none:
+                        break
+                    }
                     print(message)
                 case let .data(data, messageId, destination, _):
                     print("data")
@@ -80,7 +97,7 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
     }
     
     public func send(chatDTO: ChatDTO) {
-        swiftStomp.send(body: chatDTO, to: "/app/chat", headers: [:])
+        swiftStomp.send(body: chatDTO, to: Destination.chat.sendTo, headers: [:])
     }
     
     public func connectWebSocket() {

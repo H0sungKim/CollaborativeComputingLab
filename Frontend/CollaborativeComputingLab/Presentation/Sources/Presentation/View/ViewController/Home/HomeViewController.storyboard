@@ -30,13 +30,22 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="OYd-XE-XQA">
+                                <rect key="frame" x="116" y="346" width="161" height="32"/>
+                                <segments>
+                                    <segment title="Instructor"/>
+                                    <segment title="Student"/>
+                                </segments>
+                            </segmentedControl>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="tEs-La-0Na" firstAttribute="top" secondItem="OYd-XE-XQA" secondAttribute="bottom" constant="32" id="0zZ-Y1-8WS"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="tEs-La-0Na" secondAttribute="trailing" constant="16" id="6ng-ta-Xdv"/>
                             <constraint firstItem="tEs-La-0Na" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="16" id="BIk-mc-a5n"/>
                             <constraint firstItem="tEs-La-0Na" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="Wqc-Cz-NQ9"/>
+                            <constraint firstItem="OYd-XE-XQA" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="Z3e-E3-gEc"/>
                             <constraint firstItem="PsN-5z-f0R" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="16" id="cXb-QB-Xvv"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="PsN-5z-f0R" secondAttribute="trailing" constant="16" id="d1F-XM-y2V"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="PsN-5z-f0R" secondAttribute="bottom" constant="16" id="mkQ-wN-T3B"/>
@@ -44,6 +53,7 @@
                     </view>
                     <connections>
                         <outlet property="idTextField" destination="tEs-La-0Na" id="Moa-fq-fnG"/>
+                        <outlet property="roleSegmentedControl" destination="OYd-XE-XQA" id="Qlh-13-7yx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

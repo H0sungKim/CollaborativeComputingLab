@@ -10,5 +10,5 @@ import UIKit
 
 public protocol ViewControllerFactory {
     func createHomeViewController() -> HomeViewController
-    func createRoomViewController(id: String, chatViewModel: ChatViewModel?) -> RoomViewController
+    func createRoomViewController(id: String, role: RoomRole, chatViewModel: ChatViewModel?, streamViewModel: StreamViewModel?) -> RoomViewController
 }

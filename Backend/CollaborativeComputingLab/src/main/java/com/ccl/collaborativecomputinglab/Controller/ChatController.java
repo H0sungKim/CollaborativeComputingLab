@@ -1,6 +1,6 @@
 package com.ccl.collaborativecomputinglab.Controller;
 
-import com.ccl.collaborativecomputinglab.Model.ChatDTO;
+import com.ccl.collaborativecomputinglab.Model.Chat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -13,9 +13,9 @@ public class ChatController {
 
     @MessageMapping("/chat")
     @SendTo("/chat/chat")
-    public ChatDTO sendChat(@Payload ChatDTO chatDTO) {
-        System.out.println(chatDTO);
-        return chatDTO;
+    public Chat sendChat(@Payload Chat chat) {
+        System.out.println(chat);
+        return chat;
     }
 
 

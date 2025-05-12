@@ -1,6 +1,6 @@
 package com.ccl.collaborativecomputinglab.Handler;
 
-import com.ccl.collaborativecomputinglab.Model.ChatDTO;
+import com.ccl.collaborativecomputinglab.Model.Chat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +30,8 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         String id = session.getId();
         String payload = message.getPayload();
 
-        ChatDTO chatDTO = objectMapper.readValue(payload, ChatDTO.class);
-        sendMessageToAll(new TextMessage(objectMapper.writeValueAsString(chatDTO)));
+        Chat chat = objectMapper.readValue(payload, Chat.class);
+        sendMessageToAll(new TextMessage(objectMapper.writeValueAsString(chat)));
     }
 
     private void sendMessageToAll(TextMessage message) throws Exception {

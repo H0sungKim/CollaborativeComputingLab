@@ -8,10 +8,10 @@
 import Foundation
 
 extension Bundle {
-    var baseURL: String? {
+    var uri: String? {
         guard let file = self.path(forResource: "Secret", ofType: "plist") else { return nil }
         guard let resource = NSDictionary(contentsOfFile: file) else { return nil }
-        guard let key = resource["base_URL"] as? String else { return nil }
+        guard let key = resource["uri"] as? String else { return nil }
         return key
     }
 }

@@ -61,13 +61,9 @@
                                     <constraint firstAttribute="trailing" secondItem="e8N-Nc-6Ff" secondAttribute="trailing" constant="16" id="vaL-wn-bDv"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="npM-F4-5wY">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="npM-F4-5wY" customClass="MTHKView" customModule="HaishinKit">
                                 <rect key="frame" x="0.0" y="88" width="792" height="1188"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AKZ-Cc-g31" customClass="PDFView">
-                                        <rect key="frame" x="0.0" y="0.0" width="792" height="1188"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                    </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gYx-S7-apI">
                                         <rect key="frame" x="726" y="16" width="50" height="34"/>
                                         <state key="normal" title="Button"/>
@@ -76,6 +72,10 @@
                                             <action selector="onClickCanvas:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Ytx-oy-8bD"/>
                                         </connections>
                                     </button>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AKZ-Cc-g31" customClass="PDFView">
+                                        <rect key="frame" x="0.0" y="0.0" width="792" height="1188"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
@@ -158,6 +158,7 @@
                         <outlet property="chatTableView" destination="uBO-O2-csA" id="Jsh-Op-bdS"/>
                         <outlet property="chatTextField" destination="htA-P6-K08" id="3xz-ZB-h5W"/>
                         <outlet property="pdfView" destination="AKZ-Cc-g31" id="rzC-Rz-JwM"/>
+                        <outlet property="streamView" destination="npM-F4-5wY" id="HIF-Ed-vGI"/>
                         <outlet property="titleLabel" destination="oUw-qf-wwy" id="YeM-2H-lbz"/>
                     </connections>
                 </viewController>

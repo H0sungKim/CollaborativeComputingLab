@@ -4,6 +4,7 @@
 
 Secret.plist
 .DS_Store
+hls/
 Paper/
 ## User settings
 xcuserdata/

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ChatDTO {
-    private String sender;
-    private String message;
+public class SDP {
+    private String sdp;
+    private String type;
 }

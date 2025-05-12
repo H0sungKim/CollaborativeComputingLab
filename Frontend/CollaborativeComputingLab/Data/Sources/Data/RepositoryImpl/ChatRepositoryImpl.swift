@@ -12,27 +12,27 @@ import Combine
 
 public class DefaultChatRepository: ChatRepository {
     
-    private let chatService: ChatService
-    
-    public init(chatService: ChatService) {
-        self.chatService = chatService
-    }
+    private let webSocketService: WebSocketService
     
     public var chatStream: AnyPublisher<ChatEntity, any Error> {
-        return chatService.chatStream
+        return webSocketService.chatStream
             .map(\.entity)
             .eraseToAnyPublisher()
     }
     
+    public init(webSocketService: WebSocketService) {
+        self.webSocketService = webSocketService
+    }
+    
     public func sendChat(chatEntity: ChatEntity) {
-        chatService.send(chatDTO: ChatDTO(entity: chatEntity))
+        webSocketService.send(chatDTO: ChatDTO(entity: chatEntity))
     }
     
     public func connectWebSocket() {
-        chatService.connectWebSocket()
+        webSocketService.connectWebSocket()
     }
     
     public func disconnectWebSocket() {
-        chatService.disconnectWebSocket()
+        webSocketService.disconnectWebSocket()
     }
 }
