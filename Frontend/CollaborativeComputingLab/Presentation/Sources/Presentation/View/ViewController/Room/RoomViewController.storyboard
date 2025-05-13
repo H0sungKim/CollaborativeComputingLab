@@ -64,6 +64,10 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="npM-F4-5wY" customClass="MTHKView" customModule="HaishinKit">
                                 <rect key="frame" x="0.0" y="88" width="792" height="1188"/>
                                 <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AKZ-Cc-g31" customClass="PDFView">
+                                        <rect key="frame" x="0.0" y="0.0" width="792" height="1188"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gYx-S7-apI">
                                         <rect key="frame" x="726" y="16" width="50" height="34"/>
                                         <state key="normal" title="Button"/>
@@ -72,15 +76,19 @@
                                             <action selector="onClickCanvas:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Ytx-oy-8bD"/>
                                         </connections>
                                     </button>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AKZ-Cc-g31" customClass="PDFView">
-                                        <rect key="frame" x="0.0" y="0.0" width="792" height="1188"/>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wyh-GX-Ith" customClass="MTHKView" customModule="HaishinKit">
+                                        <rect key="frame" x="16" y="934.5" width="158.5" height="237.5"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="wyh-GX-Ith" secondAttribute="bottom" constant="16" id="5wj-82-BX0"/>
                                     <constraint firstItem="AKZ-Cc-g31" firstAttribute="leading" secondItem="npM-F4-5wY" secondAttribute="leading" id="9id-DN-puD"/>
+                                    <constraint firstItem="wyh-GX-Ith" firstAttribute="width" secondItem="npM-F4-5wY" secondAttribute="width" multiplier="0.2" id="CsI-bK-1t6"/>
                                     <constraint firstAttribute="trailing" secondItem="AKZ-Cc-g31" secondAttribute="trailing" id="M7y-Cb-kz9"/>
+                                    <constraint firstItem="wyh-GX-Ith" firstAttribute="leading" secondItem="npM-F4-5wY" secondAttribute="leading" constant="16" id="Xh7-Lk-BAg"/>
+                                    <constraint firstItem="wyh-GX-Ith" firstAttribute="height" secondItem="npM-F4-5wY" secondAttribute="height" multiplier="0.2" id="doD-fW-m0K"/>
                                     <constraint firstAttribute="trailing" secondItem="gYx-S7-apI" secondAttribute="trailing" constant="16" id="fcB-zq-5zq"/>
                                     <constraint firstItem="gYx-S7-apI" firstAttribute="top" secondItem="npM-F4-5wY" secondAttribute="top" constant="16" id="g1N-3B-roh"/>
                                     <constraint firstAttribute="bottom" secondItem="AKZ-Cc-g31" secondAttribute="bottom" id="gvR-SI-Dty"/>
@@ -154,11 +162,14 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="cameraView" destination="wyh-GX-Ith" id="ZZs-Jl-rEi"/>
                         <outlet property="chatButton" destination="aYO-la-c15" id="z4G-Wy-pfO"/>
                         <outlet property="chatTableView" destination="uBO-O2-csA" id="Jsh-Op-bdS"/>
                         <outlet property="chatTextField" destination="htA-P6-K08" id="3xz-ZB-h5W"/>
+                        <outlet property="pdfDrawButton" destination="gYx-S7-apI" id="WOB-Ba-dOP"/>
+                        <outlet property="pdfOpenButton" destination="e8N-Nc-6Ff" id="SIu-X0-Rwk"/>
                         <outlet property="pdfView" destination="AKZ-Cc-g31" id="rzC-Rz-JwM"/>
-                        <outlet property="streamView" destination="npM-F4-5wY" id="HIF-Ed-vGI"/>
+                        <outlet property="streamView" destination="npM-F4-5wY" id="fVo-bj-Gln"/>
                         <outlet property="titleLabel" destination="oUw-qf-wwy" id="YeM-2H-lbz"/>
                     </connections>
                 </viewController>

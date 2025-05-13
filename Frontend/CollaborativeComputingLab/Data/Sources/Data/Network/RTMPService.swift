@@ -21,8 +21,8 @@ public final actor RTMPService {
     private var connection: RTMPConnection
     private var stream: RTMPStream
     
-    public init(streamName: String) {
-        uri = "rtmp://\(Bundle.module.uri ?? "")/hls"
+    public init(uri: String, streamName: String) {
+        self.uri = "rtmp://\(uri)/hls"
         connection = RTMPConnection()
         stream = RTMPStream(connection: connection)
         self.streamName = streamName
@@ -60,5 +60,9 @@ public final actor RTMPService {
     
     func addOutputStreamToMixer(mixer: MediaMixer) async {
         await mixer.addOutput(stream)
+    }
+    
+    func attachAudioPlayer(audioPlayer: AudioPlayer) async {
+        await stream.attachAudioPlayer(audioPlayer)
     }
 }

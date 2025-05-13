@@ -35,10 +35,12 @@ public final class DefaultWebSocketService: NSObject, WebSocketService, @uncheck
     
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
-    private var swiftStomp = SwiftStomp(host: URL(string: "ws://\(Bundle.module.uri ?? ""):8080/ws")!)
+    private var swiftStomp: SwiftStomp
     
-    public override init() {
+    public init(uri: String) {
+        self.swiftStomp = SwiftStomp(host: URL(string: "ws://\(uri):8080/ws")!)
         super.init()
+        
         configure()
         bind()
     }

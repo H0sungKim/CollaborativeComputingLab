@@ -38,4 +38,10 @@ public final class DefaultStreamRepository: StreamRepository {
             await rtmpService.addOutputStreamToMixer(mixer: mixer)
         }
     }
+    
+    public func attachAudioPlayer(audioPlayer: Any) async {
+        if let audioPlayer = audioPlayer as? AudioPlayer {
+            await rtmpService.attachAudioPlayer(audioPlayer: audioPlayer)
+        }
+    }
 }

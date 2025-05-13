@@ -24,7 +24,7 @@ protocol StreamDIProvider {
 
 class DefaultStreamDIProvider: StreamDIProvider {
     func makeStreamRepository() -> StreamRepository {
-        return DefaultStreamRepository(rtmpService: RTMPService(streamName: "test"))
+        return DefaultStreamRepository(rtmpService: RTMPService(uri: Bundle.main.uri ?? "", streamName: "test"))
     }
     func makeStreamRepository(rtmpService: RTMPService) -> StreamRepository {
         return DefaultStreamRepository(rtmpService: rtmpService)

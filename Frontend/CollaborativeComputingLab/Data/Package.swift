@@ -28,8 +28,7 @@ let package = Package(
                 "Domain",
                 "SwiftStomp",
                 .product(name: "HaishinKit", package: "HaishinKit.swift")
-            ],
-            resources: [.process("Secret.plist")]
+            ]
         ),
     ]
 )

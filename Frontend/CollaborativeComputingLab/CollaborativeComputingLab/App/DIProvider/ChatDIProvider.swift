@@ -24,7 +24,7 @@ protocol ChatDIProvider {
 
 class DefaultChatDIProvider: ChatDIProvider {
     func makeChatRepository() -> ChatRepository {
-        return DefaultChatRepository(webSocketService: DefaultWebSocketService())
+        return DefaultChatRepository(webSocketService: DefaultWebSocketService(uri: Bundle.main.uri ?? ""))
     }
     func makeChatRepository(webSocketService: WebSocketService) -> ChatRepository {
         return DefaultChatRepository(webSocketService: webSocketService)

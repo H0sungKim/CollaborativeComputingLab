@@ -13,4 +13,5 @@ public protocol StreamRepository: Sendable {
     func close() async
     func addOutputView(_ view: UIView) async
     func addOutputStreamToMixer(mixer: Any) async
+    func attachAudioPlayer(audioPlayer: Any) async
 }

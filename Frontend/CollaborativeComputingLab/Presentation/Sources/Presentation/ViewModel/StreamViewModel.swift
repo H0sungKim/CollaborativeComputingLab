@@ -17,6 +17,7 @@ public protocol StreamViewModelInput {
     func close() async
     func addOutputView(_ view: UIView) async
     func addOutputStreamToMixer() async
+    func attachAudioPlayer(audioPlayer: AudioPlayer) async
 }
 
 public protocol StreamViewModelOutput {
@@ -49,5 +50,9 @@ public final actor DefaultStreamViewModel: StreamViewModel {
     
     public func addOutputStreamToMixer() async {
         await streamUseCase.addOutputStreamToMixer(mixer: mixer)
+    }
+    
+    public func attachAudioPlayer(audioPlayer: AudioPlayer) async {
+        await streamUseCase.attachAudioPlayer(audioPlayer: audioPlayer)
     }
 }

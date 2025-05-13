@@ -13,6 +13,7 @@ public protocol StreamUseCase: Sendable {
     func close() async
     func addOutputView(_ view: UIView) async
     func addOutputStreamToMixer(mixer: Any) async
+    func attachAudioPlayer(audioPlayer: Any) async
 }
 
 public final class DefaultStreamUseCase: StreamUseCase {
@@ -36,5 +37,9 @@ public final class DefaultStreamUseCase: StreamUseCase {
     
     public func addOutputStreamToMixer(mixer: Any) async {
         await streamRepository.addOutputStreamToMixer(mixer: mixer)
+    }
+    
+    public func attachAudioPlayer(audioPlayer: Any) async {
+        await streamRepository.attachAudioPlayer(audioPlayer: audioPlayer)
     }
 }
