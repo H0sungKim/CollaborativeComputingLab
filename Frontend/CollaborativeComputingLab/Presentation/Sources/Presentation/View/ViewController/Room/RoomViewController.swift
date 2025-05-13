@@ -12,7 +12,7 @@ import Combine
 import PDFKit
 import HaishinKit
 import AVFoundation
-//import ReplayKit
+import ReplayKit
 
 public class RoomViewController: UIViewController {
     
@@ -142,12 +142,33 @@ public class RoomViewController: UIViewController {
             Task {
                 try? await streamViewModel.mixer.attachAudio(AVCaptureDevice.default(for: .audio))
                 let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
-                try? await streamViewModel.mixer.attachVideo(front, track: 0) { videoUnit in
+                try? await streamViewModel.mixer.attachVideo(front, track: 1) { videoUnit in
                     videoUnit.isVideoMirrored = true
                 }
                 await streamViewModel.mixer.startRunning()
                 await streamViewModel.open(method: role.streamRole)
             }
+            DispatchQueue.global().async {
+                RPScreenRecorder.shared().startCapture(handler: { sampleBuffer, sampleBufferType, error in
+                    if error != nil {
+                        print(error?.localizedDescription)
+                        return
+                    }
+                    switch sampleBufferType {
+                    case .video:
+                        Task { await self.streamViewModel.mixer.append(sampleBuffer, track: 0) }
+                    case .audioApp:
+                        break
+                    case .audioMic:
+                        break
+                    @unknown default:
+                        break
+                    }
+                }, completionHandler: { error in
+                    
+                })
+            }
+            
             NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(didRouteChangeNotification(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
         case .student:
@@ -171,6 +192,11 @@ public class RoomViewController: UIViewController {
                 try? await streamViewModel.mixer.attachVideo(nil, track: 0)
                 try? await streamViewModel.mixer.attachVideo(nil, track: 1)
                 await streamViewModel.close()
+            }
+            DispatchQueue.global().async {
+                RPScreenRecorder.shared().stopCapture(handler: { error in
+                    
+                })
             }
             NotificationCenter.default.removeObserver(self)
         case .student:
