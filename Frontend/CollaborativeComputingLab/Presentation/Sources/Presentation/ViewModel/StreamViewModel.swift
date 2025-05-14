@@ -15,7 +15,7 @@ import ReplayKit
 
 public protocol StreamViewModelInput {
     func open(method: StreamRole) async
-    func close(method: StreamRole) async
+    func close() async
     func addOutputView(_ view: UIView) async
     func addOutputStreamToMixer() async
     func attachAudioPlayer(audioPlayer: AudioPlayer) async
@@ -70,7 +70,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
         NotificationCenter.default.addObserver(self, selector: #selector(didRouteChangeNotification(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
     }
     
-    public func close(method: StreamRole) async {
+    public func close() async {
         await streamUseCase.close()
     }
     

@@ -132,7 +132,7 @@ public class RoomViewController: UIViewController {
         super.viewWillDisappear(animated)
         chatViewModel.disconnectWebSocket()
         Task {
-            await streamViewModel.close(method: role.streamRole)
+            await streamViewModel.close()
         }
         
         switch role {
