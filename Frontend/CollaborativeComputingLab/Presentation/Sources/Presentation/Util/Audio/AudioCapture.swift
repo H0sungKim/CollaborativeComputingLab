@@ -13,14 +13,14 @@ protocol AudioCaptureDelegate: AnyObject {
     func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime)
 }
 
-final class AudioCapture {
-    var isRunning = false
+public final class AudioCapture: @unchecked Sendable {
+    public var isRunning = false
     weak var delegate: (any AudioCaptureDelegate)?
     private let audioEngine = AVAudioEngine()
 }
 
 extension AudioCapture: Runner {
-    func startRunning() {
+    public func startRunning() {
         guard !isRunning else {
             return
         }
@@ -38,7 +38,7 @@ extension AudioCapture: Runner {
         }
     }
 
-    func stopRunning() {
+    public func stopRunning() {
         guard isRunning else {
             return
         }

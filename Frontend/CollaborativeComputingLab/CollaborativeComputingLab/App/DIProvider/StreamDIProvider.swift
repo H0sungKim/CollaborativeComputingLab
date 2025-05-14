@@ -9,6 +9,7 @@ import Domain
 import Data
 import Presentation
 
+import HaishinKit
 import Foundation
 
 protocol StreamDIProvider {
@@ -22,7 +23,7 @@ protocol StreamDIProvider {
     func makeStreamViewModel(streamUseCase: StreamUseCase) -> StreamViewModel
 }
 
-class DefaultStreamDIProvider: StreamDIProvider {
+class DefaultStreamDIProvider: @preconcurrency StreamDIProvider {
     func makeStreamRepository() -> StreamRepository {
         return DefaultStreamRepository(rtmpService: RTMPService(uri: Bundle.main.uri ?? "", streamName: "test"))
     }
@@ -37,10 +38,10 @@ class DefaultStreamDIProvider: StreamDIProvider {
         return DefaultStreamUseCase(streamRepository: streamRepository)
     }
     
-    func makeStreamViewModel() -> StreamViewModel {
+    @ScreenActor func makeStreamViewModel() -> StreamViewModel {
         return DefaultStreamViewModel(streamUseCase: makeStreamUseCase())
     }
-    func makeStreamViewModel(streamUseCase: StreamUseCase) -> StreamViewModel {
+    @ScreenActor func makeStreamViewModel(streamUseCase: StreamUseCase) -> StreamViewModel {
         return DefaultStreamViewModel(streamUseCase: streamUseCase)
     }
 }

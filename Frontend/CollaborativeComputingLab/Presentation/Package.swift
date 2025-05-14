@@ -28,6 +28,5 @@ let package = Package(
                 .product(name: "HaishinKit", package: "HaishinKit.swift")
             ]
         ),
-
     ]
 )

@@ -16,12 +16,12 @@ import ReplayKit
 
 public class RoomViewController: UIViewController {
     
+    // MARK: - IBOutlet
     @IBOutlet weak var titleLabel: UILabel!
     
     @IBOutlet weak var pdfOpenButton: UIButton!
     @IBOutlet weak var pdfView: PDFView!
     @IBOutlet weak var pdfDrawButton: UIButton!
-    private let canvasProvider: CanvasProvider = CanvasProvider()
     
     @IBOutlet weak var chatTableView: UITableView!
     @IBOutlet weak var chatTextField: UITextField!
@@ -29,26 +29,24 @@ public class RoomViewController: UIViewController {
     
     @IBOutlet weak var streamView: MTHKView!
     @IBOutlet weak var cameraView: MTHKView!
-    @IBOutlet weak var cameraRatio: NSLayoutConstraint!
     
+    // MARK: - ChatTableView
     private var chatTableViewDelegate: TableViewDelegate?
     private var chatTableViewDataSource: TableViewDataSource?
     
+    // MARK: - PDF
+    private let canvasProvider: CanvasProvider = CanvasProvider()
+    
+    // MARK: - Dependency
     private var id: String!
     private var role: RoomRole!
     private var chatViewModel: ChatViewModel!
     private var streamViewModel: StreamViewModel!
     
-    @ScreenActor private var videoScreenObject = VideoTrackScreenObject()
-    private let audioPlayer = AudioPlayer(audioEngine: AVAudioEngine())
-    private lazy var audioCapture: AudioCapture = {
-        let audioCapture = AudioCapture()
-        audioCapture.delegate = self
-        return audioCapture
-    }()
-    
+    // MARK: - Combine
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
+    // MARK: - Inject
     public func inject(id: String!, role: RoomRole, chatViewModel: ChatViewModel, streamViewModel: StreamViewModel) {
         self.id = id
         self.role = role
@@ -56,29 +54,27 @@ public class RoomViewController: UIViewController {
         self.streamViewModel = streamViewModel
     }
     
+    // MARK: - Bind
     private func bind(chatViewModel: ChatViewModel) {
         chatViewModel.chats.sink(receiveValue: { [weak self] chats in
-            Task { @MainActor in
-                self?.chatTableView.reloadData()
-            }
+            self?.chatTableView.reloadData()
         })
         .store(in: &cancellable)
     }
     
+    private func bind(streamViewModel: StreamViewModel) {
+        streamViewModel.audioCapture.delegate = self
+    }
+    
+    // MARK: - Basic
     public override func viewDidLoad() {
         super.viewDidLoad()
         
         bind(chatViewModel: chatViewModel)
+        bind(streamViewModel: streamViewModel)
         configureChatTableView()
+        configurePDFView()
         titleLabel.text = "\(id ?? "") 님의 회의실"
-        pdfView.displayMode = .singlePageContinuous
-        pdfView.pageOverlayViewProvider = canvasProvider
-        pdfView.isInMarkupMode = true
-        pdfView.isScrollEnabled = true
-        
-        pdfView.isHidden = role.isPDFHidden
-        pdfDrawButton.isHidden = role.isPDFHidden
-        pdfOpenButton.isHidden = role.isPDFHidden
         
         switch role {
         case .instructor:
@@ -89,92 +85,44 @@ public class RoomViewController: UIViewController {
                     await streamViewModel.mixer.setVideoOrientation(orientation)
                 }
                 await streamViewModel.mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
-                var videoMixerSettings = await streamViewModel.mixer.videoMixerSettings
-                videoMixerSettings.mode = .offscreen
-                await streamViewModel.mixer.setVideoMixerSettings(videoMixerSettings)
+                await streamViewModel.setVideoMixerSettings()
                 await streamViewModel.addOutputStreamToMixer()
                 await streamViewModel.addOutputView(cameraView)
             }
 
             Task { @ScreenActor in
-                videoScreenObject.cornerRadius = 16.0
-                videoScreenObject.track = 1
-                videoScreenObject.horizontalAlignment = .right
-                videoScreenObject.layoutMargin = .init(top: 16, left: 0, bottom: 0, right: 16)
-                videoScreenObject.size = .init(width: 160 * 2, height: 90 * 2)
-                if await UIDevice.current.orientation.isLandscape {
-                    await streamViewModel.mixer.screen.size = .init(width: 1280, height: 720)
-                } else {
-                    await streamViewModel.mixer.screen.size = .init(width: 720, height: 1280)
-                }
+                await streamViewModel.configureVideoScreenObject()
+                await streamViewModel.setScreenSize()
                 await streamViewModel.mixer.screen.backgroundColor = UIColor.clear.cgColor
-                try? await streamViewModel.mixer.screen.addChild(videoScreenObject)
+                try? await streamViewModel.mixer.screen.addChild(streamViewModel.videoScreenObject)
             }
         case .student:
             Task {
                 await streamViewModel.addOutputView(streamView)
-                await streamViewModel.attachAudioPlayer(audioPlayer: audioPlayer)
+                await streamViewModel.attachAudioPlayer(audioPlayer: streamViewModel.audioPlayer)
             }
         case .none:
             break
         }
-        
-        
-        
-//        let recorder = RPScreenRecorder.shared()
-//        recorder.isMicrophoneEnabled = true
-//        recorder.isCameraEnabled = true
-//        recorder.startCapture(handler: { buffer, bufferType, error in
-//            print(bufferType)
-//            print(error?.localizedDescription)
-//            Task { await self.streamViewModel.mixer.append(buffer, track: 0) }
-//        }, completionHandler: { error in
-//            print(error?.localizedDescription)
-//        })
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         chatViewModel.connectWebSocket()
+        Task {
+            await streamViewModel.open(method: role.streamRole)
+        }
         
         switch role {
         case .instructor:
             Task {
-                try? await streamViewModel.mixer.attachAudio(AVCaptureDevice.default(for: .audio))
-                let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
-                try? await streamViewModel.mixer.attachVideo(front, track: 1) { videoUnit in
-                    videoUnit.isVideoMirrored = true
-                }
                 await streamViewModel.mixer.startRunning()
-                await streamViewModel.open(method: role.streamRole)
+                await streamViewModel.attachMedia()
             }
-            DispatchQueue.global().async {
-                RPScreenRecorder.shared().startCapture(handler: { sampleBuffer, sampleBufferType, error in
-                    if error != nil {
-                        print(error?.localizedDescription)
-                        return
-                    }
-                    switch sampleBufferType {
-                    case .video:
-                        Task { await self.streamViewModel.mixer.append(sampleBuffer, track: 0) }
-                    case .audioApp:
-                        break
-                    case .audioMic:
-                        break
-                    @unknown default:
-                        break
-                    }
-                }, completionHandler: { error in
-                    
-                })
-            }
-            
-            NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(didRouteChangeNotification(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
+            streamViewModel.startPublishScreen()
+            streamViewModel.observeNotification()
         case .student:
-            Task {
-                await streamViewModel.open(method: role.streamRole)
-            }
+            break
         case .none:
             break
         }
@@ -183,26 +131,20 @@ public class RoomViewController: UIViewController {
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         chatViewModel.disconnectWebSocket()
+        Task {
+            await streamViewModel.close(method: role.streamRole)
+        }
+        
         switch role {
         case .instructor:
             Task {
-                await streamViewModel.close()
                 await streamViewModel.mixer.stopRunning()
-                try? await streamViewModel.mixer.attachAudio(nil)
-                try? await streamViewModel.mixer.attachVideo(nil, track: 0)
-                try? await streamViewModel.mixer.attachVideo(nil, track: 1)
-                await streamViewModel.close()
+                await streamViewModel.detachMedia()
             }
-            DispatchQueue.global().async {
-                RPScreenRecorder.shared().stopCapture(handler: { error in
-                    
-                })
-            }
-            NotificationCenter.default.removeObserver(self)
+            streamViewModel.stopPublishScreen()
+            streamViewModel.removeNotification()
         case .student:
-            Task {
-                await streamViewModel.close()
-            }
+            break
         case .none:
             break
         }
@@ -210,15 +152,22 @@ public class RoomViewController: UIViewController {
     
     public override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        Task { @ScreenActor in
-            if await UIDevice.current.orientation.isLandscape {
-                await streamViewModel.mixer.screen.size = .init(width: 1280, height: 720)
-            } else {
-                await streamViewModel.mixer.screen.size = .init(width: 720, height: 1280)
-            }
-        }
+        streamViewModel.setScreenSize()
     }
     
+    // MARK: - PDFView
+    private func configurePDFView() {
+        pdfView.displayMode = .singlePageContinuous
+        pdfView.pageOverlayViewProvider = canvasProvider
+        pdfView.isInMarkupMode = true
+        pdfView.isScrollEnabled = true
+        
+        pdfView.isHidden = role.isPDFHidden
+        pdfDrawButton.isHidden = role.isPDFHidden
+        pdfOpenButton.isHidden = role.isPDFHidden
+    }
+    
+    // MARK: - ChatTableView
     private func configureChatTableView() {
         chatTableViewDelegate = TableViewDelegate()
         chatTableViewDataSource = TableViewDataSource(numberOfRowsInSection: chatTableViewNumberOfRowsInSection(_:numberOfRowsInSection:), cellForRowAt: chatTableView(_:cellForRowAt:))
@@ -239,11 +188,14 @@ public class RoomViewController: UIViewController {
         cell.messageLabel.text = chatViewModel.chats.value[indexPath.row].message
         return cell
     }
+    
+    // MARK: - IBAction
     @IBAction func onClickFile(_ sender: Any) {
         let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.pdf], asCopy: true)
         documentPicker.delegate = self
         present(documentPicker, animated: true)
     }
+    
     @IBAction func onClickChatSend(_ sender: Any) {
         chatViewModel.sendChat(sender: id, message: chatTextField.text ?? "")
         chatTextField.text = ""
@@ -254,61 +206,20 @@ public class RoomViewController: UIViewController {
         sender.setImage(UIImage(systemName: pdfView.isScrollEnabled ?? true ? "pencil.tip.crop.circle" : "pencil.tip.crop.circle.fill"), for: .normal)
     }
     
-    
     @IBAction func onClickBack(_ sender: Any) {
         navigationController?.popViewController(animated: true)
     }
-    
-    @objc private func didRouteChangeNotification(_ notification: Notification) {
-        if AVAudioSession.sharedInstance().inputDataSources?.isEmpty == true {
-            setEnabledPreferredInputBuiltInMic(false)
-        } else {
-            setEnabledPreferredInputBuiltInMic(true)
-        }
-        Task {
-            if DeviceUtil.isHeadphoneDisconnected(notification) {
-                await streamViewModel.mixer.setMonitoringEnabled(false)
-            } else {
-                await streamViewModel.mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
-            }
-        }
-    }
-    
-    @objc private func orientationDidChange(_ notification: Notification) {
-        guard let orientation = DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) else {
-            return
-        }
-        Task {
-            await streamViewModel.mixer.setVideoOrientation(orientation)
-        }
-    }
-    
-    private func setEnabledPreferredInputBuiltInMic(_ isEnabled: Bool) {
-        let session = AVAudioSession.sharedInstance()
-        do {
-            if isEnabled {
-                guard
-                    let availableInputs = session.availableInputs,
-                    let builtInMicInput = availableInputs.first(where: { $0.portType == .builtInMic }) else {
-                    return
-                }
-                try session.setPreferredInput(builtInMicInput)
-            } else {
-                try session.setPreferredInput(nil)
-            }
-        } catch {
-        }
-    }
 }
 
+// MARK: - UIDocumentPickerDelegate
 extension RoomViewController: UIDocumentPickerDelegate {
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         pdfView.document = PDFDocument(url: urls.first!)
     }
 }
 
+// MARK: - AudioCaptureDelegate
 extension RoomViewController: AudioCaptureDelegate {
-    // MARK: AudioCaptureDelegate
     nonisolated func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime) {
         Task { await streamViewModel.mixer.append(buffer, when: time) }
     }
