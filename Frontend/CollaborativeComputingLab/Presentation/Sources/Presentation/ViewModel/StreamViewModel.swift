@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  StreamViewModel.swift
 //  Presentation
 //
 //  Created by 김호성 on 2025.05.11.
@@ -57,31 +57,8 @@ public final class DefaultStreamViewModel: StreamViewModel {
         await streamUseCase.open(method: method)
     }
     
-    public func attachMedia() async {
-        try? await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
-        let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
-        try? await mixer.attachVideo(front, track: 1) { videoUnit in
-            videoUnit.isVideoMirrored = true
-        }
-    }
-    
-    public func observeNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didRouteChangeNotification(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
-    }
-    
     public func close() async {
         await streamUseCase.close()
-    }
-    
-    public func detachMedia() async {
-        try? await mixer.attachAudio(nil)
-        try? await mixer.attachVideo(nil, track: 0)
-        try? await mixer.attachVideo(nil, track: 1)
-    }
-    
-    public func removeNotification() {
-        NotificationCenter.default.removeObserver(self)
     }
     
     public func addOutputView(_ view: UIView) async {
@@ -95,6 +72,30 @@ public final class DefaultStreamViewModel: StreamViewModel {
     public func attachAudioPlayer(audioPlayer: AudioPlayer) async {
         await streamUseCase.attachAudioPlayer(audioPlayer: audioPlayer)
     }
+    
+    public func attachMedia() async {
+        try? await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
+        let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+        try? await mixer.attachVideo(front, track: 1) { videoUnit in
+            videoUnit.isVideoMirrored = true
+        }
+    }
+    
+    public func detachMedia() async {
+        try? await mixer.attachAudio(nil)
+        try? await mixer.attachVideo(nil, track: 0)
+        try? await mixer.attachVideo(nil, track: 1)
+    }
+    
+    public func observeNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRouteChangeNotification(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
+    }
+    
+    public func removeNotification() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     
     public func startPublishScreen() {
         DispatchQueue.global().async {

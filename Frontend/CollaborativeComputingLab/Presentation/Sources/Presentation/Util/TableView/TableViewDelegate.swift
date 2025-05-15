@@ -1,6 +1,6 @@
 //
 //  TableViewDelegate.swift
-//  PresentationLayer
+//  Presentation
 //
 //  Created by 김호성 on 2025.03.28.
 //

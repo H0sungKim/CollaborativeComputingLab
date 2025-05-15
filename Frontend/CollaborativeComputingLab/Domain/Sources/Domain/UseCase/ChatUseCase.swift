@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ChatUseCase.swift
 //  Domain
 //
 //  Created by 김호성 on 2025.04.28.
@@ -16,7 +16,7 @@ public protocol ChatUseCase {
     func disconnectWebSocket()
 }
 
-public class DefaultChatUseCase: ChatUseCase {
+public final class DefaultChatUseCase: ChatUseCase {
     
     private let chatRepository: ChatRepository
     

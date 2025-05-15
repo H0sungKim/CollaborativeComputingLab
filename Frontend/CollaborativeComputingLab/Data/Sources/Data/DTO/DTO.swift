@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  DTO.swift
 //  Data
 //
 //  Created by 김호성 on 2025.04.28.

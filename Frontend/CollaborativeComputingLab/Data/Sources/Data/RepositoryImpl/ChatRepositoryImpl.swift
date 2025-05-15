@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ChatRepositoryImpl.swift
 //  Data
 //
 //  Created by 김호성 on 2025.04.28.
@@ -10,7 +10,7 @@ import Domain
 import Foundation
 import Combine
 
-public class DefaultChatRepository: ChatRepository {
+public final class DefaultChatRepository: ChatRepository {
     
     private let webSocketService: WebSocketService
     

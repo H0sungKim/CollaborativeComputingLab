@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ChatViewModel.swift
 //  Presentation
 //
 //  Created by 김호성 on 2025.04.27.
@@ -22,7 +22,7 @@ public protocol ChatViewModelOutput {
 
 public protocol ChatViewModel: ChatViewModelInput, ChatViewModelOutput { }
 
-public class DefaultChatViewModel: ChatViewModel {
+public final class DefaultChatViewModel: ChatViewModel {
     
     public var chats: CurrentValueSubject<[ChatEntity], Never> = .init([])
     

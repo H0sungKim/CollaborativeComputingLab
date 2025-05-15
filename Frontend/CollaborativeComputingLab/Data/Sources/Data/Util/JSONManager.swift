@@ -1,6 +1,6 @@
 //
-//  JSONReader.swift
-//  JapaneseBenkyo
+//  JSONManager.swift
+//  Data
 //
 //  Created by 김호성 on 2/13/24.
 //
