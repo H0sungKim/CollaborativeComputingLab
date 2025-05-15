@@ -7,34 +7,35 @@
 
 import Domain
 
-import HaishinKit
 import UIKit
 import Foundation
 import AVFoundation
 import ReplayKit
 
+import HaishinKit
+
 public protocol StreamViewModelInput {
     func open(method: StreamRole) async
     func close() async
-    func addOutputView(_ view: UIView) async
-    func addOutputStreamToMixer() async
-    func attachAudioPlayer(audioPlayer: AudioPlayer) async
+    
     func attachMedia() async
     func detachMedia() async
+    
     func observeNotification()
     func removeNotification()
+    
     func startPublishScreen()
     func stopPublishScreen()
+    
     func setScreenSize()
-    func configureVideoScreenObject() async
-    func setVideoMixerSettings() async
+    func configureMixer() async
+    func configureScreen() async
+    func addOutputView(_ view: UIView) async
+    func attachAudioPlayer() async
 }
 
 public protocol StreamViewModelOutput {
     var mixer: MediaMixer { get }
-    
-    var videoScreenObject: VideoTrackScreenObject { get }
-    var audioPlayer: AudioPlayer { get }
     var audioCapture: AudioCapture { get }
 }
 
@@ -43,9 +44,10 @@ public protocol StreamViewModel: StreamViewModelInput, StreamViewModelOutput, Se
 public final class DefaultStreamViewModel: StreamViewModel {
     
     public let mixer: MediaMixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: true, useManualCapture: true)
-    @ScreenActor public let videoScreenObject = VideoTrackScreenObject()
-    public let audioPlayer = AudioPlayer(audioEngine: AVAudioEngine())
     public let audioCapture: AudioCapture = AudioCapture()
+    
+    @ScreenActor private let videoScreenObject = VideoTrackScreenObject()
+    private let audioPlayer = AudioPlayer(audioEngine: AVAudioEngine())
     
     private let streamUseCase: StreamUseCase
     
@@ -59,18 +61,6 @@ public final class DefaultStreamViewModel: StreamViewModel {
     
     public func close() async {
         await streamUseCase.close()
-    }
-    
-    public func addOutputView(_ view: UIView) async {
-        await streamUseCase.addOutputView(view)
-    }
-    
-    public func addOutputStreamToMixer() async {
-        await streamUseCase.addOutputStreamToMixer(mixer: mixer)
-    }
-    
-    public func attachAudioPlayer(audioPlayer: AudioPlayer) async {
-        await streamUseCase.attachAudioPlayer(audioPlayer: audioPlayer)
     }
     
     public func attachMedia() async {
@@ -140,7 +130,35 @@ public final class DefaultStreamViewModel: StreamViewModel {
         }
     }
     
-    @ScreenActor public func configureVideoScreenObject() async {
+    public func configureMixer() async {
+        if let orientation = await DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) {
+            await mixer.setVideoOrientation(orientation)
+        }
+        await mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
+        await configureVideoMixerSettings()
+        await addOutputStreamToMixer()
+    }
+    
+    @ScreenActor public func configureScreen() async {
+        await configureVideoScreenObject()
+        setScreenSize()
+        mixer.screen.backgroundColor = UIColor.clear.cgColor
+        try? mixer.screen.addChild(videoScreenObject)
+    }
+    
+    public func addOutputView(_ view: UIView) async {
+        await streamUseCase.addOutputView(view)
+    }
+    
+    public func attachAudioPlayer() async {
+        await streamUseCase.attachAudioPlayer(audioPlayer: audioPlayer)
+    }
+    
+    private func addOutputStreamToMixer() async {
+        await streamUseCase.addOutputStreamToMixer(mixer: mixer)
+    }
+    
+    @ScreenActor private func configureVideoScreenObject() async {
         videoScreenObject.cornerRadius = 16.0
         videoScreenObject.track = 1
         videoScreenObject.horizontalAlignment = .right
@@ -148,7 +166,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
         videoScreenObject.size = .init(width: 160 * 2, height: 90 * 2)
     }
     
-    public func setVideoMixerSettings() async {
+    private func configureVideoMixerSettings() async {
         var videoMixerSettings = await mixer.videoMixerSettings
         videoMixerSettings.mode = .offscreen
         await mixer.setVideoMixerSettings(videoMixerSettings)

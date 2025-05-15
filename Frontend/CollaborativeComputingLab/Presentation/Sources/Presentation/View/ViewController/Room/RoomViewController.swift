@@ -10,9 +10,10 @@ import Domain
 import UIKit
 import Combine
 import PDFKit
-import HaishinKit
 import AVFoundation
 import ReplayKit
+
+import HaishinKit
 
 public class RoomViewController: UIViewController {
     
@@ -69,7 +70,6 @@ public class RoomViewController: UIViewController {
     // MARK: - Basic
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
         bind(chatViewModel: chatViewModel)
         bind(streamViewModel: streamViewModel)
         configureChatTableView()
@@ -79,27 +79,16 @@ public class RoomViewController: UIViewController {
         switch role {
         case .instructor:
             Task {
-                // If you want to use the multi-camera feature, please make create a MediaMixer with a multiCamSession mode.
-                // let mixer = MediaMixer(multiCamSessionEnabled: true)
-                if let orientation = DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) {
-                    await streamViewModel.mixer.setVideoOrientation(orientation)
-                }
-                await streamViewModel.mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
-                await streamViewModel.setVideoMixerSettings()
-                await streamViewModel.addOutputStreamToMixer()
+                await streamViewModel.configureMixer()
                 await streamViewModel.addOutputView(cameraView)
             }
-
             Task { @ScreenActor in
-                await streamViewModel.configureVideoScreenObject()
-                await streamViewModel.setScreenSize()
-                await streamViewModel.mixer.screen.backgroundColor = UIColor.clear.cgColor
-                try? await streamViewModel.mixer.screen.addChild(streamViewModel.videoScreenObject)
+                await streamViewModel.configureScreen()
             }
         case .student:
             Task {
                 await streamViewModel.addOutputView(streamView)
-                await streamViewModel.attachAudioPlayer(audioPlayer: streamViewModel.audioPlayer)
+                await streamViewModel.attachAudioPlayer()
             }
         case .none:
             break
@@ -221,6 +210,8 @@ extension RoomViewController: UIDocumentPickerDelegate {
 // MARK: - AudioCaptureDelegate
 extension RoomViewController: AudioCaptureDelegate {
     nonisolated func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime) {
-        Task { await streamViewModel.mixer.append(buffer, when: time) }
+        Task {
+            await streamViewModel.mixer.append(buffer, when: time)
+        }
     }
 }

@@ -9,6 +9,7 @@ import Domain
 
 import Foundation
 import UIKit
+
 import HaishinKit
 
 public final class DefaultStreamRepository: StreamRepository {

@@ -9,8 +9,9 @@ import Domain
 import Data
 import Presentation
 
-import HaishinKit
 import Foundation
+
+import HaishinKit
 
 protocol StreamDIProvider {
     func makeStreamRepository() -> StreamRepository
