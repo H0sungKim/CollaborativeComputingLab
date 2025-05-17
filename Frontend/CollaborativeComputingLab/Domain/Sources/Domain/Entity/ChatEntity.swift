@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ChatEntity.swift
 //  Domain
 //
 //  Created by 김호성 on 2025.04.27.

@@ -10,7 +10,7 @@ import Foundation
 
 import HaishinKit
 
-protocol AudioCaptureDelegate: AnyObject {
+public protocol AudioCaptureDelegate: AnyObject {
     func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime)
 }
 

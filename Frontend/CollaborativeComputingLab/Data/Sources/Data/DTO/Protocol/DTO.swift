@@ -11,5 +11,8 @@ import Foundation
 
 protocol DTO: Codable {
     associatedtype EntityType: Entity
+    
     var entity: EntityType { get }
+    
+    init(entity: EntityType)
 }

@@ -1,8 +1,8 @@
 //
 //  UIViewController+Ext.swift
-//  DuckStar
+//  CollaborativeComputingLab
 //
-//  Created by Hosung.Kim on 2021/11/22.
+//  Created by 김호성 on 2021/11/22.
 //
 
 import UIKit

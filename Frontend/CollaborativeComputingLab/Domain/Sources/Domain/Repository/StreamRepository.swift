@@ -9,7 +9,8 @@ import Foundation
 import UIKit
 
 public protocol StreamRepository: Sendable {
-    func open(method: StreamRole) async
+    func publish() async throws
+    func play() async throws
     func close() async
     func addOutputView(_ view: UIView) async
     func addOutputStreamToMixer(mixer: Any) async

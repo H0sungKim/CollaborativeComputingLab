@@ -13,7 +13,6 @@ import AVFoundation
 import HaishinKit
 
 public final actor RTMPService {
-    static let maxRetryCount: Int = 5
     
     private var uri: String
     private var streamName: String
@@ -28,27 +27,20 @@ public final actor RTMPService {
         self.streamName = streamName
     }
     
-    func open(method: StreamRole) async {
-        do {
-            let response = try await connection.connect(uri)
-            print(response)
-            switch method {
-            case .publish:
-                let response = try await stream.publish(streamName)
-                print(response)
-            case .play:
-                let response = try await stream.play(streamName)
-                print(response)
-            }
-        } catch RTMPConnection.Error.requestFailed(let response) {
-            print(response)
-        } catch RTMPStream.Error.requestFailed(let response) {
-            print(response)
-        } catch {
-            print(error)
-        }
+    func publish() async throws {
+        let connectionResponse = try await connection.connect(uri)
+        print(connectionResponse)
+        let publishResponse = try await stream.publish(streamName)
+        print(publishResponse)
     }
-
+    
+    func play() async throws {
+        let connectionResponse = try await connection.connect(uri)
+        print(connectionResponse)
+        let publishResponse = try await stream.play(streamName)
+        print(publishResponse)
+    }
+    
     func close() async {
         try? await connection.close()
         print("conneciton.close")

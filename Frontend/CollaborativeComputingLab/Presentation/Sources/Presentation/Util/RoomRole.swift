@@ -9,7 +9,7 @@ import Domain
 
 import Foundation
 
-public enum RoomRole: Int {
+public enum RoomRole: Int, Sendable {
     case instructor = 0
     case student = 1
     

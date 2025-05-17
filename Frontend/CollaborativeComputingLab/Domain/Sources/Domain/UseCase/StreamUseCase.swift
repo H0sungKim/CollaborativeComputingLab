@@ -25,7 +25,16 @@ public final class DefaultStreamUseCase: StreamUseCase {
     }
     
     public func open(method: StreamRole) async {
-        await streamRepository.open(method: method)
+        do {
+            switch method {
+            case .publish:
+                try await streamRepository.publish()
+            case .play:
+                try await streamRepository.play()
+            }
+        } catch {
+            print(error)
+        }
     }
     
     public func close() async {

@@ -27,6 +27,7 @@ public final class DefaultChatViewModel: ChatViewModel {
     public var chats: CurrentValueSubject<[ChatEntity], Never> = .init([])
     
     private let chatUseCase: ChatUseCase
+    
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
     public init(chatUseCase: ChatUseCase) {

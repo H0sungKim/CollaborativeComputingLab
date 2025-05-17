@@ -24,7 +24,7 @@ public final class DefaultChatUseCase: ChatUseCase {
         self.chatRepository = chatRepository
     }
     
-    public var chatStream: AnyPublisher<ChatEntity, any Error> {
+    public var chatStream: AnyPublisher<ChatEntity, Error> {
         return chatRepository.chatStream
     }
     

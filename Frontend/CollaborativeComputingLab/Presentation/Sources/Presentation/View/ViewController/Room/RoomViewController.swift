@@ -63,15 +63,10 @@ public class RoomViewController: UIViewController {
         .store(in: &cancellable)
     }
     
-    private func bind(streamViewModel: StreamViewModel) {
-        streamViewModel.audioCapture.delegate = self
-    }
-    
     // MARK: - Basic
     public override func viewDidLoad() {
         super.viewDidLoad()
         bind(chatViewModel: chatViewModel)
-        bind(streamViewModel: streamViewModel)
         configureChatTableView()
         configurePDFView()
         titleLabel.text = "\(id ?? "") 님의 회의실"
@@ -79,16 +74,14 @@ public class RoomViewController: UIViewController {
         switch role {
         case .instructor:
             Task {
-                await streamViewModel.configureMixer()
+                streamViewModel.configureAudioCaptureDelegate(delegate: self)
+                await streamViewModel.configure()
                 await streamViewModel.addOutputView(cameraView)
-            }
-            Task { @ScreenActor in
-                await streamViewModel.configureScreen()
             }
         case .student:
             Task {
-                await streamViewModel.addOutputView(streamView)
                 await streamViewModel.attachAudioPlayer()
+                await streamViewModel.addOutputView(streamView)
             }
         case .none:
             break
@@ -99,17 +92,14 @@ public class RoomViewController: UIViewController {
         super.viewWillAppear(animated)
         chatViewModel.connectWebSocket()
         Task {
-            await streamViewModel.open(method: role.streamRole)
+            await streamViewModel.open(method: role)
         }
         
         switch role {
         case .instructor:
             Task {
-                await streamViewModel.mixer.startRunning()
-                await streamViewModel.attachMedia()
+                await streamViewModel.startPublish()
             }
-            streamViewModel.startPublishScreen()
-            streamViewModel.observeNotification()
         case .student:
             break
         case .none:
@@ -127,11 +117,8 @@ public class RoomViewController: UIViewController {
         switch role {
         case .instructor:
             Task {
-                await streamViewModel.mixer.stopRunning()
-                await streamViewModel.detachMedia()
+                await streamViewModel.stopPublish()
             }
-            streamViewModel.stopPublishScreen()
-            streamViewModel.removeNotification()
         case .student:
             break
         case .none:
@@ -141,7 +128,9 @@ public class RoomViewController: UIViewController {
     
     public override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        streamViewModel.setScreenSize()
+        Task {
+            await streamViewModel.setScreenSize()
+        }
     }
     
     // MARK: - PDFView
@@ -208,10 +197,10 @@ extension RoomViewController: UIDocumentPickerDelegate {
 }
 
 // MARK: - AudioCaptureDelegate
-extension RoomViewController: AudioCaptureDelegate {
-    nonisolated func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime) {
+extension RoomViewController: @preconcurrency AudioCaptureDelegate {
+    public func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime) {
         Task {
-            await streamViewModel.mixer.append(buffer, when: time)
+            await streamViewModel.appendAudio(buffer: buffer, time: time)
         }
     }
 }

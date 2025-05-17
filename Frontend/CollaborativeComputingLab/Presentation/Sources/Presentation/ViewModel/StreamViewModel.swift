@@ -15,55 +15,93 @@ import ReplayKit
 import HaishinKit
 
 public protocol StreamViewModelInput {
-    func open(method: StreamRole) async
+    func open(method: RoomRole) async
     func close() async
     
-    func attachMedia() async
-    func detachMedia() async
+    func configure() async
     
-    func observeNotification()
-    func removeNotification()
+    func startPublish() async
+    func stopPublish() async
     
-    func startPublishScreen()
-    func stopPublishScreen()
+    func setScreenSize() async
     
-    func setScreenSize()
-    func configureMixer() async
-    func configureScreen() async
     func addOutputView(_ view: UIView) async
     func attachAudioPlayer() async
+    func appendAudio(buffer: AVAudioBuffer, time: AVAudioTime) async
+    func configureAudioCaptureDelegate(delegate: AudioCaptureDelegate)
 }
 
 public protocol StreamViewModelOutput {
-    var mixer: MediaMixer { get }
-    var audioCapture: AudioCapture { get }
+    
 }
 
 public protocol StreamViewModel: StreamViewModelInput, StreamViewModelOutput, Sendable { }
 
 public final class DefaultStreamViewModel: StreamViewModel {
     
-    public let mixer: MediaMixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: true, useManualCapture: true)
-    public let audioCapture: AudioCapture = AudioCapture()
+    private let streamUseCase: StreamUseCase
     
+    private let mixer: MediaMixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: true, useManualCapture: true)
+    private let audioCapture: AudioCapture = AudioCapture()
     @ScreenActor private let videoScreenObject = VideoTrackScreenObject()
     private let audioPlayer = AudioPlayer(audioEngine: AVAudioEngine())
-    
-    private let streamUseCase: StreamUseCase
     
     @ScreenActor public init(streamUseCase: StreamUseCase) {
         self.streamUseCase = streamUseCase
     }
     
-    public func open(method: StreamRole) async {
-        await streamUseCase.open(method: method)
+    public func open(method: RoomRole) async {
+        await streamUseCase.open(method: method.streamRole)
     }
     
     public func close() async {
         await streamUseCase.close()
     }
     
-    public func attachMedia() async {
+    public func configure() async {
+        await configureMixer()
+        await configureScreen()
+    }
+    
+    public func startPublish() async {
+        await mixer.startRunning()
+        await attachMedia()
+        startPublishScreen()
+        observeNotification()
+    }
+    
+    public func stopPublish() async {
+        await mixer.stopRunning()
+        await detachMedia()
+        stopPublishScreen()
+        removeNotification()
+    }
+    
+    @ScreenActor public func setScreenSize() async {
+        if await UIDevice.current.orientation.isLandscape {
+            mixer.screen.size = .init(width: 1280, height: 720)
+        } else {
+            mixer.screen.size = .init(width: 720, height: 1280)
+        }
+    }
+    
+    public func addOutputView(_ view: UIView) async {
+        await streamUseCase.addOutputView(view)
+    }
+    
+    public func attachAudioPlayer() async {
+        await streamUseCase.attachAudioPlayer(audioPlayer: audioPlayer)
+    }
+    
+    public func appendAudio(buffer: AVAudioBuffer, time: AVAudioTime) async {
+        await mixer.append(buffer, when: time)
+    }
+    
+    public func configureAudioCaptureDelegate(delegate: AudioCaptureDelegate) {
+        audioCapture.delegate = delegate
+    }
+    
+    private func attachMedia() async {
         try? await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
         let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
         try? await mixer.attachVideo(front, track: 1) { videoUnit in
@@ -71,23 +109,23 @@ public final class DefaultStreamViewModel: StreamViewModel {
         }
     }
     
-    public func detachMedia() async {
+    private func detachMedia() async {
         try? await mixer.attachAudio(nil)
         try? await mixer.attachVideo(nil, track: 0)
         try? await mixer.attachVideo(nil, track: 1)
     }
     
-    public func observeNotification() {
+    private func observeNotification() {
         NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didRouteChangeNotification(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
     }
     
-    public func removeNotification() {
+    private func removeNotification() {
         NotificationCenter.default.removeObserver(self)
     }
     
     
-    public func startPublishScreen() {
+    private func startPublishScreen() {
         DispatchQueue.global().async {
             RPScreenRecorder.shared().startCapture(handler: { sampleBuffer, sampleBufferType, error in
                 if error != nil {
@@ -112,7 +150,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
         }
     }
     
-    public func stopPublishScreen() {
+    private func stopPublishScreen() {
         DispatchQueue.global().async {
             RPScreenRecorder.shared().stopCapture(handler: { error in
                 
@@ -120,17 +158,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
         }
     }
     
-    public func setScreenSize() {
-        Task { @ScreenActor in
-            if await UIDevice.current.orientation.isLandscape {
-                mixer.screen.size = .init(width: 1280, height: 720)
-            } else {
-                mixer.screen.size = .init(width: 720, height: 1280)
-            }
-        }
-    }
-    
-    public func configureMixer() async {
+    private func configureMixer() async {
         if let orientation = await DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) {
             await mixer.setVideoOrientation(orientation)
         }
@@ -139,19 +167,11 @@ public final class DefaultStreamViewModel: StreamViewModel {
         await addOutputStreamToMixer()
     }
     
-    @ScreenActor public func configureScreen() async {
+    @ScreenActor private func configureScreen() async {
         await configureVideoScreenObject()
-        setScreenSize()
+        await setScreenSize()
         mixer.screen.backgroundColor = UIColor.clear.cgColor
         try? mixer.screen.addChild(videoScreenObject)
-    }
-    
-    public func addOutputView(_ view: UIView) async {
-        await streamUseCase.addOutputView(view)
-    }
-    
-    public func attachAudioPlayer() async {
-        await streamUseCase.attachAudioPlayer(audioPlayer: audioPlayer)
     }
     
     private func addOutputStreamToMixer() async {
