@@ -15,7 +15,7 @@ import HaishinKit
 
 protocol StreamDIProvider {
     func makeStreamRepository() -> StreamRepository
-    func makeStreamRepository(rtmpService: RTMPService) -> StreamRepository
+    func makeStreamRepository(rtmpService: RTMPService, streamService: StreamService) -> StreamRepository
     
     func makeStreamUseCase() -> StreamUseCase
     func makeStreamUseCase(streamRepository: StreamRepository) -> StreamUseCase
@@ -25,14 +25,14 @@ protocol StreamDIProvider {
 }
 
 class DefaultStreamDIProvider: @preconcurrency StreamDIProvider {
-    func makeStreamRepository() -> StreamRepository {
-        return DefaultStreamRepository(rtmpService: RTMPService(uri: Bundle.main.uri ?? "", streamName: "test"))
+    @ScreenActor func makeStreamRepository() -> StreamRepository {
+        return DefaultStreamRepository(rtmpService: RTMPService(uri: Bundle.main.uri ?? "", streamName: "test"), streamService: StreamService())
     }
-    func makeStreamRepository(rtmpService: RTMPService) -> StreamRepository {
-        return DefaultStreamRepository(rtmpService: rtmpService)
+    func makeStreamRepository(rtmpService: RTMPService, streamService: StreamService) -> StreamRepository {
+        return DefaultStreamRepository(rtmpService: rtmpService, streamService: streamService)
     }
     
-    func makeStreamUseCase() -> StreamUseCase {
+    @ScreenActor func makeStreamUseCase() -> StreamUseCase {
         return DefaultStreamUseCase(streamRepository: makeStreamRepository())
     }
     func makeStreamUseCase(streamRepository: StreamRepository) -> StreamUseCase {
@@ -42,7 +42,7 @@ class DefaultStreamDIProvider: @preconcurrency StreamDIProvider {
     @ScreenActor func makeStreamViewModel() -> StreamViewModel {
         return DefaultStreamViewModel(streamUseCase: makeStreamUseCase())
     }
-    @ScreenActor func makeStreamViewModel(streamUseCase: StreamUseCase) -> StreamViewModel {
+    func makeStreamViewModel(streamUseCase: StreamUseCase) -> StreamViewModel {
         return DefaultStreamViewModel(streamUseCase: streamUseCase)
     }
 }

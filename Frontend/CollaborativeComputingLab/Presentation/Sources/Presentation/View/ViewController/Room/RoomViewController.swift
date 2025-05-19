@@ -71,37 +71,34 @@ public class RoomViewController: UIViewController {
         configurePDFView()
         titleLabel.text = "\(id ?? "") 님의 회의실"
         
-        switch role {
-        case .instructor:
-            Task {
-                streamViewModel.configureAudioCaptureDelegate(delegate: self)
-                await streamViewModel.configure()
-                await streamViewModel.addOutputView(cameraView)
+        let outputView: UIView = {
+            switch role {
+            case .instructor:
+                return cameraView
+            case .student:
+                return streamView
+            case .none:
+                return UIView()
             }
-        case .student:
-            Task {
-                await streamViewModel.attachAudioPlayer()
-                await streamViewModel.addOutputView(streamView)
-            }
-        case .none:
-            break
+        }()
+        Task {
+            await streamViewModel.configure(roomRole: role, outputView: outputView)
         }
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         chatViewModel.connectWebSocket()
-        Task {
-            await streamViewModel.open(method: role)
-        }
         
         switch role {
         case .instructor:
             Task {
-                await streamViewModel.startPublish()
+                await streamViewModel.publish(video: AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front), audio: AVCaptureDevice.default(for: .audio))
             }
         case .student:
-            break
+            Task {
+                await streamViewModel.play()
+            }
         case .none:
             break
         }
@@ -110,9 +107,6 @@ public class RoomViewController: UIViewController {
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         chatViewModel.disconnectWebSocket()
-        Task {
-            await streamViewModel.close()
-        }
         
         switch role {
         case .instructor:
@@ -120,7 +114,9 @@ public class RoomViewController: UIViewController {
                 await streamViewModel.stopPublish()
             }
         case .student:
-            break
+            Task {
+                await streamViewModel.stopPlay()
+            }
         case .none:
             break
         }
@@ -193,14 +189,5 @@ public class RoomViewController: UIViewController {
 extension RoomViewController: UIDocumentPickerDelegate {
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         pdfView.document = PDFDocument(url: urls.first!)
-    }
-}
-
-// MARK: - AudioCaptureDelegate
-extension RoomViewController: @preconcurrency AudioCaptureDelegate {
-    public func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime) {
-        Task {
-            await streamViewModel.appendAudio(buffer: buffer, time: time)
-        }
     }
 }

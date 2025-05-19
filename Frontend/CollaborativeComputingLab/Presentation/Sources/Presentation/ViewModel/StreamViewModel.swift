@@ -15,20 +15,15 @@ import ReplayKit
 import HaishinKit
 
 public protocol StreamViewModelInput {
-    func open(method: RoomRole) async
-    func close() async
+    func configure(roomRole: RoomRole, outputView: UIView) async
     
-    func configure() async
-    
-    func startPublish() async
+    func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async
     func stopPublish() async
     
-    func setScreenSize() async
+    func play() async
+    func stopPlay() async
     
-    func addOutputView(_ view: UIView) async
-    func attachAudioPlayer() async
-    func appendAudio(buffer: AVAudioBuffer, time: AVAudioTime) async
-    func configureAudioCaptureDelegate(delegate: AudioCaptureDelegate)
+    func setScreenSize() async
 }
 
 public protocol StreamViewModelOutput {
@@ -41,87 +36,51 @@ public final class DefaultStreamViewModel: StreamViewModel {
     
     private let streamUseCase: StreamUseCase
     
-    private let mixer: MediaMixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: true, useManualCapture: true)
-    private let audioCapture: AudioCapture = AudioCapture()
-    @ScreenActor private let videoScreenObject = VideoTrackScreenObject()
-    private let audioPlayer = AudioPlayer(audioEngine: AVAudioEngine())
-    
-    @ScreenActor public init(streamUseCase: StreamUseCase) {
+    public init(streamUseCase: StreamUseCase) {
         self.streamUseCase = streamUseCase
     }
     
-    public func open(method: RoomRole) async {
-        await streamUseCase.open(method: method.streamRole)
+    public func configure(roomRole: RoomRole, outputView: UIView) async {
+        await streamUseCase.configure(
+            streamMode: roomRole.streamMode,
+            outputView: outputView,
+            audioEngine: AVAudioEngine(),
+            screenRecorder: RPScreenRecorder.shared(),
+            orientation: UIDevice.current.orientation,
+            monitoringEnabled: DeviceUtil.isHeadphoneConnected()
+        )
     }
     
-    public func close() async {
-        await streamUseCase.close()
-    }
-    
-    public func configure() async {
-        await configureMixer()
-        await configureScreen()
-    }
-    
-    public func startPublish() async {
-        await mixer.startRunning()
-        await attachMedia()
+    public func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async {
+        do {
+            try await streamUseCase.publish(video: video, audio: audio)
+        } catch {
+            print(error.localizedDescription)
+        }
         startPublishScreen()
         observeNotification()
     }
     
     public func stopPublish() async {
-        await mixer.stopRunning()
-        await detachMedia()
+        await streamUseCase.stopPublish()
         stopPublishScreen()
         removeNotification()
     }
     
-    @ScreenActor public func setScreenSize() async {
-        if await UIDevice.current.orientation.isLandscape {
-            mixer.screen.size = .init(width: 1280, height: 720)
-        } else {
-            mixer.screen.size = .init(width: 720, height: 1280)
+    public func play() async {
+        do {
+            try await streamUseCase.play()
+        } catch {
+            print(error.localizedDescription)
         }
     }
     
-    public func addOutputView(_ view: UIView) async {
-        await streamUseCase.addOutputView(view)
+    public func stopPlay() async {
+        await streamUseCase.stopPlay()
     }
     
-    public func attachAudioPlayer() async {
-        await streamUseCase.attachAudioPlayer(audioPlayer: audioPlayer)
-    }
-    
-    public func appendAudio(buffer: AVAudioBuffer, time: AVAudioTime) async {
-        await mixer.append(buffer, when: time)
-    }
-    
-    public func configureAudioCaptureDelegate(delegate: AudioCaptureDelegate) {
-        audioCapture.delegate = delegate
-    }
-    
-    private func attachMedia() async {
-        try? await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
-        let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
-        try? await mixer.attachVideo(front, track: 1) { videoUnit in
-            videoUnit.isVideoMirrored = true
-        }
-    }
-    
-    private func detachMedia() async {
-        try? await mixer.attachAudio(nil)
-        try? await mixer.attachVideo(nil, track: 0)
-        try? await mixer.attachVideo(nil, track: 1)
-    }
-    
-    private func observeNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didRouteChangeNotification(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
-    }
-    
-    private func removeNotification() {
-        NotificationCenter.default.removeObserver(self)
+    public func setScreenSize() async {
+        await streamUseCase.setScreenSize(orientation: UIDevice.current.orientation)
     }
     
     
@@ -135,7 +94,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
                 switch sampleBufferType {
                 case .video:
                     Task { [weak self] in
-                        await self?.mixer.append(sampleBuffer, track: 0)
+                        await self?.streamUseCase.appendBuffer(sampleBuffer)
                     }
                 case .audioApp:
                     break
@@ -158,38 +117,13 @@ public final class DefaultStreamViewModel: StreamViewModel {
         }
     }
     
-    private func configureMixer() async {
-        if let orientation = await DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) {
-            await mixer.setVideoOrientation(orientation)
-        }
-        await mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
-        await configureVideoMixerSettings()
-        await addOutputStreamToMixer()
+    private func observeNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRouteChangeNotification(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
     }
     
-    @ScreenActor private func configureScreen() async {
-        await configureVideoScreenObject()
-        await setScreenSize()
-        mixer.screen.backgroundColor = UIColor.clear.cgColor
-        try? mixer.screen.addChild(videoScreenObject)
-    }
-    
-    private func addOutputStreamToMixer() async {
-        await streamUseCase.addOutputStreamToMixer(mixer: mixer)
-    }
-    
-    @ScreenActor private func configureVideoScreenObject() async {
-        videoScreenObject.cornerRadius = 16.0
-        videoScreenObject.track = 1
-        videoScreenObject.horizontalAlignment = .right
-        videoScreenObject.layoutMargin = .init(top: 16, left: 0, bottom: 0, right: 16)
-        videoScreenObject.size = .init(width: 160 * 2, height: 90 * 2)
-    }
-    
-    private func configureVideoMixerSettings() async {
-        var videoMixerSettings = await mixer.videoMixerSettings
-        videoMixerSettings.mode = .offscreen
-        await mixer.setVideoMixerSettings(videoMixerSettings)
+    private func removeNotification() {
+        NotificationCenter.default.removeObserver(self)
     }
     
     @MainActor @objc private func didRouteChangeNotification(_ notification: Notification) {
@@ -200,19 +134,16 @@ public final class DefaultStreamViewModel: StreamViewModel {
         }
         Task {
             if DeviceUtil.isHeadphoneDisconnected(notification) {
-                await mixer.setMonitoringEnabled(false)
+                await streamUseCase.setMonitoringEnabled(false)
             } else {
-                await mixer.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
+                await streamUseCase.setMonitoringEnabled(DeviceUtil.isHeadphoneConnected())
             }
         }
     }
     
     @MainActor @objc private func orientationDidChange(_ notification: Notification) {
-        guard let orientation = DeviceUtil.videoOrientation(by: UIApplication.shared.statusBarOrientation) else {
-            return
-        }
         Task {
-            await mixer.setVideoOrientation(orientation)
+            await streamUseCase.setVideoOrientation(UIDevice.current.orientation)
         }
     }
     

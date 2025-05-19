@@ -6,14 +6,23 @@
 //
 
 import Foundation
+import AVFoundation
 import UIKit
+import ReplayKit
 
 public protocol StreamUseCase: Sendable {
-    func open(method: StreamRole) async
-    func close() async
-    func addOutputView(_ view: UIView) async
-    func addOutputStreamToMixer(mixer: Any) async
-    func attachAudioPlayer(audioPlayer: Any) async
+    func configure(streamMode: StreamMode, outputView: UIView, audioEngine: sending AVAudioEngine, screenRecorder: sending RPScreenRecorder, orientation: UIDeviceOrientation, monitoringEnabled: Bool) async
+    
+    func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async throws
+    func stopPublish() async
+    
+    func play() async throws
+    func stopPlay() async
+    
+    func setMonitoringEnabled(_ monitoringEnabled: Bool) async
+    func setVideoOrientation(_ orientation: UIDeviceOrientation) async
+    func setScreenSize(orientation: UIDeviceOrientation) async
+    func appendBuffer(_ sampleBuffer: CMSampleBuffer) async
 }
 
 public final class DefaultStreamUseCase: StreamUseCase {
@@ -24,31 +33,59 @@ public final class DefaultStreamUseCase: StreamUseCase {
         self.streamRepository = streamRepository
     }
     
-    public func open(method: StreamRole) async {
-        do {
-            switch method {
-            case .publish:
-                try await streamRepository.publish()
-            case .play:
-                try await streamRepository.play()
-            }
-        } catch {
-            print(error)
+    public func configure(streamMode: StreamMode, outputView: UIView, audioEngine: sending AVAudioEngine, screenRecorder: sending RPScreenRecorder, orientation: UIDeviceOrientation, monitoringEnabled: Bool) async {
+        await streamRepository.addOutputView(outputView)
+        await streamRepository.configureAudio(audioEngine: audioEngine)
+        switch streamMode {
+        case .publish:
+            await streamRepository.setAudioCaptureDelegate()
+            await streamRepository.setVideoOrientation(orientation)
+            await streamRepository.setMonitoringEnabled(monitoringEnabled)
+            await streamRepository.configureVideoMixerSettings()
+            await streamRepository.addOutputStream()
+            
+            await streamRepository.configureVideoScreenObject()
+            await streamRepository.configureScreen(orientation: orientation)
+        case .play:
+            await streamRepository.attachAudioPlayer()
         }
+        
     }
     
-    public func close() async {
+    public func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async throws {
+        try await streamRepository.publish()
+        await streamRepository.startMixer()
+        await streamRepository.attachMedia(video: video, audio: audio)
+    }
+    
+    public func stopPublish() async {
+        await streamRepository.close()
+        await streamRepository.stopMixer()
+        await streamRepository.detachMedia()
+    }
+    
+    public func play() async throws {
+        try await streamRepository.play()
+    }
+    
+    
+    public func stopPlay() async {
         await streamRepository.close()
     }
-    public func addOutputView(_ view: UIView) async {
-        await streamRepository.addOutputView(view)
+    
+    public func setMonitoringEnabled(_ monitoringEnabled: Bool) async {
+        await streamRepository.setMonitoringEnabled(monitoringEnabled)
     }
     
-    public func addOutputStreamToMixer(mixer: Any) async {
-        await streamRepository.addOutputStreamToMixer(mixer: mixer)
+    public func setVideoOrientation(_ orientation: UIDeviceOrientation) async {
+        await streamRepository.setVideoOrientation(orientation)
     }
     
-    public func attachAudioPlayer(audioPlayer: Any) async {
-        await streamRepository.attachAudioPlayer(audioPlayer: audioPlayer)
+    public func setScreenSize(orientation: UIDeviceOrientation) async {
+        await streamRepository.setScreenSize(orientation: orientation)
+    }
+    
+    public func appendBuffer(_ sampleBuffer: CMSampleBuffer) async {
+        await streamRepository.appendBuffer(sampleBuffer)
     }
 }

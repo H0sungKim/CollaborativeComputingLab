@@ -8,6 +8,7 @@
 import Domain
 
 import Foundation
+import AVFoundation
 import UIKit
 
 import HaishinKit
@@ -15,9 +16,11 @@ import HaishinKit
 public final class DefaultStreamRepository: StreamRepository {
     
     private let rtmpService: RTMPService
+    private let streamService: StreamService
     
-    public init(rtmpService: RTMPService) {
+    public init(rtmpService: RTMPService, streamService: StreamService) {
         self.rtmpService = rtmpService
+        self.streamService = streamService
     }
     
     public func publish() async throws {
@@ -38,15 +41,67 @@ public final class DefaultStreamRepository: StreamRepository {
         }
     }
     
-    public func addOutputStreamToMixer(mixer: Any) async {
-        if let mixer = mixer as? MediaMixer {
-            await rtmpService.addOutputStreamToMixer(mixer: mixer)
-        }
+    public func addOutputStream() async {
+        await streamService.addOutputStream(stream: rtmpService.getStream())
     }
     
-    public func attachAudioPlayer(audioPlayer: Any) async {
-        if let audioPlayer = audioPlayer as? AudioPlayer {
-            await rtmpService.attachAudioPlayer(audioPlayer: audioPlayer)
-        }
+    public func attachAudioPlayer() async {
+        await rtmpService.attachAudioPlayer(audioPlayer: streamService.getAudioPlayer())
+    }
+    
+    public func attachMedia(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async {
+        await streamService.attachMedia(video: video, audio: audio)
+    }
+    
+    public func detachMedia() async {
+        await streamService.detachMedia()
+    }
+    
+    public func startMixer() async {
+        await streamService.startMixer()
+    }
+    
+    public func stopMixer() async {
+        await streamService.stopMixer()
+    }
+    
+    public func setMonitoringEnabled(_ monitoringEnabled: Bool) async {
+        await streamService.setMonitoringEnabled(monitoringEnabled)
+    }
+    
+    public func setVideoOrientation(_ orientation: UIDeviceOrientation) async {
+        await streamService.setVideoOrientation(orientation)
+    }
+    
+    public func configureVideoMixerSettings() async {
+        await streamService.configureVideoMixerSettings()
+    }
+    
+    public func setAudioCaptureDelegate() async {
+        await streamService.setAudioCaptureDelegate()
+    }
+    
+    public func removeAudioCaptureDelegate() async {
+        await streamService.removeAudioCaptureDelegate()
+    }
+    
+    public func configureScreen(orientation: UIDeviceOrientation) async {
+        await streamService.configureScreen(orientation: orientation)
+    }
+    
+    public func configureVideoScreenObject() async {
+        await streamService.configureVideoScreenObject()
+    }
+    
+    public func setScreenSize(orientation: UIDeviceOrientation) async {
+        await streamService.setScreenSize(orientation: orientation)
+    }
+    
+    public func configureAudio(audioEngine: sending AVAudioEngine) async {
+        await streamService.configureAudio(audioEngine: audioEngine)
+    }
+    
+    public func appendBuffer(_ sampleBuffer: CMSampleBuffer) async {
+        await streamService.appendBuffer(sampleBuffer)
     }
 }

@@ -50,11 +50,11 @@ public final actor RTMPService {
         await stream.addOutput(output)
     }
     
-    func addOutputStreamToMixer(mixer: MediaMixer) async {
-        await mixer.addOutput(stream)
-    }
-    
     func attachAudioPlayer(audioPlayer: AudioPlayer) async {
         await stream.attachAudioPlayer(audioPlayer)
+    }
+    
+    func getStream() -> RTMPStream {
+        return stream
     }
 }

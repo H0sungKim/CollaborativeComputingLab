@@ -5,6 +5,8 @@
 //  Created by 김호성 on 2/13/24.
 //
 
+import Domain
+
 import Foundation
 
 actor JSONManager {

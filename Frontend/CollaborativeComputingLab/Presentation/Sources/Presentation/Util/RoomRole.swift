@@ -13,7 +13,7 @@ public enum RoomRole: Int, Sendable {
     case instructor = 0
     case student = 1
     
-    var streamRole: StreamRole {
+    var streamMode: StreamMode {
         switch self {
         case .instructor:
             return .publish
