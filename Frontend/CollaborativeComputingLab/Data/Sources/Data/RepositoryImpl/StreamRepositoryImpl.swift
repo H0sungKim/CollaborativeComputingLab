@@ -45,6 +45,10 @@ public final class DefaultStreamRepository: StreamRepository {
         await streamService.addOutputStream(stream: rtmpService.getStream())
     }
     
+    public func appendBuffer(_ sampleBuffer: CMSampleBuffer) async {
+        await streamService.appendBuffer(sampleBuffer)
+    }
+    
     public func attachAudioPlayer() async {
         await rtmpService.attachAudioPlayer(audioPlayer: streamService.getAudioPlayer())
     }
@@ -65,6 +69,14 @@ public final class DefaultStreamRepository: StreamRepository {
         await streamService.stopMixer()
     }
     
+    public func setAudioCaptureDelegate() async {
+        await streamService.setAudioCaptureDelegate()
+    }
+    
+    public func removeAudioCaptureDelegate() async {
+        await streamService.removeAudioCaptureDelegate()
+    }
+    
     public func setMonitoringEnabled(_ monitoringEnabled: Bool) async {
         await streamService.setMonitoringEnabled(monitoringEnabled)
     }
@@ -73,16 +85,12 @@ public final class DefaultStreamRepository: StreamRepository {
         await streamService.setVideoOrientation(orientation)
     }
     
+    public func setScreenSize(orientation: UIDeviceOrientation) async {
+        await streamService.setScreenSize(orientation: orientation)
+    }
+    
     public func configureVideoMixerSettings() async {
         await streamService.configureVideoMixerSettings()
-    }
-    
-    public func setAudioCaptureDelegate() async {
-        await streamService.setAudioCaptureDelegate()
-    }
-    
-    public func removeAudioCaptureDelegate() async {
-        await streamService.removeAudioCaptureDelegate()
     }
     
     public func configureScreen(orientation: UIDeviceOrientation) async {
@@ -93,15 +101,7 @@ public final class DefaultStreamRepository: StreamRepository {
         await streamService.configureVideoScreenObject()
     }
     
-    public func setScreenSize(orientation: UIDeviceOrientation) async {
-        await streamService.setScreenSize(orientation: orientation)
-    }
-    
     public func configureAudio(audioEngine: sending AVAudioEngine) async {
         await streamService.configureAudio(audioEngine: audioEngine)
-    }
-    
-    public func appendBuffer(_ sampleBuffer: CMSampleBuffer) async {
-        await streamService.appendBuffer(sampleBuffer)
     }
 }

@@ -21,14 +21,6 @@ public final actor StreamService {
         
     }
     
-    func configureAudio(audioEngine: AVAudioEngine) {
-        Task {
-            audioPlayer = AudioPlayer(audioEngine: audioEngine)
-        }
-        audioCapture = AudioCapture(audioEngine: audioEngine)
-    }
-    
-    
     func attachMedia(video: AVCaptureDevice?, audio: AVCaptureDevice?) async {
         let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
         try? await mixer.attachVideo(front, track: 1) { videoUnit in
@@ -41,6 +33,14 @@ public final actor StreamService {
         try? await mixer.attachAudio(nil)
         try? await mixer.attachVideo(nil, track: 0)
         try? await mixer.attachVideo(nil, track: 1)
+    }
+    
+    func startMixer() async {
+        await mixer.startRunning()
+    }
+    
+    func stopMixer() async {
+        await mixer.stopRunning()
     }
     
     @ScreenActor func setScreenSize(orientation: UIDeviceOrientation) async {
@@ -59,6 +59,13 @@ public final actor StreamService {
         videoScreenObject.layoutMargin = UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 16)
         videoScreenObject.size = CGSize(width: 160 * 2, height: 90 * 2)
         try? mixer.screen.addChild(videoScreenObject)
+    }
+    
+    func configureAudio(audioEngine: AVAudioEngine) {
+        Task {
+            audioPlayer = AudioPlayer(audioEngine: audioEngine)
+        }
+        audioCapture = AudioCapture(audioEngine: audioEngine)
     }
     
     func configureVideoMixerSettings() async {
@@ -83,14 +90,6 @@ public final actor StreamService {
         if let videoOrientation = DeviceUtil.videoOrientation(by: orientation) {
             await mixer.setVideoOrientation(videoOrientation)
         }
-    }
-    
-    func startMixer() async {
-        await mixer.startRunning()
-    }
-    
-    func stopMixer() async {
-        await mixer.stopRunning()
     }
     
     func getAudioPlayer() -> AudioPlayer {

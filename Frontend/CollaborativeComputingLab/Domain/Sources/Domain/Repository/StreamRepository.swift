@@ -15,19 +15,19 @@ public protocol StreamRepository: Sendable {
     func close() async
     func addOutputView(_ view: UIView) async
     func addOutputStream() async
+    func appendBuffer(_ sampleBuffer: CMSampleBuffer) async
     func attachAudioPlayer() async
     func attachMedia(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async
     func detachMedia() async
     func startMixer() async
     func stopMixer() async
-    func setMonitoringEnabled(_ monitoringEnabled: Bool) async
-    func setVideoOrientation(_ orientation: UIDeviceOrientation) async
-    func configureVideoMixerSettings() async
     func setAudioCaptureDelegate() async
     func removeAudioCaptureDelegate() async
+    func setMonitoringEnabled(_ monitoringEnabled: Bool) async
+    func setVideoOrientation(_ orientation: UIDeviceOrientation) async
+    func setScreenSize(orientation: UIDeviceOrientation) async
+    func configureVideoMixerSettings() async
     func configureScreen(orientation: UIDeviceOrientation) async
     func configureVideoScreenObject() async
-    func setScreenSize(orientation: UIDeviceOrientation) async
     func configureAudio(audioEngine: sending AVAudioEngine) async
-    func appendBuffer(_ sampleBuffer: CMSampleBuffer) async
 }
