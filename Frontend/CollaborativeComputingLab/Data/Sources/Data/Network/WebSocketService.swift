@@ -32,7 +32,7 @@ public final class DefaultWebSocketService: NSObject, WebSocketService, @uncheck
         }
     }
     
-    public var chatStream: PassthroughSubject<ChatDTO, any Error> = .init()
+    public var chatStream: PassthroughSubject<ChatDTO, Error> = .init()
     
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     

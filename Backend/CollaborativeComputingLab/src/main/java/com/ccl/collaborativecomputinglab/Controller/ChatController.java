@@ -17,6 +17,4 @@ public class ChatController {
         System.out.println(chat);
         return chat;
     }
-
-
 }

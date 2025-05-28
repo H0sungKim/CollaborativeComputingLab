@@ -14,7 +14,7 @@ public final class DefaultChatRepository: ChatRepository {
     
     private let webSocketService: WebSocketService
     
-    public var chatStream: AnyPublisher<ChatEntity, any Error> {
+    public var chatStream: AnyPublisher<ChatEntity, Error> {
         return webSocketService.chatStream
             .map(\.entity)
             .eraseToAnyPublisher()
