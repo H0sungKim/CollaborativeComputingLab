@@ -79,7 +79,8 @@ public final class DefaultWebSocketService: NSObject, WebSocketService, @uncheck
                 case let .text(message, messageId, destination, _):
                     switch Destination(rawValue: destination) {
                     case .chat:
-                        guard let dto = try? JSONManager.shared.decode(string: message, type: ChatDTO.self) else { return }
+                        guard let messageData = message.data(using: .utf8) else { return }
+                        guard let dto = JSONManager.shared.decode(data: messageData, type: ChatDTO.self) else { return }
                         chatStream.send(dto)
                     case .none:
                         break

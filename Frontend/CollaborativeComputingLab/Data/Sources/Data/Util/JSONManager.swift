@@ -13,24 +13,28 @@ actor JSONManager {
     
     public static let shared = JSONManager()
     
+    private let encoder = JSONEncoder()
+    private let decoder = JSONDecoder()
+    
     private init() {
         
     }
     
-    nonisolated func encode<T: Codable>(codable: T) throws -> String {
-        guard let encoded = try? JSONEncoder().encode(codable) else {
-            throw CCLError.encodeFailed(string: "\(codable)")
+    nonisolated func encode<T: Codable>(codable: T) -> Data? {
+        do {
+            return try encoder.encode(codable)
+        } catch {
+            NSLog(error.localizedDescription)
         }
-        return String(decoding: encoded, as: UTF8.self)
+        return nil
     }
     
-    nonisolated func decode<T: Codable>(string: String, type: T.Type) throws -> T {
-        guard let data = string.data(using: .utf8) else {
-            throw CCLError.dataFailed(string: string)
+    nonisolated func decode<T: Codable>(data: Data, type: T.Type) -> T? {
+        do {
+            return try decoder.decode(T.self, from: data)
+        } catch {
+            NSLog(error.localizedDescription)
         }
-        guard let decoded = try? JSONDecoder().decode(T.self, from: data) else {
-            throw CCLError.decodeFailed(string: string)
-        }
-        return decoded
+        return nil
     }
 }
