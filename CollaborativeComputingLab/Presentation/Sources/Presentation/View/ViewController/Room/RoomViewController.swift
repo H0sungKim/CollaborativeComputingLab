@@ -11,7 +11,8 @@ import UIKit
 import Combine
 import PDFKit
 import AVFoundation
-import WebRTC
+
+import HaishinKit
 
 public class RoomViewController: UIViewController {
     
@@ -26,13 +27,8 @@ public class RoomViewController: UIViewController {
     @IBOutlet weak var chatTextField: UITextField!
     @IBOutlet weak var chatButton: UIButton!
     
-    @IBOutlet weak var streamView: RTCMTLVideoView!
-    @IBOutlet weak var cameraView: UIView!
-    
-    @IBOutlet weak var signalingConnectionLabel: UILabel!
-    @IBOutlet weak var localSdpLabel: UILabel!
-    @IBOutlet weak var remoteSdpLabel: UILabel!
-    @IBOutlet weak var webRTCConnectionLabel: UILabel!
+    @IBOutlet weak var streamView: MTHKView!
+    @IBOutlet weak var cameraView: MTHKView!
     
     // MARK: - ChatTableView
     private var chatTableViewDelegate: TableViewDelegate?
@@ -44,54 +40,32 @@ public class RoomViewController: UIViewController {
     // MARK: - Dependency
     private var id: String!
     private var role: RoomRole!
+    private var chatViewModel: ChatViewModel!
     private var streamViewModel: StreamViewModel!
     
     // MARK: - Combine
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
     // MARK: - Inject
-    public func inject(id: String!, role: RoomRole, streamViewModel: StreamViewModel) {
+    public func inject(id: String!, role: RoomRole, chatViewModel: ChatViewModel, streamViewModel: StreamViewModel) {
         self.id = id
         self.role = role
-//        self.chatViewModel = chatViewModel
+        self.chatViewModel = chatViewModel
         self.streamViewModel = streamViewModel
     }
     
     // MARK: - Bind
-    private func bind() {
-        streamViewModel.signalingConnection
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] signalingConnection in
-                self?.signalingConnectionLabel.text = "\(signalingConnection)"
-            })
-            .store(in: &cancellable)
-        
-        streamViewModel.hasLocalSdp
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] hasLocalSdp in
-                self?.localSdpLabel.text = "\(hasLocalSdp)"
-            })
-            .store(in: &cancellable)
-        
-        streamViewModel.hasRemoteSdp
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] hasRemoteSdp in
-                self?.remoteSdpLabel.text = "\(hasRemoteSdp)"
-            })
-            .store(in: &cancellable)
-        
-        streamViewModel.webRTCConnection
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] webRTCConnection in
-                self?.webRTCConnectionLabel.text = "\(webRTCConnection)"
-            })
-            .store(in: &cancellable)
+    private func bind(chatViewModel: ChatViewModel) {
+        chatViewModel.chats.sink(receiveValue: { [weak self] chats in
+            self?.chatTableView.reloadData()
+        })
+        .store(in: &cancellable)
     }
     
     // MARK: - Basic
     public override func viewDidLoad() {
         super.viewDidLoad()
-        bind()
+        bind(chatViewModel: chatViewModel)
         configureChatTableView()
         configurePDFView()
         titleLabel.text = "\(id ?? "") 님의 회의실"
@@ -106,40 +80,52 @@ public class RoomViewController: UIViewController {
                 return UIView()
             }
         }()
-//        Task {
-//            await streamViewModel.configure(roomRole: role, outputView: outputView)
-//        }
+        Task {
+            await streamViewModel.configure(roomRole: role, outputView: outputView)
+        }
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        chatViewModel.connectWebSocket()
         
         switch role {
         case .instructor:
-            streamViewModel.offer()
+            Task {
+                await streamViewModel.publish(video: AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front), audio: AVCaptureDevice.default(for: .audio))
+            }
         case .student:
-            streamViewModel.answer()
+            Task {
+                await streamViewModel.play()
+            }
         case .none:
             break
         }
-        streamViewModel.startCaptureLocalVideo(view: streamView)
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        chatViewModel.disconnectWebSocket()
         
-//        switch role {
-//        case .instructor:
-//            Task {
-//                await streamViewModel.stopPublish()
-//            }
-//        case .student:
-//            Task {
-//                await streamViewModel.stopPlay()
-//            }
-//        case .none:
-//            break
-//        }
+        switch role {
+        case .instructor:
+            Task {
+                await streamViewModel.stopPublish()
+            }
+        case .student:
+            Task {
+                await streamViewModel.stopPlay()
+            }
+        case .none:
+            break
+        }
+    }
+    
+    public override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        Task {
+            await streamViewModel.setScreenSize()
+        }
     }
     
     // MARK: - PDFView
@@ -166,12 +152,13 @@ public class RoomViewController: UIViewController {
     }
     
     private func chatTableViewNumberOfRowsInSection(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return chatViewModel.chats.value.count
     }
     
     private func chatTableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: ChatTableViewCell = ChatTableViewCell.create(tableView: tableView, indexPath: indexPath)
-        
+        cell.senderLabel.text = chatViewModel.chats.value[indexPath.row].sender
+        cell.messageLabel.text = chatViewModel.chats.value[indexPath.row].message
         return cell
     }
     
@@ -183,7 +170,7 @@ public class RoomViewController: UIViewController {
     }
     
     @IBAction func onClickChatSend(_ sender: Any) {
-        
+        chatViewModel.sendChat(sender: id, message: chatTextField.text ?? "")
         chatTextField.text = ""
     }
     

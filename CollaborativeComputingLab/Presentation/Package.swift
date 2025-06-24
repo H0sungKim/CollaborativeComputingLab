@@ -16,7 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "Domain", path: "../Domain"),
-        .package(name: "WebRTC", path: "../../WebRTC"),
+        .package(url: "https://github.com/HaishinKit/HaishinKit.swift.git", from: "2.0.8")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -25,7 +25,7 @@ let package = Package(
             name: "Presentation",
             dependencies: [
                 "Domain",
-                "WebRTC"
+                .product(name: "HaishinKit", package: "HaishinKit.swift")
             ]
         ),
     ]

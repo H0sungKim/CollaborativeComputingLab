@@ -9,95 +9,83 @@ import Foundation
 import AVFoundation
 import UIKit
 import ReplayKit
-import Combine
 
-public protocol StreamUseCase {
-    var signalingConnection: CurrentValueSubject<Bool, Never> { get }
-    var hasLocalSdp: CurrentValueSubject<Bool, Never> { get }
-    var hasRemoteSdp: CurrentValueSubject<Bool, Never> { get }
-    var webRTCConnection: CurrentValueSubject<IceConnectionState, Never> { get }
+public protocol StreamUseCase: Sendable {
+    func configure(streamMode: StreamMode, outputView: UIView, audioEngine: sending AVAudioEngine, screenRecorder: sending RPScreenRecorder, orientation: UIDeviceOrientation, monitoringEnabled: Bool) async
     
-    func offer()
-    func answer()
-    func startCaptureLocalVideo(view: UIView)
+    func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async throws
+    func stopPublish() async
+    
+    func play() async throws
+    func stopPlay() async
+    
+    func setMonitoringEnabled(_ monitoringEnabled: Bool) async
+    func setVideoOrientation(_ orientation: UIDeviceOrientation) async
+    func setScreenSize(orientation: UIDeviceOrientation) async
+    func appendBuffer(_ sampleBuffer: CMSampleBuffer) async
 }
 
 public final class DefaultStreamUseCase: StreamUseCase {
     
-    private let signalingRepository: SignalingRepository
-    private let webRTCRepository: WebRTCRepository
+    private let streamRepository: StreamRepository
     
-    private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
-    
-    public var signalingConnection: CurrentValueSubject<Bool, Never> {
-        return signalingRepository.isConnected
+    public init(streamRepository: StreamRepository) {
+        self.streamRepository = streamRepository
     }
     
-    public var hasLocalSdp: CurrentValueSubject<Bool, Never> = .init(false)
-    
-    public var hasRemoteSdp: CurrentValueSubject<Bool, Never> = .init(false)
-    
-    public var webRTCConnection: CurrentValueSubject<IceConnectionState, Never> {
-        return webRTCRepository.connectionState
-    }
-    
-    public init(signalingRepository: SignalingRepository, webRTCRepository: WebRTCRepository) {
-        self.signalingRepository = signalingRepository
-        self.webRTCRepository = webRTCRepository
+    public func configure(streamMode: StreamMode, outputView: UIView, audioEngine: sending AVAudioEngine, screenRecorder: sending RPScreenRecorder, orientation: UIDeviceOrientation, monitoringEnabled: Bool) async {
+        await streamRepository.addOutputView(outputView)
+        await streamRepository.configureAudio(audioEngine: audioEngine)
+        switch streamMode {
+        case .publish:
+            await streamRepository.setAudioCaptureDelegate()
+            await streamRepository.setVideoOrientation(orientation)
+            await streamRepository.setMonitoringEnabled(monitoringEnabled)
+            await streamRepository.configureVideoMixerSettings()
+            await streamRepository.addOutputStream()
+            
+            await streamRepository.configureVideoScreenObject()
+            await streamRepository.configureScreen(orientation: orientation)
+        case .play:
+            await streamRepository.attachAudioPlayer()
+        }
         
-        bind()
     }
     
-    public func offer() {
-        webRTCRepository.offer().sinkHandledCompletion(receiveValue: { [weak self] sdp in
-            NSLog("Offer SDP: \(sdp)")
-            self?.signalingRepository.sendSdp(sdp)
-            self?.hasLocalSdp.send(true)
-        })
-        .store(in: &cancellable)
+    public func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async throws {
+        try await streamRepository.publish()
+        await streamRepository.startMixer()
+        await streamRepository.attachMedia(video: video, audio: audio)
     }
     
-    public func answer() {
-        webRTCRepository.answer().sinkHandledCompletion(receiveValue: { [weak self] sdp in
-            NSLog("Answer SDP: \(sdp)")
-            self?.signalingRepository.sendSdp(sdp)
-            self?.hasLocalSdp.send(true)
-        })
-        .store(in: &cancellable)
+    public func stopPublish() async {
+        await streamRepository.close()
+        await streamRepository.stopMixer()
+        await streamRepository.detachMedia()
     }
     
-    public func startCaptureLocalVideo(view: UIView) {
-        webRTCRepository.startCaptureLocalVideo(view: view)
+    public func play() async throws {
+        try await streamRepository.play()
     }
     
-    private func bind() {
-        bindLocalCandidate()
-        bindRemoteSdp()
-        bindRemoteCandidate()
+    
+    public func stopPlay() async {
+        await streamRepository.close()
     }
     
-    private func bindLocalCandidate() {
-        webRTCRepository.localCandidateSubject.sink(receiveValue: { [weak self] candidate in
-            NSLog("Local Candidate: \(candidate)")
-            self?.signalingRepository.sendCandidate(candidate)
-        })
-        .store(in: &cancellable)
+    public func setMonitoringEnabled(_ monitoringEnabled: Bool) async {
+        await streamRepository.setMonitoringEnabled(monitoringEnabled)
     }
     
-    private func bindRemoteSdp() {
-        signalingRepository.sdpSubject.sink(receiveValue: { [weak self] sdp in
-            NSLog("Remote SDP: \(sdp)")
-            self?.webRTCRepository.setRemoteSdp(sdp)
-            self?.hasRemoteSdp.send(true)
-        })
-        .store(in: &cancellable)
+    public func setVideoOrientation(_ orientation: UIDeviceOrientation) async {
+        await streamRepository.setVideoOrientation(orientation)
     }
     
-    private func bindRemoteCandidate() {
-        signalingRepository.candidateSubject.sink(receiveValue: { [weak self] candidate in
-            NSLog("Remote Candidate: \(candidate)")
-            self?.webRTCRepository.setRemoteCandidate(candidate)
-        })
-        .store(in: &cancellable)
+    public func setScreenSize(orientation: UIDeviceOrientation) async {
+        await streamRepository.setScreenSize(orientation: orientation)
+    }
+    
+    public func appendBuffer(_ sampleBuffer: CMSampleBuffer) async {
+        await streamRepository.appendBuffer(sampleBuffer)
     }
 }

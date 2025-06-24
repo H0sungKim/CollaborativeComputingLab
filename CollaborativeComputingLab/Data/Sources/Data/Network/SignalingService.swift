@@ -10,7 +10,6 @@ import Domain
 
 import Foundation
 import Combine
-import WebRTC
 
 public final class SignalingService: @unchecked Sendable {
     private let webSocket: WebSocket
@@ -19,8 +18,8 @@ public final class SignalingService: @unchecked Sendable {
         return webSocket.isConnected
     }
     
-    var sdpSubject: PassthroughSubject<SessionDescription, Never> = .init()
-    var candidateSubject: PassthroughSubject<IceCandidate, Never> = .init()
+//    var sdpSubject: PassthroughSubject<SessionDescription, Never> = .init()
+//    var candidateSubject: PassthroughSubject<IceCandidate, Never> = .init()
     
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
@@ -37,16 +36,16 @@ public final class SignalingService: @unchecked Sendable {
     }
     
     func receive() {
-        webSocket.dataStream.sinkHandledCompletion(receiveValue: { [weak self] data in
-            guard let message = JSONManager.shared.decode(data: data, type: Message.self) else { return }
-            switch message {
-            case .sdp(let sessionDescription):
-                self?.sdpSubject.send(sessionDescription)
-            case .candidate(let iceCandidate):
-                self?.candidateSubject.send(iceCandidate)
-            }
-        })
-        .store(in: &cancellable)
+//        webSocket.dataStream.sinkHandledCompletion(receiveValue: { [weak self] data in
+//            guard let message = JSONManager.shared.decode(data: data, type: Message.self) else { return }
+//            switch message {
+//            case .sdp(let sessionDescription):
+//                self?.sdpSubject.send(sessionDescription)
+//            case .candidate(let iceCandidate):
+//                self?.candidateSubject.send(iceCandidate)
+//            }
+//        })
+//        .store(in: &cancellable)
     }
     
     func bindConnectionState() {
@@ -64,16 +63,16 @@ public final class SignalingService: @unchecked Sendable {
         .store(in: &cancellable)
     }
     
-    
-    func sendSdp(_ sdp: SessionDescription) {
-        let message = Message.sdp(sdp)
-        guard let dataMessage = JSONManager.shared.encode(codable: message) else { return }
-        webSocket.send(data: dataMessage)
-    }
-    
-    func sendCandidate(_ iceCandidate: IceCandidate) {
-        let message = Message.candidate(iceCandidate)
-        guard let dataMessage = JSONManager.shared.encode(codable: message) else { return }
-        webSocket.send(data: dataMessage)
-    }
+//    
+//    func sendSdp(_ sdp: SessionDescription) {
+//        let message = Message.sdp(sdp)
+//        guard let dataMessage = JSONManager.shared.encode(codable: message) else { return }
+//        webSocket.send(data: dataMessage)
+//    }
+//    
+//    func sendCandidate(_ iceCandidate: IceCandidate) {
+//        let message = Message.candidate(iceCandidate)
+//        guard let dataMessage = JSONManager.shared.encode(codable: message) else { return }
+//        webSocket.send(data: dataMessage)
+//    }
 }

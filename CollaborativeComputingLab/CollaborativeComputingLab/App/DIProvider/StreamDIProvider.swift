@@ -11,46 +11,38 @@ import Presentation
 
 import Foundation
 
+import HaishinKit
+
 protocol StreamDIProvider {
-    func makeSignalingService(webSocket: WebSocket?) -> SignalingService
-    func makeWebRTCService(iceServers: [String]?) -> WebRTCService
+    func makeStreamRepository() -> StreamRepository
+    func makeStreamRepository(rtmpService: RTMPService, streamService: StreamService) -> StreamRepository
     
-    func makeSignalingRepository(signalingService: SignalingService?) -> SignalingRepository
-    func makeWebRTCRepository(WebRTCService: WebRTCService?) -> WebRTCRepository
+    func makeStreamUseCase() -> StreamUseCase
+    func makeStreamUseCase(streamRepository: StreamRepository) -> StreamUseCase
     
-    func makeStreamUseCase(signalingRepository: SignalingRepository?, webRTCRepository: WebRTCRepository?) -> StreamUseCase
-    
-    func makeStreamViewModel(streamUseCase: StreamUseCase?) -> StreamViewModel
+    func makeStreamViewModel() -> StreamViewModel
+    func makeStreamViewModel(streamUseCase: StreamUseCase) -> StreamViewModel
 }
 
-class DefaultStreamDIProvider: StreamDIProvider {
-    func makeSignalingService(webSocket: WebSocket? = nil) -> SignalingService {
-        return SignalingService(webSocket: webSocket ?? WebSocket(url: URL(string: "ws://\(Bundle.main.uri ?? ""):8080")!))
+class DefaultStreamDIProvider: @preconcurrency StreamDIProvider {
+    @ScreenActor func makeStreamRepository() -> StreamRepository {
+        return DefaultStreamRepository(rtmpService: RTMPService(uri: Bundle.main.uri ?? "", streamName: "test"), streamService: StreamService())
+    }
+    func makeStreamRepository(rtmpService: RTMPService, streamService: StreamService) -> StreamRepository {
+        return DefaultStreamRepository(rtmpService: rtmpService, streamService: streamService)
     }
     
-    func makeWebRTCService(iceServers: [String]? = nil) -> WebRTCService {
-        return WebRTCService(iceServers: iceServers ?? [
-            "stun:stun.l.google.com:19302",
-            "stun:stun1.l.google.com:19302",
-            "stun:stun2.l.google.com:19302",
-            "stun:stun3.l.google.com:19302",
-            "stun:stun4.l.google.com:19302"
-        ])
+    @ScreenActor func makeStreamUseCase() -> StreamUseCase {
+        return DefaultStreamUseCase(streamRepository: makeStreamRepository())
+    }
+    func makeStreamUseCase(streamRepository: StreamRepository) -> StreamUseCase {
+        return DefaultStreamUseCase(streamRepository: streamRepository)
     }
     
-    func makeSignalingRepository(signalingService: SignalingService? = nil) -> SignalingRepository {
-        return DefaultSignalingRepository(signalingService: signalingService ?? makeSignalingService())
+    @ScreenActor func makeStreamViewModel() -> StreamViewModel {
+        return DefaultStreamViewModel(streamUseCase: makeStreamUseCase())
     }
-    
-    func makeWebRTCRepository(WebRTCService: WebRTCService? = nil) -> WebRTCRepository {
-        return DefaultWebRTCRepository(webRTCService: WebRTCService ?? makeWebRTCService())
-    }
-    
-    func makeStreamUseCase(signalingRepository: SignalingRepository? = nil, webRTCRepository: WebRTCRepository? = nil) -> StreamUseCase {
-        return DefaultStreamUseCase(signalingRepository: signalingRepository ?? makeSignalingRepository(), webRTCRepository: webRTCRepository ?? makeWebRTCRepository())
-    }
-    
-    func makeStreamViewModel(streamUseCase: StreamUseCase?) -> StreamViewModel {
-        return DefaultStreamViewModel(streamUseCase: streamUseCase ?? makeStreamUseCase())
+    func makeStreamViewModel(streamUseCase: StreamUseCase) -> StreamViewModel {
+        return DefaultStreamViewModel(streamUseCase: streamUseCase)
     }
 }

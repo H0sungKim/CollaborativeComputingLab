@@ -32,7 +32,7 @@ class AppDIProvider: ViewControllerFactory {
     
     func createRoomViewController(id: String, role: RoomRole, chatViewModel: ChatViewModel? = nil, streamViewModel: StreamViewModel? = nil) -> RoomViewController {
         let viewController: RoomViewController = RoomViewController.create()
-        viewController.inject(id: id, role: role, streamViewModel: streamViewModel ?? streamDIProvider.makeStreamViewModel(streamUseCase: nil))
+        viewController.inject(id: id, role: role, chatViewModel: chatViewModel ?? chatDIProvider.makeChatViewModel(), streamViewModel: streamViewModel ?? streamDIProvider.makeStreamViewModel())
         return viewController
     }
 }
