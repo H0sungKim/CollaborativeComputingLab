@@ -71,7 +71,7 @@ public final class WebSocket: NSObject, @unchecked Sendable {
         })
     }
     
-    private func disconnect() {
+    func disconnect() {
         socket?.cancel()
         socket = nil
         timer?.invalidate()

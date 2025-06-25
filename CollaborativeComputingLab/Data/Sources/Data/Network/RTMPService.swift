@@ -22,28 +22,36 @@ public final actor RTMPService {
     
     public init(uri: String, streamName: String) {
         self.uri = "rtmp://\(uri)/hls"
+        self.streamName = streamName
+        
         connection = RTMPConnection()
         stream = RTMPStream(connection: connection)
-        self.streamName = streamName
     }
     
-    func publish() async throws {
-        let connectionResponse = try await connection.connect(uri)
-        print(connectionResponse)
-        let publishResponse = try await stream.publish(streamName)
-        print(publishResponse)
+    func publish() async {
+        do {
+            let connectionResponse = try await connection.connect(uri)
+            let publishResponse = try await stream.publish(streamName)
+        } catch {
+            NSLog(error.localizedDescription)
+        }
     }
     
-    func play() async throws {
-        let connectionResponse = try await connection.connect(uri)
-        print(connectionResponse)
-        let publishResponse = try await stream.play(streamName)
-        print(publishResponse)
+    func play() async {
+        do {
+            let connectionResponse = try await connection.connect(uri)
+            let publishResponse = try await stream.play(streamName)
+        } catch {
+            NSLog(error.localizedDescription)
+        }
     }
     
     func close() async {
-        try? await connection.close()
-        print("conneciton.close")
+        do {
+            try await connection.close()
+        } catch {
+            NSLog(error.localizedDescription)
+        }
     }
     
     func addOutput(_ output: HKStreamOutput) async {

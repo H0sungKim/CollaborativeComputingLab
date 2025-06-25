@@ -16,7 +16,6 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "Domain", path: "../Domain"),
-        .package(url: "https://github.com/Romixery/SwiftStomp.git", from: "1.0.4"),
         .package(url: "https://github.com/HaishinKit/HaishinKit.swift.git", from: "2.0.8")
     ],
     targets: [
@@ -26,7 +25,6 @@ let package = Package(
             name: "Data",
             dependencies: [
                 "Domain",
-                "SwiftStomp",
                 .product(name: "HaishinKit", package: "HaishinKit.swift")
             ]
         ),

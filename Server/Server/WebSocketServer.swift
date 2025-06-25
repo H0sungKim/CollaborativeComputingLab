@@ -21,28 +21,28 @@ final class WebSocketServer {
         let webSocketOptions = NWProtocolWebSocket.Options()
         webSocketOptions.autoReplyPing = true
         parameters.defaultProtocolStack.applicationProtocols.append(webSocketOptions)
-        self.listener = try NWListener(using: parameters, on: self.port)
+        listener = try NWListener(using: parameters, on: port)
     }
     
     func start() {
-        self.listener.newConnectionHandler = self.newConnectionHandler
-        self.listener.start(queue: queue)
-        print("Signaling server started listening on port \(self.port)")
+        listener.newConnectionHandler = newConnectionHandler
+        listener.start(queue: queue)
+        print("Signaling server started listening on port \(port)")
     }
     
     private func newConnectionHandler(_ connection: NWConnection) {
         let client = WebSocketClient(connection: connection)
-        self.connectedClients.insert(client)
-        client.connection.start(queue: self.queue)
+        connectedClients.insert(client)
+        client.connection.start(queue: queue)
         client.connection.receiveMessage { [weak self] (data, context, isComplete, error) in
             self?.didReceiveMessage(from: client, data: data, context: context, error: error)
         }
-        print("A client has connected. Total connected clients: \(self.connectedClients.count)")
+        print("A client has connected. Total connected clients: \(connectedClients.count)")
     }
     
     private func didDisconnect(client: WebSocketClient) {
-        self.connectedClients.remove(client)
-        print("A client has disconnected. Total connected clients: \(self.connectedClients.count)")
+        connectedClients.remove(client)
+        print("A client has disconnected. Total connected clients: \(connectedClients.count)")
     }
     
     private func didReceiveMessage(from client: WebSocketClient,
@@ -52,13 +52,14 @@ final class WebSocketServer {
         
         if let context = context, context.isFinal {
             client.connection.cancel()
-            self.didDisconnect(client: client)
+            didDisconnect(client: client)
             return
         }
         
         if let data = data {
-            let otherClients = self.connectedClients.filter { $0 != client }
-            self.broadcast(data: data, to: otherClients)
+//            let otherClients = self.connectedClients.filter { $0 != client }
+//            self.broadcast(data: data, to: otherClients)
+            broadcast(data: data, to: connectedClients)
             
             if let str = String(data: data, encoding: .utf8) {
                 print("------------------------------------ Incoming Message ------------------------------------")

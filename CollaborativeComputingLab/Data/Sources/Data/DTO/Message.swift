@@ -10,6 +10,11 @@ import Domain
 
 import Foundation
 
+enum Message {
+    case enterRoom(id: String)
+    case sendChat(chat: ChatDTO)
+}
+
 //enum Message {
 //    case sdp(SessionDescription)
 //    case candidate(IceCandidate)

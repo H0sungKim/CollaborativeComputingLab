@@ -52,11 +52,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
     }
     
     public func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async {
-        do {
-            try await streamUseCase.publish(video: video, audio: audio)
-        } catch {
-            print(error.localizedDescription)
-        }
+        await streamUseCase.publish(video: video, audio: audio)
         startPublishScreen()
         observeNotification()
     }
@@ -68,11 +64,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
     }
     
     public func play() async {
-        do {
-            try await streamUseCase.play()
-        } catch {
-            print(error.localizedDescription)
-        }
+        await streamUseCase.play()
     }
     
     public func stopPlay() async {
@@ -87,8 +79,8 @@ public final class DefaultStreamViewModel: StreamViewModel {
     private func startPublishScreen() {
         DispatchQueue.global().async {
             RPScreenRecorder.shared().startCapture(handler: { sampleBuffer, sampleBufferType, error in
-                if error != nil {
-                    print(error?.localizedDescription)
+                if let error {
+                    print(error.localizedDescription)
                     return
                 }
                 switch sampleBufferType {
@@ -104,7 +96,8 @@ public final class DefaultStreamViewModel: StreamViewModel {
                     break
                 }
             }, completionHandler: { error in
-                print(error?.localizedDescription)
+                guard let error else { return }
+                NSLog(error.localizedDescription)
             })
         }
     }
@@ -161,6 +154,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
                 try session.setPreferredInput(nil)
             }
         } catch {
+            NSLog(error.localizedDescription)
         }
     }
 }

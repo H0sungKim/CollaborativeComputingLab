@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 public protocol ChatRepository {
-    var chatStream: AnyPublisher<ChatEntity, Error> { get }
+    var chatStream: AnyPublisher<ChatEntity, Never> { get }
     
     func sendChat(chatEntity: ChatEntity)
     func connectWebSocket()

@@ -23,16 +23,24 @@ public final actor StreamService {
     
     func attachMedia(video: AVCaptureDevice?, audio: AVCaptureDevice?) async {
         let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
-        try? await mixer.attachVideo(front, track: 1) { videoUnit in
-            videoUnit.isVideoMirrored = true
+        do {
+            try await mixer.attachVideo(front, track: 1) { videoUnit in
+                videoUnit.isVideoMirrored = true
+            }
+            try await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
+        } catch {
+            NSLog(error.localizedDescription)
         }
-        try? await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
     }
     
     func detachMedia() async {
-        try? await mixer.attachAudio(nil)
-        try? await mixer.attachVideo(nil, track: 0)
-        try? await mixer.attachVideo(nil, track: 1)
+        do {
+            try await mixer.attachAudio(nil)
+            try await mixer.attachVideo(nil, track: 0)
+            try await mixer.attachVideo(nil, track: 1)
+        } catch {
+            NSLog(error.localizedDescription)
+        }
     }
     
     func startMixer() async {
@@ -58,7 +66,11 @@ public final actor StreamService {
         videoScreenObject.horizontalAlignment = .right
         videoScreenObject.layoutMargin = UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 16)
         videoScreenObject.size = CGSize(width: 160 * 2, height: 90 * 2)
-        try? mixer.screen.addChild(videoScreenObject)
+        do {
+            try mixer.screen.addChild(videoScreenObject)
+        } catch {
+            NSLog(error.localizedDescription)
+        }
     }
     
     func configureAudio(audioEngine: AVAudioEngine) {

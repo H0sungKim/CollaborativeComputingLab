@@ -10,8 +10,8 @@ import UIKit
 import AVFoundation
 
 public protocol StreamRepository: Sendable {
-    func publish() async throws
-    func play() async throws
+    func publish() async
+    func play() async
     func close() async
     func addOutputView(_ view: UIView) async
     func addOutputStream() async

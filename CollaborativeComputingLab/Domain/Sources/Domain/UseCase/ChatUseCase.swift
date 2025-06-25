@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 public protocol ChatUseCase {
-    var chatStream: AnyPublisher<ChatEntity, Error> { get }
+    var chatStream: AnyPublisher<ChatEntity, Never> { get }
     
     func sendChat(chatEntity: ChatEntity)
     func connectWebSocket()
@@ -24,7 +24,7 @@ public final class DefaultChatUseCase: ChatUseCase {
         self.chatRepository = chatRepository
     }
     
-    public var chatStream: AnyPublisher<ChatEntity, Error> {
+    public var chatStream: AnyPublisher<ChatEntity, Never> {
         return chatRepository.chatStream
     }
     

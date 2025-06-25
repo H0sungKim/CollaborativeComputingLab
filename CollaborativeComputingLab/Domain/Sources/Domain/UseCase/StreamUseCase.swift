@@ -13,10 +13,10 @@ import ReplayKit
 public protocol StreamUseCase: Sendable {
     func configure(streamMode: StreamMode, outputView: UIView, audioEngine: sending AVAudioEngine, screenRecorder: sending RPScreenRecorder, orientation: UIDeviceOrientation, monitoringEnabled: Bool) async
     
-    func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async throws
+    func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async
     func stopPublish() async
     
-    func play() async throws
+    func play() async
     func stopPlay() async
     
     func setMonitoringEnabled(_ monitoringEnabled: Bool) async
@@ -52,8 +52,8 @@ public final class DefaultStreamUseCase: StreamUseCase {
         
     }
     
-    public func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async throws {
-        try await streamRepository.publish()
+    public func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async {
+        await streamRepository.publish()
         await streamRepository.startMixer()
         await streamRepository.attachMedia(video: video, audio: audio)
     }
@@ -64,8 +64,8 @@ public final class DefaultStreamUseCase: StreamUseCase {
         await streamRepository.detachMedia()
     }
     
-    public func play() async throws {
-        try await streamRepository.play()
+    public func play() async {
+        await streamRepository.play()
     }
     
     

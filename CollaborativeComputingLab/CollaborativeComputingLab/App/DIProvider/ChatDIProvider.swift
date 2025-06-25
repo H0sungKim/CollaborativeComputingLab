@@ -13,7 +13,7 @@ import Foundation
 
 protocol ChatDIProvider {
     func makeChatRepository() -> ChatRepository
-    func makeChatRepository(webSocketService: WebSocketService) -> ChatRepository
+    func makeChatRepository(chatService: ChatService) -> ChatRepository
     
     func makeChatUseCase() -> ChatUseCase
     func makeChatUseCase(chatRepository: ChatRepository) -> ChatUseCase
@@ -24,10 +24,10 @@ protocol ChatDIProvider {
 
 class DefaultChatDIProvider: ChatDIProvider {
     func makeChatRepository() -> ChatRepository {
-        return DefaultChatRepository(webSocketService: DefaultWebSocketService(uri: Bundle.main.uri ?? ""))
+        return DefaultChatRepository(chatService: DefaultChatService(webSocket: WebSocket(url: URL(string: "ws://\(Bundle.main.uri ?? ""):8080")!)))
     }
-    func makeChatRepository(webSocketService: WebSocketService) -> ChatRepository {
-        return DefaultChatRepository(webSocketService: webSocketService)
+    func makeChatRepository(chatService: ChatService) -> ChatRepository {
+        return DefaultChatRepository(chatService: chatService)
     }
     
     func makeChatUseCase() -> ChatUseCase {

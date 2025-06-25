@@ -68,7 +68,7 @@ public class RoomViewController: UIViewController {
         bind(chatViewModel: chatViewModel)
         configureChatTableView()
         configurePDFView()
-        titleLabel.text = "\(id ?? "") 님의 회의실"
+        titleLabel.text = "\(id ?? "") 님의 강의실"
         
         let outputView: UIView = {
             switch role {
