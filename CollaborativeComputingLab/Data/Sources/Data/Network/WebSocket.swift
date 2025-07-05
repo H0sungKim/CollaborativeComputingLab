@@ -1,9 +1,8 @@
 //
-//  NativeSocketProvider.swift
-//  WebRTC-Demo
+//  WebSocket.swift
+//  Data
 //
-//  Created by stasel on 15/07/2019.
-//  Copyright © 2019 stasel. All rights reserved.
+//  Created by 김호성 on 2025.05.08.
 //
 
 import Domain
@@ -16,6 +15,7 @@ public final class WebSocket: NSObject, @unchecked Sendable {
     private let url: URL
     private var socket: URLSessionWebSocketTask?
     private var timer: Timer?
+    private var usage: Int = 0
     private lazy var urlSession: URLSession = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
     
     var dataStream: PassthroughSubject<Data, WebSocketError> = .init()
@@ -26,6 +26,10 @@ public final class WebSocket: NSObject, @unchecked Sendable {
         super.init()
     }
     
+    deinit {
+        disconnect()
+    }
+    
     func startPing() {
         timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true, block: { [weak self] _ in
             self?.ping()
@@ -34,13 +38,17 @@ public final class WebSocket: NSObject, @unchecked Sendable {
     
     private func ping() {
         socket?.sendPing(pongReceiveHandler: { error in
-            if let error = error {
-                NSLog(error.localizedDescription)
+            if let error {
+                Logger.log(error.localizedDescription, level: .error)
             }
         })
     }
     
     func connect() {
+        if isConnected.value {
+            return
+        }
+        Logger.log("WebSocket Connected.")
         let socket = urlSession.webSocketTask(with: url)
         socket.resume()
         self.socket = socket
@@ -58,6 +66,7 @@ public final class WebSocket: NSObject, @unchecked Sendable {
             
             switch result {
             case .success(.data(let data)):
+                Logger.log("WebSocket Receive Data: \(String(data: data, encoding: .utf8) ?? "")")
                 dataStream.send(data)
             case .success(.string(let string)):
                 dataStream.send(completion: .failure(.nonDataMessage(message: string)))
@@ -71,7 +80,8 @@ public final class WebSocket: NSObject, @unchecked Sendable {
         })
     }
     
-    func disconnect() {
+    private func disconnect() {
+        Logger.log("WebSocket Disconnected.")
         socket?.cancel()
         socket = nil
         timer?.invalidate()
@@ -85,6 +95,7 @@ extension WebSocket: URLSessionWebSocketDelegate, URLSessionDelegate  {
     }
     
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+        Logger.log(closeCode)
         disconnect()
     }
 }

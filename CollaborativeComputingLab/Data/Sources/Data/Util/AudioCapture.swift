@@ -1,9 +1,11 @@
 //
 //  AudioCapture.swift
-//  Presentation
+//  Data
 //
 //  Created by 김호성 on 2025.04.27.
 //
+
+import Domain
 
 import AVFoundation
 import Foundation
@@ -39,7 +41,7 @@ extension AudioCapture: Runner {
             try audioEngine.start()
             isRunning = true
         } catch {
-            print(error)
+            Logger.log(error.localizedDescription, level: .error)
         }
     }
 

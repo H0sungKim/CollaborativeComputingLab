@@ -11,7 +11,6 @@ import Combine
 public protocol ChatRepository {
     var chatStream: AnyPublisher<ChatEntity, Never> { get }
     
-    func sendChat(chatEntity: ChatEntity)
+    func sendChat(messageEntity: MessageEntity)
     func connectWebSocket()
-    func disconnectWebSocket()
 }

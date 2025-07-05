@@ -23,12 +23,12 @@ public final class DefaultStreamRepository: StreamRepository {
         self.streamService = streamService
     }
     
-    public func publish() async {
-        await rtmpService.publish()
+    public func publish(streamName: String) async {
+        await rtmpService.publish(streamName: streamName)
     }
     
-    public func play() async {
-        await rtmpService.play()
+    public func play(streamName: String) async {
+        await rtmpService.play(streamName: streamName)
     }
     
     public func close() async {

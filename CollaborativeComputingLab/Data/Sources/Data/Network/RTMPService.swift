@@ -15,34 +15,36 @@ import HaishinKit
 public final actor RTMPService {
     
     private var uri: String
-    private var streamName: String
     
     private var connection: RTMPConnection
     private var stream: RTMPStream
     
-    public init(uri: String, streamName: String) {
+    public init(uri: String) {
         self.uri = "rtmp://\(uri)/hls"
-        self.streamName = streamName
         
         connection = RTMPConnection()
         stream = RTMPStream(connection: connection)
     }
     
-    func publish() async {
+    func publish(streamName: String) async {
         do {
             let connectionResponse = try await connection.connect(uri)
+            Logger.log(connectionResponse)
             let publishResponse = try await stream.publish(streamName)
+            Logger.log(publishResponse)
         } catch {
-            NSLog(error.localizedDescription)
+            Logger.log(error.localizedDescription, level: .error)
         }
     }
     
-    func play() async {
+    func play(streamName: String) async {
         do {
             let connectionResponse = try await connection.connect(uri)
-            let publishResponse = try await stream.play(streamName)
+            Logger.log("\(connectionResponse)")
+            let playResponse = try await stream.play(streamName)
+            Logger.log("\(playResponse)")
         } catch {
-            NSLog(error.localizedDescription)
+            Logger.log(error.localizedDescription, level: .error)
         }
     }
     
@@ -50,7 +52,7 @@ public final actor RTMPService {
         do {
             try await connection.close()
         } catch {
-            NSLog(error.localizedDescription)
+            Logger.log(error.localizedDescription, level: .error)
         }
     }
     

@@ -14,7 +14,7 @@ extension UITableViewCell {
         if let reusableCell = tableView.dequeueReusableCell(withIdentifier: String(describing: T.self), for: indexPath) as? T {
             cell = reusableCell
         } else {
-            let objectArray = Bundle.main.loadNibNamed(String(describing: T.self), owner: nil, options: nil)
+            let objectArray = Bundle.presentation.loadNibNamed(String(describing: T.self), owner: nil, options: nil)
             cell = objectArray!.first! as! T
         }
         return cell

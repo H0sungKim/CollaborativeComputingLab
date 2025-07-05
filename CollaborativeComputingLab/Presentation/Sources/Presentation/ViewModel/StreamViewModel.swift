@@ -17,10 +17,10 @@ import HaishinKit
 public protocol StreamViewModelInput {
     func configure(roomRole: RoomRole, outputView: UIView) async
     
-    func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async
+    func publish(streamName: String, video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async
     func stopPublish() async
     
-    func play() async
+    func play(streamName: String) async
     func stopPlay() async
     
     func setScreenSize() async
@@ -51,8 +51,8 @@ public final class DefaultStreamViewModel: StreamViewModel {
         )
     }
     
-    public func publish(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async {
-        await streamUseCase.publish(video: video, audio: audio)
+    public func publish(streamName: String, video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async {
+        await streamUseCase.publish(streamName: streamName, video: video, audio: audio)
         startPublishScreen()
         observeNotification()
     }
@@ -63,8 +63,8 @@ public final class DefaultStreamViewModel: StreamViewModel {
         removeNotification()
     }
     
-    public func play() async {
-        await streamUseCase.play()
+    public func play(streamName: String) async {
+        await streamUseCase.play(streamName: streamName)
     }
     
     public func stopPlay() async {
@@ -80,7 +80,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
         DispatchQueue.global().async {
             RPScreenRecorder.shared().startCapture(handler: { sampleBuffer, sampleBufferType, error in
                 if let error {
-                    print(error.localizedDescription)
+                    Logger.log(error.localizedDescription, level: .error)
                     return
                 }
                 switch sampleBufferType {
@@ -97,7 +97,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
                 }
             }, completionHandler: { error in
                 guard let error else { return }
-                NSLog(error.localizedDescription)
+                Logger.log(error.localizedDescription, level: .error)
             })
         }
     }
@@ -105,7 +105,8 @@ public final class DefaultStreamViewModel: StreamViewModel {
     private func stopPublishScreen() {
         DispatchQueue.global().async {
             RPScreenRecorder.shared().stopCapture(handler: { error in
-                
+                guard let error else { return }
+                Logger.log(error.localizedDescription, level: .error)
             })
         }
     }
@@ -154,7 +155,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
                 try session.setPreferredInput(nil)
             }
         } catch {
-            NSLog(error.localizedDescription)
+            Logger.log(error.localizedDescription, level: .error)
         }
     }
 }

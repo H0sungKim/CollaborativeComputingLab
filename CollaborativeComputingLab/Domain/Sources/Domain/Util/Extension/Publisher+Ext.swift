@@ -9,16 +9,15 @@ import Foundation
 import Combine
 
 extension Publisher {
-    public func sinkHandledCompletion(receiveValue: @escaping ((Self.Output) -> Void)) -> AnyCancellable {
-        return self.sink(receiveCompletion: handleCompletion, receiveValue: receiveValue)
-    }
-    
-    private func handleCompletion(completion: Subscribers.Completion<Self.Failure>) {
-        switch completion {
-        case .finished: break
-        case .failure(let error):
-            NSLog(error.localizedDescription)
-        }
+    public func sinkHandledCompletion(receiveValue: @escaping ((Self.Output) -> Void), funcName: String = #function) -> AnyCancellable {
+        return self.sink(receiveCompletion: { completion in
+            switch completion {
+            case .finished:
+                break
+            case .failure(let error):
+                Logger.log(error.localizedDescription, level: .error, funcName: funcName)
+            }
+        }, receiveValue: receiveValue)
     }
     
     public func manageThread() -> AnyPublisher<Output, Failure> {

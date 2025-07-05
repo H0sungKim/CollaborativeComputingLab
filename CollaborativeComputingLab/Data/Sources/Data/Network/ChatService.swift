@@ -1,9 +1,11 @@
 //
-//  File.swift
+//  ChatService.swift
 //  Data
 //
 //  Created by 김호성 on 2025.06.25.
 //
+
+import Domain
 
 import Foundation
 import Combine
@@ -11,9 +13,8 @@ import Combine
 public protocol ChatService: URLSessionWebSocketDelegate {
     var chatStream: PassthroughSubject<ChatDTO, Never> { get }
     
-    func send(chatDTO: ChatDTO)
+    func send(messageDTO: MessageDTO)
     func connectWebSocket()
-    func disconnectWebSocket()
 }
 
 public final class DefaultChatService: NSObject, ChatService, @unchecked Sendable {
@@ -28,25 +29,28 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
         super.init()
     }
     
-    public func connectWebSocket() {
-        webSocket.connect()
-        receive()
-    }
-    
     func receive() {
         webSocket.dataStream.sinkHandledCompletion(receiveValue: { [weak self] data in
-            guard let message = JSONManager.shared.decode(data: data, type: ChatDTO.self) else { return }
-            self?.chatStream.send(message)
+            guard let message = JSONManager.shared.decode(data: data, type: ServerMessage.self) else { return }
+            switch message {
+            case .newChat(let chatDTO):
+                Logger.log("WebSocket received new chat: \(chatDTO)")
+                self?.chatStream.send(chatDTO)
+            default:
+                break
+            }
         })
         .store(in: &cancellable)
     }
     
-    public func send(chatDTO: ChatDTO) {
-        guard let dataMessage = JSONManager.shared.encode(codable: chatDTO) else { return }
-        webSocket.send(data: dataMessage)
+    public func send(messageDTO: MessageDTO) {
+        Logger.log("Sending chat message: \(messageDTO)")
+        guard let messageData = JSONManager.shared.encode(codable: ClientMessage.sendChat(messageDTO)) else { return }
+        webSocket.send(data: messageData)
     }
     
-    public func disconnectWebSocket() {
-        webSocket.disconnect()
+    public func connectWebSocket() {
+        webSocket.connect()
+        receive()
     }
 }

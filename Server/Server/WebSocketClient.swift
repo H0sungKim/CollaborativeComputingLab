@@ -1,9 +1,8 @@
 //
 //  WebSocketClient.swift
-//  SignalingServer
+//  Server
 //
-//  Created by stasel on 15/07/2019.
-//  Copyright © 2019 stasel. All rights reserved.
+//  Created by 김호성 on 2025.06.24.
 //
 
 import Foundation
@@ -12,6 +11,7 @@ import Network
 final class WebSocketClient: Hashable, Equatable {
     
     let id: String
+    var name: String?
     let connection: NWConnection
     
     init(connection: NWConnection) {

@@ -5,6 +5,8 @@
 //  Created by 김호성 on 2025.05.18.
 //
 
+import Domain
+
 import Foundation
 import AVFoundation
 import UIKit
@@ -14,10 +16,10 @@ import HaishinKit
 public final actor StreamService {
     private let mixer: MediaMixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: true, useManualCapture: true)
     private var audioCapture: AudioCapture!
-    @ScreenActor private let videoScreenObject = VideoTrackScreenObject()
+    @ScreenActor private lazy var videoScreenObject: VideoTrackScreenObject = VideoTrackScreenObject()
     private var audioPlayer: AudioPlayer!
     
-    @ScreenActor public init() {
+    public init() {
         
     }
     
@@ -29,7 +31,7 @@ public final actor StreamService {
             }
             try await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
         } catch {
-            NSLog(error.localizedDescription)
+            Logger.log(error.localizedDescription, level: .error)
         }
     }
     
@@ -39,7 +41,7 @@ public final actor StreamService {
             try await mixer.attachVideo(nil, track: 0)
             try await mixer.attachVideo(nil, track: 1)
         } catch {
-            NSLog(error.localizedDescription)
+            Logger.log(error.localizedDescription, level: .error)
         }
     }
     
@@ -69,7 +71,7 @@ public final actor StreamService {
         do {
             try mixer.screen.addChild(videoScreenObject)
         } catch {
-            NSLog(error.localizedDescription)
+            Logger.log(error.localizedDescription, level: .error)
         }
     }
     

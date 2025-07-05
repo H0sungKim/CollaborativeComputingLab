@@ -10,25 +10,23 @@ import Domain
 import Foundation
 
 public struct ChatDTO: DTO {
-    let sender: String?
+    let name: String?
     let message: String?
     
-    init(sender: String?, message: String?) {
-        self.sender = sender
+    init(name: String?, message: String?) {
+        self.name = name
         self.message = message
     }
     
     init(entity: ChatEntity) {
-        self.sender = entity.sender
+        self.name = entity.name
         self.message = entity.message
     }
     
     var entity: ChatEntity {
-        get {
-            return ChatEntity(
-                sender: self.sender ?? "",
-                message: self.message ?? ""
-            )
-        }
+        return ChatEntity(
+            name: name ?? "",
+            message: message ?? ""
+        )
     }
 }

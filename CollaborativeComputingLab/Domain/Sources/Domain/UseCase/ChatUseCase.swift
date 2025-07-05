@@ -11,9 +11,8 @@ import Combine
 public protocol ChatUseCase {
     var chatStream: AnyPublisher<ChatEntity, Never> { get }
     
-    func sendChat(chatEntity: ChatEntity)
+    func sendChat(messageEntity: MessageEntity)
     func connectWebSocket()
-    func disconnectWebSocket()
 }
 
 public final class DefaultChatUseCase: ChatUseCase {
@@ -28,16 +27,11 @@ public final class DefaultChatUseCase: ChatUseCase {
         return chatRepository.chatStream
     }
     
-    public func sendChat(chatEntity: ChatEntity) {
-        chatRepository.sendChat(chatEntity: chatEntity)
+    public func sendChat(messageEntity: MessageEntity) {
+        chatRepository.sendChat(messageEntity: messageEntity)
     }
     
     public func connectWebSocket() {
         chatRepository.connectWebSocket()
     }
-    
-    public func disconnectWebSocket() {
-        chatRepository.disconnectWebSocket()
-    }
-    
 }

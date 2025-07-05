@@ -24,15 +24,11 @@ public final class DefaultChatRepository: ChatRepository {
         self.chatService = chatService
     }
     
-    public func sendChat(chatEntity: ChatEntity) {
-        chatService.send(chatDTO: ChatDTO(entity: chatEntity))
+    public func sendChat(messageEntity: MessageEntity) {
+        chatService.send(messageDTO: MessageDTO(entity: messageEntity))
     }
     
     public func connectWebSocket() {
         chatService.connectWebSocket()
-    }
-    
-    public func disconnectWebSocket() {
-        chatService.disconnectWebSocket()
     }
 }

@@ -11,9 +11,8 @@ import Foundation
 import Combine
 
 public protocol ChatViewModelInput {
-    func sendChat(sender: String, message: String)
+    func sendChat(message: String)
     func connectWebSocket()
-    func disconnectWebSocket()
 }
 
 public protocol ChatViewModelOutput {
@@ -44,16 +43,12 @@ public final class DefaultChatViewModel: ChatViewModel {
             .store(in: &cancellable)
     }
     
-    public func sendChat(sender: String, message: String) {
-        let chatEntity = ChatEntity(sender: sender, message: message)
-        chatUseCase.sendChat(chatEntity: chatEntity)
+    public func sendChat(message: String) {
+        let messageEntity = MessageEntity(message: message)
+        chatUseCase.sendChat(messageEntity: messageEntity)
     }
     
     public func connectWebSocket() {
         chatUseCase.connectWebSocket()
-    }
-    
-    public func disconnectWebSocket() {
-        chatUseCase.disconnectWebSocket()
     }
 }

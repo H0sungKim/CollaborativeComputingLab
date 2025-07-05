@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -17,43 +18,46 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PsN-5z-f0R">
-                                <rect key="frame" x="16" y="767" width="361" height="35"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="siy-IB-yfs">
+                                <rect key="frame" x="0.0" y="178.66666666666669" width="393" height="605.33333333333326"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dpt-Tf-6Na">
+                                <rect key="frame" x="313" y="704" width="48" height="48"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="48" id="0SI-hN-TN8"/>
+                                    <constraint firstAttribute="height" constant="48" id="Vz6-e1-hzZ"/>
+                                </constraints>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="회의실 입장"/>
+                                <buttonConfiguration key="configuration" style="filled" cornerStyle="capsule">
+                                    <imageReference key="image" image="plus" catalog="system" symbolScale="default"/>
+                                </buttonConfiguration>
                                 <connections>
-                                    <action selector="onClickEnter:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="bfE-Cd-Mjt"/>
+                                    <action selector="onClickCreateRoom:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="PUs-jr-F6p"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="닉네임 입력" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tEs-La-0Na">
-                                <rect key="frame" x="16" y="409" width="361" height="34"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="OYd-XE-XQA">
-                                <rect key="frame" x="116" y="346" width="161" height="32"/>
-                                <segments>
-                                    <segment title="Instructor"/>
-                                    <segment title="Student"/>
-                                </segments>
-                            </segmentedControl>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="강의실 목록" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="77P-BC-3On">
+                                <rect key="frame" x="15.999999999999993" y="134" width="109.33333333333331" height="28.666666666666657"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="tEs-La-0Na" firstAttribute="top" secondItem="OYd-XE-XQA" secondAttribute="bottom" constant="32" id="0zZ-Y1-8WS"/>
-                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="tEs-La-0Na" secondAttribute="trailing" constant="16" id="6ng-ta-Xdv"/>
-                            <constraint firstItem="tEs-La-0Na" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="16" id="BIk-mc-a5n"/>
-                            <constraint firstItem="tEs-La-0Na" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="Wqc-Cz-NQ9"/>
-                            <constraint firstItem="OYd-XE-XQA" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="Z3e-E3-gEc"/>
-                            <constraint firstItem="PsN-5z-f0R" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="16" id="cXb-QB-Xvv"/>
-                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="PsN-5z-f0R" secondAttribute="trailing" constant="16" id="d1F-XM-y2V"/>
-                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="PsN-5z-f0R" secondAttribute="bottom" constant="16" id="mkQ-wN-T3B"/>
+                            <constraint firstItem="siy-IB-yfs" firstAttribute="top" secondItem="77P-BC-3On" secondAttribute="bottom" constant="16" id="1qI-gW-HN0"/>
+                            <constraint firstItem="siy-IB-yfs" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="8eP-mQ-Ihc"/>
+                            <constraint firstItem="77P-BC-3On" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="16" id="AZP-m1-Zc9"/>
+                            <constraint firstItem="77P-BC-3On" firstAttribute="leading" secondItem="5EZ-qb-Rvc" secondAttribute="leading" constant="16" id="C3G-fG-pWy"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="siy-IB-yfs" secondAttribute="trailing" id="L1Y-f3-YIX"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="siy-IB-yfs" secondAttribute="bottom" id="mdY-Cg-Hya"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="dpt-Tf-6Na" secondAttribute="bottom" constant="32" id="ojp-Rp-bzL"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="dpt-Tf-6Na" secondAttribute="trailing" constant="32" id="ya6-Pv-I5R"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="idTextField" destination="tEs-La-0Na" id="Moa-fq-fnG"/>
-                        <outlet property="roleSegmentedControl" destination="OYd-XE-XQA" id="Qlh-13-7yx"/>
+                        <outlet property="roomTableView" destination="siy-IB-yfs" id="qBc-Ms-SPK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -62,6 +66,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="plus" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

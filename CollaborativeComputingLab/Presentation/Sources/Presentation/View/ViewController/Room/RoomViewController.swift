@@ -40,6 +40,7 @@ public class RoomViewController: UIViewController {
     // MARK: - Dependency
     private var id: String!
     private var role: RoomRole!
+    private var roomViewModel: RoomViewModel!
     private var chatViewModel: ChatViewModel!
     private var streamViewModel: StreamViewModel!
     
@@ -47,17 +48,35 @@ public class RoomViewController: UIViewController {
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()
     
     // MARK: - Inject
-    public func inject(id: String!, role: RoomRole, chatViewModel: ChatViewModel, streamViewModel: StreamViewModel) {
+    public func inject(
+        id: String,
+        role: RoomRole,
+        roomViewModel: RoomViewModel,
+        chatViewModel: ChatViewModel,
+        streamViewModel: StreamViewModel
+    ) {
         self.id = id
         self.role = role
+        self.roomViewModel = roomViewModel
         self.chatViewModel = chatViewModel
         self.streamViewModel = streamViewModel
     }
     
     // MARK: - Bind
-    private func bind(chatViewModel: ChatViewModel) {
+    private func bind() {
         chatViewModel.chats.sink(receiveValue: { [weak self] chats in
             self?.chatTableView.reloadData()
+        })
+        .store(in: &cancellable)
+        
+        roomViewModel.participants.sink(receiveValue: { [weak self] participants in
+            Logger.log("Participants updated: \(participants)")
+            self?.titleLabel.text = "\(self?.roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
+        })
+        .store(in: &cancellable)
+        
+        roomViewModel.roomClosed.sink(receiveValue: {
+            Logger.log("Room closed.")
         })
         .store(in: &cancellable)
     }
@@ -65,10 +84,10 @@ public class RoomViewController: UIViewController {
     // MARK: - Basic
     public override func viewDidLoad() {
         super.viewDidLoad()
-        bind(chatViewModel: chatViewModel)
+        bind()
         configureChatTableView()
         configurePDFView()
-        titleLabel.text = "\(id ?? "") 님의 강의실"
+        titleLabel.text = "\(roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
         
         let outputView: UIView = {
             switch role {
@@ -88,15 +107,16 @@ public class RoomViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         chatViewModel.connectWebSocket()
+        roomViewModel.connectWebSocket()
         
         switch role {
         case .instructor:
             Task {
-                await streamViewModel.publish(video: AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front), audio: AVCaptureDevice.default(for: .audio))
+                await streamViewModel.publish(streamName: id, video: AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front), audio: AVCaptureDevice.default(for: .audio))
             }
         case .student:
             Task {
-                await streamViewModel.play()
+                await streamViewModel.play(streamName: id)
             }
         case .none:
             break
@@ -105,7 +125,8 @@ public class RoomViewController: UIViewController {
     
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        chatViewModel.disconnectWebSocket()
+        
+        roomViewModel.exitRoom(id: id)
         
         switch role {
         case .instructor:
@@ -157,7 +178,7 @@ public class RoomViewController: UIViewController {
     
     private func chatTableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: ChatTableViewCell = ChatTableViewCell.create(tableView: tableView, indexPath: indexPath)
-        cell.senderLabel.text = chatViewModel.chats.value[indexPath.row].sender
+        cell.senderLabel.text = chatViewModel.chats.value[indexPath.row].name
         cell.messageLabel.text = chatViewModel.chats.value[indexPath.row].message
         return cell
     }
@@ -170,7 +191,7 @@ public class RoomViewController: UIViewController {
     }
     
     @IBAction func onClickChatSend(_ sender: Any) {
-        chatViewModel.sendChat(sender: id, message: chatTextField.text ?? "")
+        chatViewModel.sendChat(message: chatTextField.text ?? "")
         chatTextField.text = ""
     }
     

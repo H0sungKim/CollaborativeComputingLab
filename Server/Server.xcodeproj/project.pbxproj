@@ -41,10 +41,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9692AADC2E0E7E08000B2B00 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		96BB8C672E096D8600AB92EF = {
 			isa = PBXGroup;
 			children = (
 				96BB8C722E096D8600AB92EF /* Server */,
+				9692AADC2E0E7E08000B2B00 /* Frameworks */,
 				96BB8C712E096D8600AB92EF /* Products */,
 			);
 			sourceTree = "<group>";
