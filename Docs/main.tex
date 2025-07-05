@@ -50,19 +50,28 @@
 \pagestyle{fancy}
 
 %Author
+\newcommand\paperdate{{May 29, 2025}}
+
+%Author
 \newcommand\paperauthor{{Hosung.Kim}}
 
 % Title
 \newcommand\papertitle{Demo Application of Synchronous Mobile Distance Learning System}
+
+
 
 % Main header content
 \header{}
 
 \begin{document}
 
-\title{{\fontsize{14pt}{14pt}\selectfont{\vspace*{-3mm}\papertitle\vspace*{-1mm}}}}
+\title{{\fontsize{20pt}{20pt}\selectfont{\vspace*{-3mm}\papertitle\vspace*{-1mm}}}}
 
-\author{{\bfseries\fontsize{10pt}{10pt}\selectfont{\paperauthor}}}
+\date{{\bfseries\fontsize{12pt}{12pt}\selectfont{\paperdate}}}
+
+\author{{\bfseries\fontsize{14pt}{14pt}\selectfont{\paperauthor}}}
+
+
 
 \label{first}
 \maketitle
@@ -138,7 +147,7 @@ SwiftStomp는 STOMP 메세지 전송 및 구독, 핑-퐁 핸들링, 자동 재�
 PDF 문서 스크롤과 그리기 기능 간의 입력 충돌을 해결하기 위해, PDFView의 isScrollEnabled 속성을 제어하는 그리기 모드 토글 버튼을 구현하였다. 이 버튼을 통해 사용자는 스크롤과 주석 작성 기능을 전환할 수 있다.
 
 강사의 화면은 ReplayKit을 통해 녹화되어, 음성 및 전면 카메라 영상과 함께 송출되며, 이 과정에서 PDFView와 애노테이션 역시 함께 전달된다.
-
+\newpage
 \section{결론}
 \begin{figure}[htbp]
     \begin{center}
@@ -147,12 +156,19 @@ PDF 문서 스크롤과 그리기 기능 간의 입력 충돌을 해결하기 �
     \label{fig:fig4}
     \end{center}
 \end{figure}
-\newpage
+
+
 본 보고서에서는 iPadOS 기반의 동기식 모바일 원격 교육 시스템에 대한 이해를 목적으로 데모 애플리케이션을 설계 및 구현하였다.
 
 MacBook M3 Pro에서 스트리밍 서버와 채팅 서버를 구동하고, iPad Air 3대를 활용하여 강사 1인과 학생2인의 환경에서 테스트를 진행한 결과, 1초 이내의 지연으로 실시간 강의 및 상호작용이 원할하게 수행됨을 확인하였다.
 
-다만, 현재까지 개발된 프로토타입 시스템에서는 단일 강의실 환경에서 제한된 인원으로만 테스트된 초기 단계의 시스템으로, 실제 서비스 환경에 적용되기 위해서는 보다 다양한 환경에서의 테스트와 기능 확장이 필요하다. 향후에는 다수의 강의실 생성 기능을 추가하고 M:N 환경에서의 안정성과 성능을 검증할 계획이다.
+다만, 현재까지 개발된 프로토타입 시스템에서는 단일 강의실 환경에서 제한된 인원으로만 테스트된 초기 단계의 시스템으로, 실제 서비스 환경에 적용되기 위해서는 보다 다양한 환경에서의 테스트와 기능 확장이 요구된다.
+
+따라서 향후에는 다음과 같은 기능을 추가하여 시스템의 완성도를 높이고자 한다.
+첫째, 현재와 같은 단일 강의실 환경이 아닌, 사용자가 강의실을 생성하고 선택적으로 입장할 수 있는 기능을 추가하여 다수의 강의실이 동시에 운영될 수 있는 구조로 개선할 것이다.
+둘째, 강의자가 실시간으로 참여 중인 학생 명단을 확인할 수 있는 기능을 추가하여 출석 관리 및 학습자 모니터링을 용이하게 할 것이다.
+셋째, 강의자가 자신의 카메라 화면을 확인할 수 있는 기능을 추가하여 강의 진행의 안정성을 높일 것이다.
+넷째, 공유 화이트보드 기능을 추가하여 교육의 질을 높일 것이다.
 
 전체 소스코드는 \href{https://github.com/H0sungKim/CollaborativeComputingLab}{https://github.com/H0sungKim/CollaborativeComputingLab}에서 확인할 수 있다.
 
