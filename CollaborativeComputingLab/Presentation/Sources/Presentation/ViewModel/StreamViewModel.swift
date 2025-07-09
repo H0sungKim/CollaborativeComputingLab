@@ -17,7 +17,7 @@ import HaishinKit
 public protocol StreamViewModelInput {
     func configure(roomRole: RoomRole, outputView: UIView) async
     
-    func publish(streamName: String, video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async
+    func publish(streamName: String, view: UIView, video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async
     func stopPublish() async
     
     func play(streamName: String) async
@@ -51,9 +51,9 @@ public final class DefaultStreamViewModel: StreamViewModel {
         )
     }
     
-    public func publish(streamName: String, video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async {
+    public func publish(streamName: String, view: UIView, video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async {
         await streamUseCase.publish(streamName: streamName, video: video, audio: audio)
-        startPublishScreen()
+        startPublishScreen(view: view)
         observeNotification()
     }
     
@@ -76,7 +76,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
     }
     
     
-    private func startPublishScreen() {
+    private func startPublishScreen(view: UIView) {
         DispatchQueue.global().async {
             RPScreenRecorder.shared().startCapture(handler: { sampleBuffer, sampleBufferType, error in
                 if let error {
@@ -86,7 +86,9 @@ public final class DefaultStreamViewModel: StreamViewModel {
                 switch sampleBufferType {
                 case .video:
                     Task { [weak self] in
-                        await self?.streamUseCase.appendBuffer(sampleBuffer)
+                        guard let resizedSampleBuffer = await sampleBuffer.resize(to: view) else { return }
+                        await self?.streamUseCase.appendBuffer(resizedSampleBuffer)
+//                        await self?.streamUseCase.appendBuffer(sampleBuffer)
                     }
                 case .audioApp:
                     break

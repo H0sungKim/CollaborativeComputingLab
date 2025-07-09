@@ -31,9 +31,9 @@
 \usepackage{titlesec}
 
 \titleformat*{\section}{\Large\bfseries}
-\titleformat*{\subsection}{\normalsize\bfseries}
+\titleformat*{\subsection}{\large\bfseries}
 
-\renewcommand{\baselinestretch}{0.9} 
+\renewcommand{\baselinestretch}{1.2} 
 
 \graphicspath{{./figures/}}
 
@@ -56,7 +56,7 @@
 \newcommand\paperauthor{{Hosung.Kim}}
 
 % Title
-\newcommand\papertitle{Demo Application of Synchronous Mobile Distance Learning System}
+\newcommand\papertitle{Demo Application of\\[0.5ex] Synchronous Mobile Distance Learning System}
 
 
 
@@ -113,7 +113,7 @@ Data 계층은 Network, DTO, Repository(Implementation)로 구성되며, 서버�
 서버와 클라이언트 간의 데이터 흐름은 다음과 같다.
 서버로부터 데이터를 수신하는 경우, Network가 서버로부터 DTO 형태의 데이터를 전달받는다. 해당 데이터는 Repository에서 Entity로 변환되고 UseCase를 거쳐 ViewModel에 전달된다. ViewController는 ViewModel의 상태 변화를 관찰하고 있다가 변경사항이 발생하면 이를 UI에 반영한다.
 서버로 데이터를 전송하는 경우, ViewController에서 ViewModel, UseCase, Repository를 통해 값을 전달한다. Repository를 거치며 Entity는 DTO형태로 변환되고 최종적으로 Network를 통해 서버로 전송한다.
-
+\newpage
 \section{구현}
 \begin{figure}[htbp]
     \begin{center}
@@ -147,7 +147,7 @@ SwiftStomp는 STOMP 메세지 전송 및 구독, 핑-퐁 핸들링, 자동 재�
 PDF 문서 스크롤과 그리기 기능 간의 입력 충돌을 해결하기 위해, PDFView의 isScrollEnabled 속성을 제어하는 그리기 모드 토글 버튼을 구현하였다. 이 버튼을 통해 사용자는 스크롤과 주석 작성 기능을 전환할 수 있다.
 
 강사의 화면은 ReplayKit을 통해 녹화되어, 음성 및 전면 카메라 영상과 함께 송출되며, 이 과정에서 PDFView와 애노테이션 역시 함께 전달된다.
-\newpage
+
 \section{결론}
 \begin{figure}[htbp]
     \begin{center}

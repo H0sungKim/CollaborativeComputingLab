@@ -13,7 +13,6 @@ import UIKit
 public class HomeViewController: UIViewController {
     
     @IBOutlet weak var roomTableView: UITableView!
-    
     private var roomTableViewDataSource: UITableViewDiffableDataSource<Section, Item>!
     
     private var roomViewModel: RoomViewModel!

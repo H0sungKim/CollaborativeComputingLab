@@ -112,7 +112,7 @@ public class RoomViewController: UIViewController {
         switch role {
         case .instructor:
             Task {
-                await streamViewModel.publish(streamName: id, video: AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front), audio: AVCaptureDevice.default(for: .audio))
+                await streamViewModel.publish(streamName: id, view: streamView, video: AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front), audio: AVCaptureDevice.default(for: .audio))
             }
         case .student:
             Task {
