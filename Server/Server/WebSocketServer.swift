@@ -88,8 +88,8 @@ final class WebSocketServer {
             chatRooms[entity.id]?.removeClient(client)
             
             if !(chatRooms[entity.id]?.isAvailable ?? false) {
-                chatRooms.removeValue(forKey: entity.id)
                 closeRoom(id: entity.id)
+                chatRooms.removeValue(forKey: entity.id)
             } else {
                 broadcastParticipants(id: entity.id)
             }

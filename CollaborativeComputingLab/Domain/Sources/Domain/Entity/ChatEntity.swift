@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ChatEntity: Entity {
+public struct ChatEntity: Entity, Sendable, Equatable, Hashable {
     public let name: String
     public let message: String
     

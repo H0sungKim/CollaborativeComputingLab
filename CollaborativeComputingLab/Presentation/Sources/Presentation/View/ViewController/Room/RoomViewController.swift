@@ -23,6 +23,8 @@ public class RoomViewController: UIViewController {
     @IBOutlet weak var pdfView: PDFView!
     @IBOutlet weak var pdfDrawButton: UIButton!
     
+    @IBOutlet weak var participantTableView: UITableView!
+    
     @IBOutlet weak var chatTableView: UITableView!
     @IBOutlet weak var chatTextField: UITextField!
     @IBOutlet weak var chatButton: UIButton!
@@ -32,7 +34,10 @@ public class RoomViewController: UIViewController {
     
     // MARK: - ChatTableView
     private var chatTableViewDelegate: TableViewDelegate?
-    private var chatTableViewDataSource: TableViewDataSource?
+    private var chatTableViewDataSource: UITableViewDiffableDataSource<ChatTableViewSection, ChatTableViewItem>?
+    
+    private var participantTableViewDelegate: TableViewDelegate?
+    private var participantTableViewDataSource: UITableViewDiffableDataSource<ParticipateTableViewSection, ParticipateTableViewItem>?
     
     // MARK: - PDF
     private let canvasProvider: CanvasProvider = CanvasProvider()
@@ -65,18 +70,25 @@ public class RoomViewController: UIViewController {
     // MARK: - Bind
     private func bind() {
         chatViewModel.chats.sink(receiveValue: { [weak self] chats in
-            self?.chatTableView.reloadData()
+            var snapshot = NSDiffableDataSourceSnapshot<ChatTableViewSection, ChatTableViewItem>()
+            snapshot.appendSections([.chat])
+            snapshot.appendItems(chats.map({ ChatTableViewItem.chat($0) }), toSection: .chat)
+            self?.chatTableViewDataSource?.apply(snapshot, animatingDifferences: true)
         })
         .store(in: &cancellable)
         
         roomViewModel.participants.sink(receiveValue: { [weak self] participants in
-            Logger.log("Participants updated: \(participants)")
             self?.titleLabel.text = "\(self?.roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
+            
+            var snapshot = NSDiffableDataSourceSnapshot<ParticipateTableViewSection, ParticipateTableViewItem>()
+            snapshot.appendSections([.participant])
+            snapshot.appendItems(participants.map({ ParticipateTableViewItem.participant($0) }), toSection: .participant)
+            self?.participantTableViewDataSource?.apply(snapshot, animatingDifferences: true)
         })
         .store(in: &cancellable)
         
-        roomViewModel.roomClosed.sink(receiveValue: {
-            Logger.log("Room closed.")
+        roomViewModel.roomClosed.sink(receiveValue: { [weak self] in
+            self?.presentCloseRoomAlert()
         })
         .store(in: &cancellable)
     }
@@ -86,6 +98,7 @@ public class RoomViewController: UIViewController {
         super.viewDidLoad()
         bind()
         configureChatTableView()
+        configureParticipantTableView()
         configurePDFView()
         titleLabel.text = "\(roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
         
@@ -161,28 +174,6 @@ public class RoomViewController: UIViewController {
         pdfOpenButton.isHidden = role.isPDFHidden
     }
     
-    // MARK: - ChatTableView
-    private func configureChatTableView() {
-        chatTableViewDelegate = TableViewDelegate()
-        chatTableViewDataSource = TableViewDataSource(numberOfRowsInSection: chatTableViewNumberOfRowsInSection(_:numberOfRowsInSection:), cellForRowAt: chatTableView(_:cellForRowAt:))
-        
-        chatTableView.delegate = chatTableViewDelegate
-        chatTableView.dataSource = chatTableViewDataSource
-        
-        chatTableView.register(UINib(nibName: String(describing: ChatTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: ChatTableViewCell.self))
-    }
-    
-    private func chatTableViewNumberOfRowsInSection(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return chatViewModel.chats.value.count
-    }
-    
-    private func chatTableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: ChatTableViewCell = ChatTableViewCell.create(tableView: tableView, indexPath: indexPath)
-        cell.senderLabel.text = chatViewModel.chats.value[indexPath.row].name
-        cell.messageLabel.text = chatViewModel.chats.value[indexPath.row].message
-        return cell
-    }
-    
     // MARK: - IBAction
     @IBAction func onClickFile(_ sender: Any) {
         let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.pdf], asCopy: true)
@@ -202,6 +193,84 @@ public class RoomViewController: UIViewController {
     
     @IBAction func onClickBack(_ sender: Any) {
         navigationController?.popViewController(animated: true)
+    }
+    
+    private func presentCloseRoomAlert() {
+        let alert: UIAlertController = UIAlertController(title: "강의실이 종료되었습니다.", message: "", preferredStyle: .alert)
+        let actionClose: UIAlertAction = UIAlertAction(title: "확인", style: .default, handler: { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+            self?.dismiss(animated: true, completion: nil)
+        })
+        alert.addAction(actionClose)
+        present(alert, animated: true, completion: nil)
+    }
+}
+
+// MARK: - ChatTableView
+extension RoomViewController {
+    
+    private enum ChatTableViewSection: Int {
+        case chat
+    }
+    
+    private enum ChatTableViewItem: Hashable, Sendable {
+        case chat(ChatEntity)
+    }
+    
+    private func configureChatTableView() {
+        chatTableView.register(UINib(nibName: String(describing: ChatTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: ChatTableViewCell.self))
+        
+        chatTableViewDelegate = TableViewDelegate()
+        chatTableViewDataSource = UITableViewDiffableDataSource<ChatTableViewSection, ChatTableViewItem>(tableView: chatTableView, cellProvider: { tableView, indexPath, itemIdentifier in
+            switch itemIdentifier {
+            case .chat(let chatEntity):
+                let cell: ChatTableViewCell = ChatTableViewCell.create(tableView: tableView, indexPath: indexPath)
+                cell.configure(chatEntity: chatEntity)
+                return cell
+            }
+        })
+        
+        chatTableView.delegate = chatTableViewDelegate
+        chatTableView.dataSource = chatTableViewDataSource
+        
+        var snapshot = NSDiffableDataSourceSnapshot<ChatTableViewSection, ChatTableViewItem>()
+        snapshot.appendSections([.chat])
+        snapshot.appendItems(chatViewModel.chats.value.map({ ChatTableViewItem.chat($0) }), toSection: .chat)
+        chatTableViewDataSource?.apply(snapshot, animatingDifferences: true)
+    }
+}
+
+// MARK: - ParticipateTableView
+extension RoomViewController {
+    
+    private enum ParticipateTableViewSection: Int {
+        case participant
+    }
+    
+    private enum ParticipateTableViewItem: Hashable, Sendable {
+        case participant(ParticipantEntity)
+    }
+    
+    private func configureParticipantTableView() {
+        participantTableView.register(UINib(nibName: String(describing: ParticipantTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: ParticipantTableViewCell.self))
+        
+        participantTableViewDelegate = TableViewDelegate()
+        participantTableViewDataSource = UITableViewDiffableDataSource<ParticipateTableViewSection, ParticipateTableViewItem>(tableView: participantTableView, cellProvider: { tableView, indexPath, itemIdentifier in
+            switch itemIdentifier {
+            case .participant(let participantEntity):
+                let cell: ParticipantTableViewCell = ParticipantTableViewCell.create(tableView: tableView, indexPath: indexPath)
+                cell.configure(participantEntity: participantEntity)
+                return cell
+            }
+        })
+        
+        participantTableView.delegate = participantTableViewDelegate
+        participantTableView.dataSource = participantTableViewDataSource
+        
+        var snapshot = NSDiffableDataSourceSnapshot<ParticipateTableViewSection, ParticipateTableViewItem>()
+        snapshot.appendSections([.participant])
+        snapshot.appendItems(roomViewModel.participants.value.map({ ParticipateTableViewItem.participant($0) }), toSection: .participant)
+        participantTableViewDataSource?.apply(snapshot, animatingDifferences: true)
     }
 }
 

@@ -33,6 +33,7 @@ public final class DefaultRoomViewModel: RoomViewModel {
     
     public var roomClosed: AnyPublisher<Void, Never> {
         return roomUseCase.roomClosedStream
+            .manageThread()
     }
     
     private var cancellable: Set<AnyCancellable> = Set<AnyCancellable>()

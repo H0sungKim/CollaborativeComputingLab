@@ -5,6 +5,8 @@
 //  Created by 김호성 on 2025.04.27.
 //
 
+import Domain
+
 import UIKit
 
 class ChatTableViewCell: UITableViewCell {
@@ -21,8 +23,11 @@ class ChatTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+        
     }
-
+    
+    func configure(chatEntity: ChatEntity) {
+        senderLabel.text = chatEntity.name
+        messageLabel.text = chatEntity.message
+    }
 }

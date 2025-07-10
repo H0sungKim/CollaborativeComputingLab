@@ -13,7 +13,7 @@ import UIKit
 public class HomeViewController: UIViewController {
     
     @IBOutlet weak var roomTableView: UITableView!
-    private var roomTableViewDataSource: UITableViewDiffableDataSource<Section, Item>!
+    private var roomTableViewDataSource: UITableViewDiffableDataSource<RoomTableViewSection, RoomTableViewItem>?
     
     private var roomViewModel: RoomViewModel!
     
@@ -27,10 +27,10 @@ public class HomeViewController: UIViewController {
         roomViewModel.availableRooms.sink(receiveValue: { [weak self] roomEnities in
             guard let self else { return }
             Logger.log("Available Rooms: \(roomEnities)")
-            var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+            var snapshot = NSDiffableDataSourceSnapshot<RoomTableViewSection, RoomTableViewItem>()
             snapshot.appendSections([.availableRooms])
-            snapshot.appendItems(roomEnities.map({ Item.room($0) }), toSection: .availableRooms)
-            roomTableViewDataSource.apply(snapshot)
+            snapshot.appendItems(roomEnities.map({ RoomTableViewItem.room($0) }), toSection: .availableRooms)
+            roomTableViewDataSource?.apply(snapshot)
         })
         .store(in: &cancellable)
     }
@@ -52,7 +52,7 @@ public class HomeViewController: UIViewController {
         roomTableView.register(UINib(nibName: String(describing: RoomTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: RoomTableViewCell.self))
         
         roomTableView.delegate = self
-        roomTableViewDataSource = UITableViewDiffableDataSource<Section, Item>(tableView: roomTableView, cellProvider: { tableView, indexPath, itemIdentifier in
+        roomTableViewDataSource = UITableViewDiffableDataSource<RoomTableViewSection, RoomTableViewItem>(tableView: roomTableView, cellProvider: { tableView, indexPath, itemIdentifier in
             switch itemIdentifier {
             case .room(let roomEntity):
                 let cell: RoomTableViewCell = RoomTableViewCell.create(tableView: tableView, indexPath: indexPath)
@@ -61,7 +61,7 @@ public class HomeViewController: UIViewController {
             }
         })
         roomTableView.dataSource = roomTableViewDataSource
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+        var snapshot = NSDiffableDataSourceSnapshot<RoomTableViewSection, RoomTableViewItem>()
         snapshot.appendSections([.availableRooms])
         roomTableViewDataSource?.apply(snapshot, animatingDifferences: false)
     }
@@ -95,11 +95,11 @@ public class HomeViewController: UIViewController {
 
 extension HomeViewController: UITableViewDelegate {
     
-    private enum Section: Int {
+    private enum RoomTableViewSection: Int {
         case availableRooms
     }
     
-    private enum Item: Hashable, Sendable {
+    private enum RoomTableViewItem: Hashable, Sendable {
         case room(RoomEntity)
     }
     

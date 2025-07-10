@@ -111,14 +111,14 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NeW-e7-MDf">
                                 <rect key="frame" x="792" y="88" width="240" height="1210"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="zA3-p4-h5e">
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="zA3-p4-h5e">
                                         <rect key="frame" x="0.0" y="0.0" width="240" height="1210"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AkS-TI-XFA">
-                                                <rect key="frame" x="0.0" y="0.0" width="240" height="605"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="240" height="603"/>
                                                 <subviews>
-                                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="7VC-VE-gr5">
-                                                        <rect key="frame" x="0.0" y="56" width="240" height="549"/>
+                                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="7VC-VE-gr5">
+                                                        <rect key="frame" x="0.0" y="56" width="240" height="547"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     </tableView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="참여자 명단" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="faN-MH-Xze">
@@ -138,11 +138,18 @@
                                                     <constraint firstItem="7VC-VE-gr5" firstAttribute="leading" secondItem="AkS-TI-XFA" secondAttribute="leading" id="ts9-VU-rzB"/>
                                                 </constraints>
                                             </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Z6D-5w-6ao" userLabel="seperator">
+                                                <rect key="frame" x="0.0" y="603" width="240" height="4"/>
+                                                <color key="backgroundColor" systemColor="opaqueSeparatorColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="4" id="cfs-hX-4df"/>
+                                                </constraints>
+                                            </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a3e-ia-EfK">
-                                                <rect key="frame" x="0.0" y="605" width="240" height="605"/>
+                                                <rect key="frame" x="0.0" y="607" width="240" height="603"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="osv-un-gT0">
-                                                        <rect key="frame" x="0.0" y="541" width="240" height="64"/>
+                                                        <rect key="frame" x="0.0" y="539" width="240" height="64"/>
                                                         <subviews>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aYO-la-c15">
                                                                 <rect key="frame" x="181.5" y="15" width="50.5" height="34"/>
@@ -152,7 +159,7 @@
                                                                     <action selector="onClickChatSend:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="GER-Da-UlE"/>
                                                                 </connections>
                                                             </button>
-                                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="htA-P6-K08">
+                                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="htA-P6-K08">
                                                                 <rect key="frame" x="8" y="15" width="165.5" height="34"/>
                                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
@@ -168,8 +175,8 @@
                                                             <constraint firstAttribute="height" constant="64" id="d5t-Ez-oOx"/>
                                                         </constraints>
                                                     </view>
-                                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="uBO-O2-csA">
-                                                        <rect key="frame" x="0.0" y="56" width="240" height="485"/>
+                                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="uBO-O2-csA">
+                                                        <rect key="frame" x="0.0" y="56" width="240" height="483"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     </tableView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="채팅창" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="klg-Kq-qDY">
@@ -193,6 +200,9 @@
                                                 </constraints>
                                             </view>
                                         </subviews>
+                                        <constraints>
+                                            <constraint firstItem="AkS-TI-XFA" firstAttribute="height" secondItem="a3e-ia-EfK" secondAttribute="height" id="KgY-j0-oab"/>
+                                        </constraints>
                                     </stackView>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -228,6 +238,7 @@
                         <outlet property="chatButton" destination="aYO-la-c15" id="z4G-Wy-pfO"/>
                         <outlet property="chatTableView" destination="uBO-O2-csA" id="Jsh-Op-bdS"/>
                         <outlet property="chatTextField" destination="htA-P6-K08" id="3xz-ZB-h5W"/>
+                        <outlet property="participantTableView" destination="7VC-VE-gr5" id="8Mz-A7-ZIy"/>
                         <outlet property="pdfDrawButton" destination="gYx-S7-apI" id="WOB-Ba-dOP"/>
                         <outlet property="pdfOpenButton" destination="e8N-Nc-6Ff" id="SIu-X0-Rwk"/>
                         <outlet property="pdfView" destination="AKZ-Cc-g31" id="rzC-Rz-JwM"/>
@@ -244,6 +255,9 @@
         <image name="chevron.backward" catalog="system" width="97" height="128"/>
         <image name="paperplane" catalog="system" width="128" height="119"/>
         <image name="pencil.tip.crop.circle" catalog="system" width="128" height="123"/>
+        <systemColor name="opaqueSeparatorColor">
+            <color red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ParticipantEntity: Entity {
+public struct ParticipantEntity: Entity, Hashable, Sendable, Equatable {
     public let name: String
     
     public init(name: String) {
