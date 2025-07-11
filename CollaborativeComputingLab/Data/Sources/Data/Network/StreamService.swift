@@ -23,13 +23,12 @@ public final actor StreamService {
         
     }
     
-    func attachMedia(video: AVCaptureDevice?, audio: AVCaptureDevice?) async {
-        let front = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front)
+    func attachMedia(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async {
         do {
-            try await mixer.attachVideo(front, track: 1) { videoUnit in
+            try await mixer.attachVideo(video, track: 1) { videoUnit in
                 videoUnit.isVideoMirrored = true
             }
-            try await mixer.attachAudio(AVCaptureDevice.default(for: .audio))
+            try await mixer.attachAudio(audio)
         } catch {
             Logger.log(error.localizedDescription, level: .error)
         }

@@ -19,6 +19,8 @@ public class RoomViewController: UIViewController {
     // MARK: - IBOutlet
     @IBOutlet weak var titleLabel: UILabel!
     
+    @IBOutlet weak var cameraButton: UIButton!
+    
     @IBOutlet weak var pdfOpenButton: UIButton!
     @IBOutlet weak var pdfView: PDFView!
     @IBOutlet weak var pdfDrawButton: UIButton!
@@ -30,7 +32,7 @@ public class RoomViewController: UIViewController {
     @IBOutlet weak var chatButton: UIButton!
     
     @IBOutlet weak var streamView: MTHKView!
-    @IBOutlet weak var cameraView: MTHKView!
+    @IBOutlet weak var cameraPreviewView: CameraPreviewView!
     
     // MARK: - ChatTableView
     private var chatTableViewDelegate: TableViewDelegate?
@@ -100,12 +102,17 @@ public class RoomViewController: UIViewController {
         configureChatTableView()
         configureParticipantTableView()
         configurePDFView()
+        cameraPreviewView.configure()
+        if #available(iOS 17, *) {
+            cameraPreviewView.rotate(orientation: UIDevice.current.orientation)
+        }
+        cameraPreviewView.isHidden = role == .student
         titleLabel.text = "\(roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
         
         let outputView: UIView = {
             switch role {
             case .instructor:
-                return cameraView
+                return cameraPreviewView
             case .student:
                 return streamView
             case .none:
@@ -121,11 +128,12 @@ public class RoomViewController: UIViewController {
         super.viewWillAppear(animated)
         chatViewModel.connectWebSocket()
         roomViewModel.connectWebSocket()
+        cameraPreviewView.start()
         
         switch role {
         case .instructor:
             Task {
-                await streamViewModel.publish(streamName: id, view: streamView, video: AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front), audio: AVCaptureDevice.default(for: .audio))
+                await streamViewModel.publish(streamName: id, view: streamView, video: nil, audio: AVCaptureDevice.default(for: .audio))
             }
         case .student:
             Task {
@@ -140,6 +148,7 @@ public class RoomViewController: UIViewController {
         super.viewWillDisappear(animated)
         
         roomViewModel.exitRoom(id: id)
+        cameraPreviewView.stop()
         
         switch role {
         case .instructor:
@@ -160,6 +169,10 @@ public class RoomViewController: UIViewController {
         Task {
             await streamViewModel.setScreenSize()
         }
+        
+        if #available(iOS 17, *) {
+            cameraPreviewView.rotate(orientation: UIDevice.current.orientation)
+        }
     }
     
     // MARK: - PDFView
@@ -169,12 +182,17 @@ public class RoomViewController: UIViewController {
         pdfView.isInMarkupMode = true
         pdfView.isScrollEnabled = true
         
-        pdfView.isHidden = role.isPDFHidden
-        pdfDrawButton.isHidden = role.isPDFHidden
-        pdfOpenButton.isHidden = role.isPDFHidden
+        pdfView.isHidden = role == .student
+        pdfDrawButton.isHidden = role == .student
+        pdfOpenButton.isHidden = role == .student
     }
     
     // MARK: - IBAction
+    @IBAction func onClickCamera(_ sender: UIButton) {
+        cameraPreviewView.isHidden.toggle()
+        sender.setImage(UIImage(systemName: cameraPreviewView.isHidden ? "camera" : "camera.fill"), for: .normal)
+    }
+    
     @IBAction func onClickFile(_ sender: Any) {
         let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.pdf], asCopy: true)
         documentPicker.delegate = self

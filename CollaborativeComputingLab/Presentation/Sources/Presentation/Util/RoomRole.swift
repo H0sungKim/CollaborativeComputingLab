@@ -21,13 +21,4 @@ public enum RoomRole: Int, Sendable {
             return .play
         }
     }
-    
-    var isPDFHidden: Bool {
-        switch self {
-        case .instructor:
-            return false
-        case .student:
-            return true
-        }
-    }
 }
