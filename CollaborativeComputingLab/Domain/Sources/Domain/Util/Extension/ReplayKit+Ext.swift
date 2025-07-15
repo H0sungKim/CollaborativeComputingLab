@@ -11,7 +11,7 @@ import CoreMedia
 import CoreImage
 
 extension CMSampleBuffer {
-    var ciImage: CIImage? {
+    fileprivate var ciImage: CIImage? {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(self) else {
             return nil
         }
@@ -27,28 +27,33 @@ extension CMSampleBuffer {
         }
         
         return ciImage?
-            .generateCVPixelBuffer(from: fromRect, to: toRect)?
+            .resize(from: fromRect, to: toRect)
+            .generateCVPixelBuffer()?
             .generateCMSampleBuffer(timingInfo: CMSampleTimingInfo(duration: duration, presentationTimeStamp: presentationTimeStamp, decodeTimeStamp: decodeTimeStamp))
     }
 }
 
 extension CIImage {
-    
-    func generateCVPixelBuffer(from: CGRect, to: CGRect) -> CVPixelBuffer? {
+    fileprivate func resize(from: CGRect, to: CGRect) -> CIImage {
         let ciImageWidth = extent.width
         let ciImageHeight = extent.height
-        
         
         let scaleX = ciImageWidth / from.width
         let scaleY = ciImageHeight / from.height
         
         let cropRect = CGRect(
             x: (to.origin.x - from.origin.x) * scaleX,
-            y: (from.height - to.origin.y - to.height + from.origin.y) * scaleY,
+            y: (from.height - to.origin.y - to.height) * scaleY,
             width: to.width * scaleX,
             height: to.height * scaleY
         )
         
+        let croppedImage = self.cropped(to: cropRect).transformed(by: CGAffineTransform(translationX: -cropRect.origin.x, y: -cropRect.origin.y))
+        
+        return croppedImage
+    }
+    
+    fileprivate func generateCVPixelBuffer() -> CVPixelBuffer? {
         let attrs = [kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue, kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue] as CFDictionary
         var pixelBuffer: CVPixelBuffer!
         let status = CVPixelBufferCreate(kCFAllocatorDefault, Int(extent.width), Int(extent.height), kCVPixelFormatType_32BGRA, attrs, &pixelBuffer)
@@ -58,7 +63,7 @@ extension CIImage {
         }
         
         let ciContext = CIContext()
-        ciContext.render(self, to: pixelBuffer, bounds: cropRect, colorSpace: CGColorSpaceCreateDeviceRGB())
+        ciContext.render(self, to: pixelBuffer, bounds: extent, colorSpace: CGColorSpaceCreateDeviceRGB())
         CVPixelBufferLockBaseAddress(pixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
         
         return pixelBuffer
@@ -66,7 +71,7 @@ extension CIImage {
 }
 
 extension CVPixelBuffer {
-    func generateCMSampleBuffer(timingInfo: CMSampleTimingInfo) -> CMSampleBuffer? {
+    fileprivate func generateCMSampleBuffer(timingInfo: CMSampleTimingInfo) -> CMSampleBuffer? {
         var sampleBuffer: CMSampleBuffer?
         var timimgInfo: CMSampleTimingInfo = timingInfo
         var videoInfo: CMVideoFormatDescription!
@@ -88,7 +93,7 @@ extension CVPixelBuffer {
 
 extension UIView {
     @MainActor
-    func getResizeRects() -> (from: CGRect, to: CGRect)? {
+    fileprivate func getResizeRects() -> (from: CGRect, to: CGRect)? {
         guard let window = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
         let screenRect = window.screen.bounds
         

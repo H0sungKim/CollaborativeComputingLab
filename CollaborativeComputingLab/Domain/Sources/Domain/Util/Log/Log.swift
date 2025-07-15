@@ -10,8 +10,8 @@ import os
 
 public final class Log {
     
-    static let subsystem: String = Bundle.main.bundleIdentifier!
-    static let logger: Logger = Logger(subsystem: subsystem, category: "Log")
+    private static let subsystem: String = Bundle.main.bundleIdentifier!
+    private static let logger: Logger = Logger(subsystem: subsystem, category: "Log")
     
     private static let enabled: Bool = true
     
