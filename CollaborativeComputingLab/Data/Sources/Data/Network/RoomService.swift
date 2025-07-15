@@ -15,6 +15,7 @@ public protocol RoomService {
     var participantListStream: PassthroughSubject<ParticipantListDTO, Never> { get }
     var roomClosed: PassthroughSubject<Void, Never> { get }
     
+    func requestRoomList()
     func enterRoom(roomEntranceDTO: RoomEntranceDTO)
     func exitRoom(roomExitDTO: RoomExitDTO)
     func connectWebSocket()
@@ -38,13 +39,13 @@ public final class DefaultRoomService: RoomService {
             guard let message = JSONManager.shared.decode(data: data, type: ServerMessage.self) else { return }
             switch message {
             case .availableRooms(let roomListDTO):
-                Logger.log("WebSocket received availableRooms: \(roomListDTO)")
+                Log.log("WebSocket received availableRooms: \(roomListDTO)")
                 self?.roomListStream.send(roomListDTO)
             case .participantUpdated(let participantListDTO):
-                Logger.log("WebSocket received participantUpdated: \(participantListDTO)")
+                Log.log("WebSocket received participantUpdated: \(participantListDTO)")
                 self?.participantListStream.send(participantListDTO)
             case .roomClosed:
-                Logger.log("WebSocket received roomClosed.")
+                Log.log("WebSocket received roomClosed.")
                 self?.roomClosed.send(())
             default:
                 break
@@ -53,14 +54,20 @@ public final class DefaultRoomService: RoomService {
         .store(in: &cancellable)
     }
     
+    public func requestRoomList() {
+        Log.log("Sending requestRoomList message.")
+        guard let messageData = JSONManager.shared.encode(codable: ClientMessage.requestRoomList) else { return }
+        webSocket.send(data: messageData)
+    }
+    
     public func enterRoom(roomEntranceDTO: RoomEntranceDTO) {
-        Logger.log("Sending enterRoom message: \(roomEntranceDTO)")
+        Log.log("Sending enterRoom message: \(roomEntranceDTO)")
         guard let messageData = JSONManager.shared.encode(codable: ClientMessage.enterRoom(roomEntranceDTO)) else { return }
         webSocket.send(data: messageData)
     }
     
     public func exitRoom(roomExitDTO: RoomExitDTO) {
-        Logger.log("Sending exitRoom message: \(roomExitDTO)")
+        Log.log("Sending exitRoom message: \(roomExitDTO)")
         guard let messageData = JSONManager.shared.encode(codable: ClientMessage.leaveRoom (roomExitDTO)) else { return }
         webSocket.send(data: messageData)
     }

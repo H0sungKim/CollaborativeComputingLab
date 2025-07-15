@@ -13,6 +13,7 @@ public protocol RoomUseCase {
     var participantListStream: AnyPublisher<[ParticipantEntity], Never> { get }
     var roomClosedStream: AnyPublisher<Void, Never> { get }
     
+    func requestRoomList()
     func enterRoom(roomEntranceEntity: RoomEntranceEntity)
     func exitRoom(roomExitEntity: RoomExitEntity)
     func connectWebSocket()
@@ -36,6 +37,10 @@ public final class DefaultRoomUseCase: RoomUseCase {
     
     public var roomClosedStream: AnyPublisher<Void, Never> {
         return roomRepository.roomClosedStream
+    }
+    
+    public func requestRoomList() {
+        roomRepository.requestRoomList()
     }
     
     public func enterRoom(roomEntranceEntity: RoomEntranceEntity) {

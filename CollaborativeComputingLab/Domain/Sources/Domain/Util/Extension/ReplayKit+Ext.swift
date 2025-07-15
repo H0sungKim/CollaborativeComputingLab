@@ -53,7 +53,7 @@ extension CIImage {
         var pixelBuffer: CVPixelBuffer!
         let status = CVPixelBufferCreate(kCFAllocatorDefault, Int(extent.width), Int(extent.height), kCVPixelFormatType_32BGRA, attrs, &pixelBuffer)
         guard status == kCVReturnSuccess else {
-            Logger.log("CVPixelBufferCreateに失敗")
+            Log.log("CVPixelBufferCreateに失敗")
             return nil
         }
         

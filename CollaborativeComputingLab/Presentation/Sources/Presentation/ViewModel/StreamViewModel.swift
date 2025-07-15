@@ -15,7 +15,7 @@ import ReplayKit
 import HaishinKit
 
 public protocol StreamViewModelInput {
-    func configure(roomRole: RoomRole, outputView: UIView) async
+    func configure(roomRole: RoomRole, outputView: UIView?) async
     
     func publish(streamName: String, view: UIView, video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async
     func stopPublish() async
@@ -40,7 +40,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
         self.streamUseCase = streamUseCase
     }
     
-    public func configure(roomRole: RoomRole, outputView: UIView) async {
+    public func configure(roomRole: RoomRole, outputView: UIView?) async {
         await streamUseCase.configure(
             streamMode: roomRole.streamMode,
             outputView: outputView,
@@ -80,7 +80,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
         DispatchQueue.global().async {
             RPScreenRecorder.shared().startCapture(handler: { sampleBuffer, sampleBufferType, error in
                 if let error {
-                    Logger.log(error.localizedDescription, level: .error)
+                    Log.log(error.localizedDescription, level: .error)
                     return
                 }
                 switch sampleBufferType {
@@ -99,7 +99,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
                 }
             }, completionHandler: { error in
                 guard let error else { return }
-                Logger.log(error.localizedDescription, level: .error)
+                Log.log(error.localizedDescription, level: .error)
             })
         }
     }
@@ -108,7 +108,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
         DispatchQueue.global().async {
             RPScreenRecorder.shared().stopCapture(handler: { error in
                 guard let error else { return }
-                Logger.log(error.localizedDescription, level: .error)
+                Log.log(error.localizedDescription, level: .error)
             })
         }
     }
@@ -157,7 +157,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
                 try session.setPreferredInput(nil)
             }
         } catch {
-            Logger.log(error.localizedDescription, level: .error)
+            Log.log(error.localizedDescription, level: .error)
         }
     }
 }

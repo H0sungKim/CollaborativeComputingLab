@@ -19,11 +19,16 @@ public class RoomViewController: UIViewController {
     // MARK: - IBOutlet
     @IBOutlet weak var titleLabel: UILabel!
     
+    @IBOutlet weak var publishView: UIView!
+    
     @IBOutlet weak var cameraButton: UIButton!
     
     @IBOutlet weak var pdfOpenButton: UIButton!
     @IBOutlet weak var pdfView: PDFView!
-    @IBOutlet weak var pdfDrawButton: UIButton!
+    
+    @IBOutlet weak var drawButton: UIButton!
+    @IBOutlet weak var clearButton: UIButton!
+    @IBOutlet weak var undoButton: UIButton!
     
     @IBOutlet weak var participantTableView: UITableView!
     
@@ -32,12 +37,50 @@ public class RoomViewController: UIViewController {
     @IBOutlet weak var chatButton: UIButton!
     
     @IBOutlet weak var streamView: MTHKView!
+    @IBOutlet weak var whiteboardView: CanvasView!
     @IBOutlet weak var cameraPreviewView: CameraPreviewView!
+    
+    // MARK: - PublishScreen
+    private enum PublishScreenType: Int {
+        case pdf = 0
+        case whiteboard
+        case none
+    }
+    
+    private var publishScreenType: PublishScreenType = .none {
+        didSet {
+            drawButton.isSelected = false
+            switch publishScreenType {
+            case .pdf:
+                drawButton.isHidden = false
+                clearButton.isHidden = true
+                undoButton.isHidden = true
+                
+                pdfView.isHidden = false
+                whiteboardView.isHidden = true
+                
+                pdfView.isScrollEnabled = !drawButton.isSelected
+                canvasProvider.setUserInteractionEnabled(drawButton.isSelected)
+            case .whiteboard:
+                drawButton.isHidden = false
+                clearButton.isHidden = false
+                undoButton.isHidden = false
+                
+                pdfView.isHidden = true
+                whiteboardView.isHidden = false
+                
+                whiteboardView.isUserInteractionEnabled = drawButton.isSelected
+            case .none:
+                break
+            }
+        }
+    }
     
     // MARK: - ChatTableView
     private var chatTableViewDelegate: TableViewDelegate?
     private var chatTableViewDataSource: UITableViewDiffableDataSource<ChatTableViewSection, ChatTableViewItem>?
     
+    // MARK: - ParticipantTableView
     private var participantTableViewDelegate: TableViewDelegate?
     private var participantTableViewDataSource: UITableViewDiffableDataSource<ParticipateTableViewSection, ParticipateTableViewItem>?
     
@@ -99,28 +142,39 @@ public class RoomViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         bind()
+        
         configureChatTableView()
         configureParticipantTableView()
-        configurePDFView()
-        cameraPreviewView.configure()
-        if #available(iOS 17, *) {
-            cameraPreviewView.rotate(orientation: UIDevice.current.orientation)
-        }
-        cameraPreviewView.isHidden = role == .student
+        
         titleLabel.text = "\(roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
         
-        let outputView: UIView = {
-            switch role {
-            case .instructor:
-                return cameraPreviewView
-            case .student:
-                return streamView
-            case .none:
-                return UIView()
+        drawButton.setImage(UIImage(systemName: "pencil.tip.crop.circle.fill"), for: .selected)
+        drawButton.setImage(UIImage(systemName: "pencil.tip.crop.circle"), for: .normal)
+        
+        cameraButton.setImage(UIImage(systemName: "camera.fill"), for: .selected)
+        cameraButton.setImage(UIImage(systemName: "camera"), for: .normal)
+        
+        switch role {
+        case .instructor:
+            publishScreenType = .pdf
+            configurePDFView()
+            cameraPreviewView.configure()
+            if #available(iOS 17, *) {
+                cameraPreviewView.rotate(orientation: UIDevice.current.orientation)
             }
-        }()
-        Task {
-            await streamViewModel.configure(roomRole: role, outputView: outputView)
+            cameraButton.isSelected = true
+            Task {
+                await streamViewModel.configure(roomRole: role, outputView: nil)
+            }
+        case .student:
+            pdfOpenButton.isHidden = true
+            publishView.isHidden = true
+            publishScreenType = .none
+            Task {
+                await streamViewModel.configure(roomRole: role, outputView: streamView)
+            }
+        case .none:
+            break
         }
     }
     
@@ -128,10 +182,10 @@ public class RoomViewController: UIViewController {
         super.viewWillAppear(animated)
         chatViewModel.connectWebSocket()
         roomViewModel.connectWebSocket()
-        cameraPreviewView.start()
         
         switch role {
         case .instructor:
+            cameraPreviewView.start()
             Task {
                 await streamViewModel.publish(streamName: id, view: streamView, video: nil, audio: AVCaptureDevice.default(for: .audio))
             }
@@ -181,16 +235,13 @@ public class RoomViewController: UIViewController {
         pdfView.pageOverlayViewProvider = canvasProvider
         pdfView.isInMarkupMode = true
         pdfView.isScrollEnabled = true
-        
-        pdfView.isHidden = role == .student
-        pdfDrawButton.isHidden = role == .student
-        pdfOpenButton.isHidden = role == .student
+        canvasProvider.setUserInteractionEnabled(false)
     }
     
     // MARK: - IBAction
     @IBAction func onClickCamera(_ sender: UIButton) {
+        sender.isSelected.toggle()
         cameraPreviewView.isHidden.toggle()
-        sender.setImage(UIImage(systemName: cameraPreviewView.isHidden ? "camera" : "camera.fill"), for: .normal)
     }
     
     @IBAction func onClickFile(_ sender: Any) {
@@ -204,15 +255,39 @@ public class RoomViewController: UIViewController {
         chatTextField.text = ""
     }
     
-    @IBAction func onClickCanvas(_ sender: UIButton) {
-        pdfView.isScrollEnabled?.toggle()
-        sender.setImage(UIImage(systemName: pdfView.isScrollEnabled ?? true ? "pencil.tip.crop.circle" : "pencil.tip.crop.circle.fill"), for: .normal)
+    @IBAction func onClickDraw(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        switch publishScreenType {
+        case .pdf:
+            pdfView.isScrollEnabled = !sender.isSelected
+            canvasProvider.setUserInteractionEnabled(sender.isSelected)
+        case .whiteboard:
+            whiteboardView.isUserInteractionEnabled = sender.isSelected
+        case .none:
+            break
+        }
     }
     
     @IBAction func onClickBack(_ sender: Any) {
         navigationController?.popViewController(animated: true)
     }
     
+    @IBAction func publishScreenChanged(_ sender: UISegmentedControl) {
+        if let publishScreenType = PublishScreenType(rawValue: sender.selectedSegmentIndex) {
+            self.publishScreenType = publishScreenType
+        }
+        Log.log(sender.selectedSegmentIndex)
+    }
+    
+    @IBAction func onClickClear(_ sender: Any) {
+        whiteboardView.clear()
+    }
+    
+    @IBAction func onClickUndo(_ sender: Any) {
+        whiteboardView.undo()
+    }
+    
+    // MARK: - RoomClosed
     private func presentCloseRoomAlert() {
         let alert: UIAlertController = UIAlertController(title: "강의실이 종료되었습니다.", message: "", preferredStyle: .alert)
         let actionClose: UIAlertAction = UIAlertAction(title: "확인", style: .default, handler: { [weak self] _ in

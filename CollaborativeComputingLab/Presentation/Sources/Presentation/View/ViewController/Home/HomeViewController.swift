@@ -26,11 +26,12 @@ public class HomeViewController: UIViewController {
     private func bind() {
         roomViewModel.availableRooms.sink(receiveValue: { [weak self] roomEnities in
             guard let self else { return }
-            Logger.log("Available Rooms: \(roomEnities)")
+            Log.log("Available Rooms: \(roomEnities)")
             var snapshot = NSDiffableDataSourceSnapshot<RoomTableViewSection, RoomTableViewItem>()
             snapshot.appendSections([.availableRooms])
             snapshot.appendItems(roomEnities.map({ RoomTableViewItem.room($0) }), toSection: .availableRooms)
             roomTableViewDataSource?.apply(snapshot)
+            roomTableView.refreshControl?.endRefreshing()
         })
         .store(in: &cancellable)
     }
@@ -50,7 +51,8 @@ public class HomeViewController: UIViewController {
     }
     private func configureRoomTableView() {
         roomTableView.register(UINib(nibName: String(describing: RoomTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: RoomTableViewCell.self))
-        
+        roomTableView.refreshControl = UIRefreshControl()
+        roomTableView.refreshControl?.addTarget(self, action: #selector(roomTableViewRefreshed), for: .valueChanged)
         roomTableView.delegate = self
         roomTableViewDataSource = UITableViewDiffableDataSource<RoomTableViewSection, RoomTableViewItem>(tableView: roomTableView, cellProvider: { tableView, indexPath, itemIdentifier in
             switch itemIdentifier {
@@ -64,6 +66,14 @@ public class HomeViewController: UIViewController {
         var snapshot = NSDiffableDataSourceSnapshot<RoomTableViewSection, RoomTableViewItem>()
         snapshot.appendSections([.availableRooms])
         roomTableViewDataSource?.apply(snapshot, animatingDifferences: false)
+    }
+    
+    @objc private func roomTableViewRefreshed() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
+            guard let self else { return }
+            roomViewModel.requestRoomList()
+            roomTableView.refreshControl?.beginRefreshing()
+        })
     }
     
     @IBAction func onClickCreateRoom(_ sender: Any) {
@@ -80,7 +90,7 @@ public class HomeViewController: UIViewController {
             self?.roomViewModel.enterRoom(id: id, userName: alert.textFields?.first?.text ?? "")
             guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
             let roomViewController = viewControllerFactory.createRoomViewController(id: id, role: .instructor, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
-            Logger.log(self?.roomViewModel.participants.value)
+            Log.log(self?.roomViewModel.participants.value)
             self?.navigationController?.pushViewController(roomViewController, animated: true)
             self?.dismiss(animated: true, completion: nil)
         })
@@ -117,7 +127,7 @@ extension HomeViewController: UITableViewDelegate {
             self?.roomViewModel.enterRoom(id: roomEntity.id, userName: alert.textFields?.first?.text ?? "")
             guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
             let roomViewController = viewControllerFactory.createRoomViewController(id: roomEntity.id, role: .student, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
-            Logger.log(self?.roomViewModel.participants.value)
+            Log.log(self?.roomViewModel.participants.value)
             self?.navigationController?.pushViewController(roomViewController, animated: true)
             self?.dismiss(animated: true, completion: nil)
         })

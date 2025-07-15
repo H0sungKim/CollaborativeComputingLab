@@ -27,7 +27,7 @@ final class WebSocketServer {
     func start() {
         listener.newConnectionHandler = newConnectionHandler
         listener.start(queue: queue)
-        Logger.log("Server started listening on port \(port)")
+        Log.log("Server started listening on port \(port)")
     }
     
     private func newConnectionHandler(_ connection: NWConnection) {
@@ -41,12 +41,12 @@ final class WebSocketServer {
         if let encoded = JSONManager.shared.encode(codable: ServerMessage.availableRooms(RoomListDTO(entities: roomEntityList))) {
             broadcast(data: encoded, to: [client])
         }
-        Logger.log("A client has connected. Total connected clients: \(connectedClients.count)")
+        Log.log("A client has connected. Total connected clients: \(connectedClients.count)")
     }
     
     private func didDisconnect(client: WebSocketClient) {
         connectedClients.remove(client)
-        Logger.log("A client has disconnected. Total connected clients: \(connectedClients.count)")
+        Log.log("A client has disconnected. Total connected clients: \(connectedClients.count)")
     }
     
     private func didReceiveMessage(from client: WebSocketClient,
@@ -67,9 +67,12 @@ final class WebSocketServer {
         guard let data, let message = JSONManager.shared.decode(data: data, type: ClientMessage.self) else { return }
         
         switch message {
+        case .requestRoomList:
+            Log.log("Received request for room list.")
+            broadcastAvailableRooms(to: [client])
         case .enterRoom(let roomEntranceDTO):
             let entity = roomEntranceDTO.entity
-            Logger.log(entity)
+            Log.log(entity)
             client.name = entity.userName
             let room: Room = {
                 guard let room = chatRooms[entity.id] else {
@@ -80,11 +83,11 @@ final class WebSocketServer {
             }()
             room.addClient(client)
             
-            broadcastAvailableRooms()
+            broadcastAvailableRooms(to: connectedClients)
             broadcastParticipants(id: entity.id)
         case .leaveRoom(let roomExitDTO):
             let entity = roomExitDTO.entity
-            Logger.log(entity)
+            Log.log(entity)
             chatRooms[entity.id]?.removeClient(client)
             
             if !(chatRooms[entity.id]?.isAvailable ?? false) {
@@ -94,10 +97,10 @@ final class WebSocketServer {
                 broadcastParticipants(id: entity.id)
             }
             
-            broadcastAvailableRooms()
+            broadcastAvailableRooms(to: connectedClients)
         case .sendChat(let messageDTO):
             let entity = messageDTO.entity
-            Logger.log(entity)
+            Log.log(entity)
             broadcastMessage(message: entity, sender: client)
         }
     }
@@ -116,11 +119,11 @@ final class WebSocketServer {
         }
     }
     
-    private func broadcastAvailableRooms() {
+    private func broadcastAvailableRooms(to clients: Set<WebSocketClient>) {
         let message = ServerMessage.availableRooms(getRoomListDTO())
-        Logger.log(message)
+        Log.log(message)
         guard let messageData = JSONManager.shared.encode(codable: message) else { return }
-        broadcast(data: messageData, to: connectedClients)
+        broadcast(data: messageData, to: clients)
     }
     
     private func getRoomListDTO() -> RoomListDTO {
@@ -131,7 +134,7 @@ final class WebSocketServer {
     
     private func broadcastParticipants(id: String) {
         let message = ServerMessage.participantUpdated(getParticipantListDTO(id: id))
-        Logger.log(message)
+        Log.log(message)
         guard let messageData = JSONManager.shared.encode(codable: message) else { return }
         broadcast(data: messageData, to: Set(chatRooms[id]?.clients ?? []))
     }
@@ -142,14 +145,14 @@ final class WebSocketServer {
     
     private func closeRoom(id: String) {
         let message = ServerMessage.roomClosed
-        Logger.log(message)
+        Log.log(message)
         guard let messageData = JSONManager.shared.encode(codable: message) else { return }
         broadcast(data: messageData, to: Set(chatRooms[id]?.clients ?? []))
     }
     
     private func broadcastMessage(message: MessageEntity, sender: WebSocketClient) {
         let message = ServerMessage.newChat(ChatDTO(name: sender.name, message: message.message))
-        Logger.log(message)
+        Log.log(message)
         guard let messageData = JSONManager.shared.encode(codable: message) else { return }
         chatRooms.values.forEach({ room in
             if room.clients.contains(sender) {

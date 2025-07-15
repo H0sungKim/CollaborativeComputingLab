@@ -23,4 +23,10 @@ class CanvasProvider: NSObject, @preconcurrency PDFPageOverlayViewProvider {
         }
         return canvasView
     }
+    
+    func setUserInteractionEnabled(_ enabled: Bool) {
+        canvasViewForPage.values.forEach({
+            $0.isUserInteractionEnabled = enabled
+        })
+    }
 }

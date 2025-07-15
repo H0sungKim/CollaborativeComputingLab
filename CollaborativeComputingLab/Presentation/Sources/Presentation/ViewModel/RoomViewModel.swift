@@ -11,6 +11,7 @@ import Foundation
 import Combine
 
 public protocol RoomViewModelInput {
+    func requestRoomList()
     func enterRoom(id: String, userName: String)
     func exitRoom(id: String)
     func connectWebSocket()
@@ -57,6 +58,10 @@ public final class DefaultRoomViewModel: RoomViewModel {
                 self?.participants.value = participantListEntity
             })
             .store(in: &cancellable)
+    }
+    
+    public func requestRoomList() {
+        roomUseCase.requestRoomList()
     }
     
     public func enterRoom(id: String, userName: String) {

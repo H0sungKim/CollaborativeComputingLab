@@ -15,7 +15,7 @@ extension Publisher {
             case .finished:
                 break
             case .failure(let error):
-                Logger.log(error.localizedDescription, level: .error, funcName: funcName)
+                Log.log(error.localizedDescription, level: .error, funcName: funcName)
             }
         }, receiveValue: receiveValue)
     }

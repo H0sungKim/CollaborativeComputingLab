@@ -75,7 +75,6 @@
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     </view>
                                                 </subviews>
-                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="bottom" secondItem="AKZ-Cc-g31" secondAttribute="bottom" id="48g-vA-jPl"/>
                                                     <constraint firstItem="AKZ-Cc-g31" firstAttribute="top" secondItem="7lQ-y8-wga" secondAttribute="top" id="Bao-dD-bdy"/>
@@ -83,15 +82,19 @@
                                                     <constraint firstAttribute="trailing" secondItem="AKZ-Cc-g31" secondAttribute="trailing" id="bUF-7k-ifL"/>
                                                 </constraints>
                                             </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="23l-eh-UK8" customClass="CanvasView" customModule="Presentation">
+                                                <rect key="frame" x="0.0" y="0.0" width="792" height="1210"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </view>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gYx-S7-apI">
                                                 <rect key="frame" x="726" y="16" width="50" height="34"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="plain" image="pencil.tip.crop.circle" catalog="system"/>
                                                 <connections>
-                                                    <action selector="onClickCanvas:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Ytx-oy-8bD"/>
+                                                    <action selector="onClickDraw:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Ytx-oy-8bD"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6r6-5w-0b3">
+                                            <button opaque="NO" contentMode="scaleToFill" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6r6-5w-0b3">
                                                 <rect key="frame" x="16" y="16" width="55.5" height="34"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="plain" image="camera.fill" catalog="system"/>
@@ -103,13 +106,19 @@
                                                 <rect key="frame" x="730" y="66" width="46" height="34"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="plain" image="xmark" catalog="system"/>
+                                                <connections>
+                                                    <action selector="onClickClear:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="fg9-Ij-ne8"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F46-NO-Y2a">
                                                 <rect key="frame" x="726.5" y="116" width="49.5" height="34"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="plain" image="arrow.uturn.backward" catalog="system"/>
+                                                <connections>
+                                                    <action selector="onClickUndo:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="njn-iR-b5L"/>
+                                                </connections>
                                             </button>
-                                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wyh-GX-Ith" customClass="CameraPreviewView" customModule="Presentation">
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wyh-GX-Ith" customClass="CameraPreviewView" customModule="Presentation">
                                                 <rect key="frame" x="16" y="1066" width="128" height="128"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="128" id="vG5-Gy-q9m"/>
@@ -122,11 +131,16 @@
                                                     <segment title="PDF"/>
                                                     <segment title="공유 화이트보드"/>
                                                 </segments>
+                                                <connections>
+                                                    <action selector="publishScreenChanged:" destination="Y6W-OH-hqX" eventType="valueChanged" id="4hj-2P-1Gw"/>
+                                                </connections>
                                             </segmentedControl>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="F46-NO-Y2a" secondAttribute="trailing" constant="16" id="3bE-6F-de5"/>
+                                            <constraint firstAttribute="trailing" secondItem="23l-eh-UK8" secondAttribute="trailing" id="6AU-rh-Kn1"/>
+                                            <constraint firstAttribute="bottom" secondItem="23l-eh-UK8" secondAttribute="bottom" id="8cy-DY-BuB"/>
                                             <constraint firstItem="wyh-GX-Ith" firstAttribute="leading" secondItem="DbS-y6-R0c" secondAttribute="leading" constant="16" id="FMM-t4-Lie"/>
                                             <constraint firstItem="7lQ-y8-wga" firstAttribute="top" secondItem="DbS-y6-R0c" secondAttribute="top" id="GWN-e0-fFT"/>
                                             <constraint firstAttribute="trailing" secondItem="7lQ-y8-wga" secondAttribute="trailing" id="H0B-3P-f2S"/>
@@ -135,8 +149,10 @@
                                             <constraint firstItem="gYx-S7-apI" firstAttribute="top" secondItem="DbS-y6-R0c" secondAttribute="top" constant="16" id="OBA-9U-BzW"/>
                                             <constraint firstItem="F46-NO-Y2a" firstAttribute="top" secondItem="1fn-Vl-Qjs" secondAttribute="bottom" constant="16" id="WC5-EF-xl4"/>
                                             <constraint firstItem="1fn-Vl-Qjs" firstAttribute="top" secondItem="gYx-S7-apI" secondAttribute="bottom" constant="16" id="YwU-8H-c02"/>
+                                            <constraint firstItem="23l-eh-UK8" firstAttribute="top" secondItem="DbS-y6-R0c" secondAttribute="top" id="gZL-WK-2us"/>
                                             <constraint firstAttribute="trailing" secondItem="gYx-S7-apI" secondAttribute="trailing" constant="16" id="hSV-Ed-cm4"/>
                                             <constraint firstAttribute="trailing" secondItem="1fn-Vl-Qjs" secondAttribute="trailing" constant="16" id="hYf-6e-spU"/>
+                                            <constraint firstItem="23l-eh-UK8" firstAttribute="leading" secondItem="DbS-y6-R0c" secondAttribute="leading" id="jxA-VD-gVe"/>
                                             <constraint firstAttribute="bottom" secondItem="wyh-GX-Ith" secondAttribute="bottom" constant="16" id="naX-yf-hdb"/>
                                             <constraint firstItem="6r6-5w-0b3" firstAttribute="leading" secondItem="DbS-y6-R0c" secondAttribute="leading" constant="16" id="o1g-5I-F8Z"/>
                                             <constraint firstItem="uD1-if-iaW" firstAttribute="centerX" secondItem="DbS-y6-R0c" secondAttribute="centerX" id="xm8-se-hKz"/>
@@ -284,12 +300,16 @@
                         <outlet property="chatButton" destination="aYO-la-c15" id="z4G-Wy-pfO"/>
                         <outlet property="chatTableView" destination="uBO-O2-csA" id="Jsh-Op-bdS"/>
                         <outlet property="chatTextField" destination="htA-P6-K08" id="3xz-ZB-h5W"/>
+                        <outlet property="clearButton" destination="1fn-Vl-Qjs" id="3sE-Oe-J5r"/>
+                        <outlet property="drawButton" destination="gYx-S7-apI" id="WOB-Ba-dOP"/>
                         <outlet property="participantTableView" destination="7VC-VE-gr5" id="8Mz-A7-ZIy"/>
-                        <outlet property="pdfDrawButton" destination="gYx-S7-apI" id="WOB-Ba-dOP"/>
                         <outlet property="pdfOpenButton" destination="e8N-Nc-6Ff" id="SIu-X0-Rwk"/>
                         <outlet property="pdfView" destination="AKZ-Cc-g31" id="rzC-Rz-JwM"/>
+                        <outlet property="publishView" destination="DbS-y6-R0c" id="NDt-yl-hpk"/>
                         <outlet property="streamView" destination="npM-F4-5wY" id="Qgo-r0-lS1"/>
                         <outlet property="titleLabel" destination="oUw-qf-wwy" id="YeM-2H-lbz"/>
+                        <outlet property="undoButton" destination="F46-NO-Y2a" id="SA9-Uj-L5r"/>
+                        <outlet property="whiteboardView" destination="23l-eh-UK8" id="dYa-GL-xyt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

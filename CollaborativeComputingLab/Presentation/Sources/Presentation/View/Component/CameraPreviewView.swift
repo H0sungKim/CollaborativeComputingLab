@@ -31,10 +31,10 @@ class CameraPreviewView: UIView {
             if session.canAddInput(input) {
                 session.addInput(input)
             } else {
-                Logger.log("Cannot add input.", level: .error)
+                Log.log("Cannot add input.", level: .error)
             }
         } catch {
-            Logger.log(error.localizedDescription, level: .error)
+            Log.log(error.localizedDescription, level: .error)
         }
         
         session.commitConfiguration()

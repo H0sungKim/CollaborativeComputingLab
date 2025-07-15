@@ -35,6 +35,10 @@ public final class DefaultRoomRepository: RoomRepository {
         self.roomService = roomService
     }
     
+    public func requestRoomList() {
+        roomService.requestRoomList()
+    }
+    
     public func enterRoom(roomEntranceEntity: RoomEntranceEntity) {
         roomService.enterRoom(roomEntranceDTO: RoomEntranceDTO(entity: roomEntranceEntity))
     }

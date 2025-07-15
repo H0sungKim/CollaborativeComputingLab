@@ -30,7 +30,7 @@ public final actor StreamService {
             }
             try await mixer.attachAudio(audio)
         } catch {
-            Logger.log(error.localizedDescription, level: .error)
+            Log.log(error.localizedDescription, level: .error)
         }
     }
     
@@ -40,7 +40,7 @@ public final actor StreamService {
             try await mixer.attachVideo(nil, track: 0)
             try await mixer.attachVideo(nil, track: 1)
         } catch {
-            Logger.log(error.localizedDescription, level: .error)
+            Log.log(error.localizedDescription, level: .error)
         }
     }
     
@@ -70,7 +70,7 @@ public final actor StreamService {
         do {
             try mixer.screen.addChild(videoScreenObject)
         } catch {
-            Logger.log(error.localizedDescription, level: .error)
+            Log.log(error.localizedDescription, level: .error)
         }
     }
     

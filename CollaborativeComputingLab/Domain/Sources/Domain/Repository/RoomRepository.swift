@@ -13,6 +13,7 @@ public protocol RoomRepository {
     var participantListStream: AnyPublisher<[ParticipantEntity], Never> { get }
     var roomClosedStream: AnyPublisher<Void, Never> { get }
     
+    func requestRoomList()
     func enterRoom(roomEntranceEntity: RoomEntranceEntity)
     func exitRoom(roomExitEntity: RoomExitEntity)
     func connectWebSocket()

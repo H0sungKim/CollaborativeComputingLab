@@ -24,7 +24,7 @@ actor JSONManager {
         do {
             return try encoder.encode(codable)
         } catch {
-            Logger.log(error.localizedDescription, level: .error)
+            Log.log(error.localizedDescription, level: .error)
         }
         return nil
     }
@@ -33,7 +33,7 @@ actor JSONManager {
         do {
             return try decoder.decode(T.self, from: data)
         } catch {
-            Logger.log(error.localizedDescription, level: .error)
+            Log.log(error.localizedDescription, level: .error)
         }
         return nil
     }
