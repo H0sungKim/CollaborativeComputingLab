@@ -88,7 +88,6 @@ public final class DefaultStreamViewModel: StreamViewModel {
                     Task { [weak self] in
                         guard let resizedSampleBuffer = await sampleBuffer.resize(to: view) else { return }
                         await self?.streamUseCase.appendBuffer(resizedSampleBuffer)
-//                        await self?.streamUseCase.appendBuffer(sampleBuffer)
                     }
                 case .audioApp:
                     break

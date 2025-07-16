@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  RoomRepository.swift
 //  Domain
 //
 //  Created by 김호성 on 2025.07.01.

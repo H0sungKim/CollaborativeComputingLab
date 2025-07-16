@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  RoomRepositoryImpl.swift
 //  Data
 //
 //  Created by 김호성 on 2025.07.01.
