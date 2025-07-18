@@ -30,11 +30,14 @@ final class Room {
         clients.append(client)
     }
     
-    func removeClient(_ client: WebSocketClient) {
+    @discardableResult
+    func removeClient(_ client: WebSocketClient) -> Bool {
         if client == instructor {
             instructor = nil
         }
+        let oldCount = clients.count
         clients.removeAll(where: { $0 == client })
+        return oldCount != clients.count
     }
     
     var roomEntity: RoomEntity {

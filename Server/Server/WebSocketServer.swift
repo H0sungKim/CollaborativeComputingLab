@@ -45,7 +45,17 @@ final class WebSocketServer {
     }
     
     private func didDisconnect(client: WebSocketClient) {
-        connectedClients.remove(client)
+        chatRooms.values.forEach({ room in
+            if room.removeClient(client) {
+                if !room.isAvailable {
+                    closeRoom(id: room.id)
+                    chatRooms.removeValue(forKey: room.id)
+                } else {
+                    broadcastParticipants(id: room.id)
+                }
+                broadcastAvailableRooms(to: connectedClients)
+            }
+        })
         Log.log("A client has disconnected. Total connected clients: \(connectedClients.count)")
     }
     
