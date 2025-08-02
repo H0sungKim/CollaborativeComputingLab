@@ -29,22 +29,22 @@ public final actor RTMPService {
     func publish(streamName: String) async {
         do {
             let connectionResponse = try await connection.connect(uri)
-            Log.log(connectionResponse)
+            Log.i(connectionResponse)
             let publishResponse = try await stream.publish(streamName)
-            Log.log(publishResponse)
+            Log.i(publishResponse)
         } catch {
-            Log.log(error.localizedDescription, level: .error)
+            Log.e(error.localizedDescription)
         }
     }
     
     func play(streamName: String) async {
         do {
             let connectionResponse = try await connection.connect(uri)
-            Log.log("\(connectionResponse)")
+            Log.i("\(connectionResponse)")
             let playResponse = try await stream.play(streamName)
-            Log.log("\(playResponse)")
+            Log.i("\(playResponse)")
         } catch {
-            Log.log(error.localizedDescription, level: .error)
+            Log.e(error.localizedDescription)
         }
     }
     
@@ -52,7 +52,7 @@ public final actor RTMPService {
         do {
             try await connection.close()
         } catch {
-            Log.log(error.localizedDescription, level: .error)
+            Log.e(error.localizedDescription)
         }
     }
     

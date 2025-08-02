@@ -26,7 +26,7 @@ public class HomeViewController: UIViewController {
     private func bind() {
         roomViewModel.availableRooms.sink(receiveValue: { [weak self] roomEnities in
             guard let self else { return }
-            Log.log("Available Rooms: \(roomEnities)")
+            Log.i("Available Rooms: \(roomEnities)")
             var snapshot = NSDiffableDataSourceSnapshot<RoomTableViewSection, RoomTableViewItem>()
             snapshot.appendSections([.availableRooms])
             snapshot.appendItems(roomEnities.map({ RoomTableViewItem.room($0) }), toSection: .availableRooms)
@@ -38,6 +38,7 @@ public class HomeViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        
         configureRoomTableView()
         bind()
     }
@@ -90,7 +91,7 @@ public class HomeViewController: UIViewController {
             self?.roomViewModel.enterRoom(id: id, userName: alert.textFields?.first?.text ?? "")
             guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
             let roomViewController = viewControllerFactory.createRoomViewController(id: id, role: .instructor, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
-            Log.log(self?.roomViewModel.participants.value)
+            Log.i(self?.roomViewModel.participants.value)
             self?.navigationController?.pushViewController(roomViewController, animated: true)
             self?.dismiss(animated: true, completion: nil)
         })
@@ -127,7 +128,7 @@ extension HomeViewController: UITableViewDelegate {
             self?.roomViewModel.enterRoom(id: roomEntity.id, userName: alert.textFields?.first?.text ?? "")
             guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
             let roomViewController = viewControllerFactory.createRoomViewController(id: roomEntity.id, role: .student, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
-            Log.log(self?.roomViewModel.participants.value)
+            Log.i(self?.roomViewModel.participants.value)
             self?.navigationController?.pushViewController(roomViewController, animated: true)
             self?.dismiss(animated: true, completion: nil)
         })

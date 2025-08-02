@@ -39,13 +39,13 @@ public final class DefaultRoomService: RoomService {
             guard let message = JSONManager.shared.decode(data: data, type: ServerMessage.self) else { return }
             switch message {
             case .availableRooms(let roomListDTO):
-                Log.log("WebSocket received availableRooms: \(roomListDTO)")
+                Log.i("WebSocket received availableRooms: \(roomListDTO)")
                 self?.roomListStream.send(roomListDTO)
             case .participantUpdated(let participantListDTO):
-                Log.log("WebSocket received participantUpdated: \(participantListDTO)")
+                Log.i("WebSocket received participantUpdated: \(participantListDTO)")
                 self?.participantListStream.send(participantListDTO)
             case .roomClosed:
-                Log.log("WebSocket received roomClosed.")
+                Log.i("WebSocket received roomClosed.")
                 self?.roomClosed.send(())
             default:
                 break
@@ -55,19 +55,19 @@ public final class DefaultRoomService: RoomService {
     }
     
     public func requestRoomList() {
-        Log.log("Sending requestRoomList message.")
+        Log.i("Sending requestRoomList message.")
         guard let messageData = JSONManager.shared.encode(codable: ClientMessage.requestRoomList) else { return }
         webSocket.send(data: messageData)
     }
     
     public func enterRoom(roomEntranceDTO: RoomEntranceDTO) {
-        Log.log("Sending enterRoom message: \(roomEntranceDTO)")
+        Log.i("Sending enterRoom message: \(roomEntranceDTO)")
         guard let messageData = JSONManager.shared.encode(codable: ClientMessage.enterRoom(roomEntranceDTO)) else { return }
         webSocket.send(data: messageData)
     }
     
     public func exitRoom(roomExitDTO: RoomExitDTO) {
-        Log.log("Sending exitRoom message: \(roomExitDTO)")
+        Log.i("Sending exitRoom message: \(roomExitDTO)")
         guard let messageData = JSONManager.shared.encode(codable: ClientMessage.leaveRoom (roomExitDTO)) else { return }
         webSocket.send(data: messageData)
     }

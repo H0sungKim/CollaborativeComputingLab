@@ -18,6 +18,12 @@ class CameraPreviewView: UIView {
         return AVCaptureVideoPreviewLayer.self
     }
     
+    override var isHidden: Bool {
+        didSet {
+            isHidden ? stop() : start()
+        }
+    }
+    
     var previewLayer: AVCaptureVideoPreviewLayer {
         return layer as! AVCaptureVideoPreviewLayer
     }
@@ -31,10 +37,10 @@ class CameraPreviewView: UIView {
             if session.canAddInput(input) {
                 session.addInput(input)
             } else {
-                Log.log("Cannot add input.", level: .error)
+                Log.e("Cannot add input.")
             }
         } catch {
-            Log.log(error.localizedDescription, level: .error)
+            Log.e(error.localizedDescription)
         }
         
         session.commitConfiguration()

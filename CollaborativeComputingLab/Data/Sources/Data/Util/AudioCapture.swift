@@ -41,7 +41,7 @@ extension AudioCapture: Runner {
             try audioEngine.start()
             isRunning = true
         } catch {
-            Log.log(error.localizedDescription, level: .error)
+            Log.e(error.localizedDescription)
         }
     }
 

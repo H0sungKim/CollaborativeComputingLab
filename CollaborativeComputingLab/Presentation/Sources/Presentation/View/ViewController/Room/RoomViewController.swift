@@ -276,7 +276,7 @@ public class RoomViewController: UIViewController {
         if let publishScreenType = PublishScreenType(rawValue: sender.selectedSegmentIndex) {
             self.publishScreenType = publishScreenType
         }
-        Log.log(sender.selectedSegmentIndex)
+        Log.i(sender.selectedSegmentIndex)
     }
     
     @IBAction func onClickClear(_ sender: Any) {

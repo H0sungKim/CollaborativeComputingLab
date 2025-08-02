@@ -39,7 +39,7 @@ public final class WebSocket: NSObject, @unchecked Sendable {
     private func ping() {
         socket?.sendPing(pongReceiveHandler: { error in
             if let error {
-                Log.log(error.localizedDescription, level: .error)
+                Log.e(error.localizedDescription)
             }
         })
     }
@@ -48,7 +48,7 @@ public final class WebSocket: NSObject, @unchecked Sendable {
         if isConnected.value {
             return
         }
-        Log.log("WebSocket Connected.")
+        Log.i("WebSocket Connected.")
         let socket = urlSession.webSocketTask(with: url)
         socket.resume()
         self.socket = socket
@@ -66,7 +66,7 @@ public final class WebSocket: NSObject, @unchecked Sendable {
             
             switch result {
             case .success(.data(let data)):
-                Log.log("WebSocket Receive Data: \(String(data: data, encoding: .utf8) ?? "")")
+                Log.i("WebSocket Receive Data: \(String(data: data, encoding: .utf8) ?? "")")
                 dataStream.send(data)
             case .success(.string(let string)):
                 dataStream.send(completion: .failure(.nonDataMessage(message: string)))
@@ -81,7 +81,7 @@ public final class WebSocket: NSObject, @unchecked Sendable {
     }
     
     private func disconnect() {
-        Log.log("WebSocket Disconnected.")
+        Log.i("WebSocket Disconnected.")
         socket?.cancel()
         socket = nil
         timer?.invalidate()
@@ -95,7 +95,7 @@ extension WebSocket: URLSessionWebSocketDelegate, URLSessionDelegate  {
     }
     
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        Log.log(closeCode)
+        Log.i(closeCode)
         disconnect()
     }
 }

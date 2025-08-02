@@ -34,7 +34,7 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
             guard let message = JSONManager.shared.decode(data: data, type: ServerMessage.self) else { return }
             switch message {
             case .newChat(let chatDTO):
-                Log.log("WebSocket received new chat: \(chatDTO)")
+                Log.i("WebSocket received new chat: \(chatDTO)")
                 self?.chatStream.send(chatDTO)
             default:
                 break
@@ -44,7 +44,7 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
     }
     
     public func send(messageDTO: MessageDTO) {
-        Log.log("Sending chat message: \(messageDTO)")
+        Log.i("Sending chat message: \(messageDTO)")
         guard let messageData = JSONManager.shared.encode(codable: ClientMessage.sendChat(messageDTO)) else { return }
         webSocket.send(data: messageData)
     }

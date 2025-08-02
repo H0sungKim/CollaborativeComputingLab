@@ -80,7 +80,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
         DispatchQueue.global().async {
             RPScreenRecorder.shared().startCapture(handler: { sampleBuffer, sampleBufferType, error in
                 if let error {
-                    Log.log(error.localizedDescription, level: .error)
+                    Log.e(error.localizedDescription)
                     return
                 }
                 switch sampleBufferType {
@@ -98,7 +98,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
                 }
             }, completionHandler: { error in
                 guard let error else { return }
-                Log.log(error.localizedDescription, level: .error)
+                Log.e(error.localizedDescription)
             })
         }
     }
@@ -107,7 +107,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
         DispatchQueue.global().async {
             RPScreenRecorder.shared().stopCapture(handler: { error in
                 guard let error else { return }
-                Log.log(error.localizedDescription, level: .error)
+                Log.e(error.localizedDescription)
             })
         }
     }
@@ -156,7 +156,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
                 try session.setPreferredInput(nil)
             }
         } catch {
-            Log.log(error.localizedDescription, level: .error)
+            Log.e(error.localizedDescription)
         }
     }
 }
