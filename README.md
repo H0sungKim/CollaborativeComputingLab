@@ -1,1 +1,5 @@
 # CollaborativeComputingLab
+| Date | Report |
+|---|---|
+| 2025.05.29 |[A_Prototype_of_a_Synchronous_Mobile_Distance_Learning_System_Using_RTMP_and_STOMP.pdf](/Docs/20250529_A_Prototype_of_a_Synchronous_Mobile_Distance_Learning_System_Using_RTMP_and_STOMP/A_Prototype_of_a_Synchronous_Mobile_Distance_Learning_System_Using_RTMP_and_STOMP.pdf)|
+| 2025.07.16 |[An_Extended_Prototype_of_a_Synchronous_Mobile_Distance_Learning_System_with_Multi-Room_Support_and_a_Whiteboard.pdf](/Docs/20250716_An_Extended_Prototype_of_a_Synchronous_Mobile_Distance_Learning_System_with_Multi-Room_Support_and_a_Whiteboard/An_Extended_Prototype_of_a_Synchronous_Mobile_Distance_Learning_System_with_Multi-Room_Support_and_a_Whiteboard.pdf)|
