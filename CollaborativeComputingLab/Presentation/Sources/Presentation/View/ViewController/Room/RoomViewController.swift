@@ -26,6 +26,9 @@ public class RoomViewController: UIViewController {
     @IBOutlet weak var pdfOpenButton: UIButton!
     @IBOutlet weak var pdfView: PDFView!
     
+    @IBOutlet weak var participantButton: UIButton!
+    @IBOutlet weak var chatButton: UIButton!
+    
     @IBOutlet weak var drawButton: UIButton!
     @IBOutlet weak var clearButton: UIButton!
     @IBOutlet weak var undoButton: UIButton!
@@ -34,11 +37,14 @@ public class RoomViewController: UIViewController {
     
     @IBOutlet weak var chatTableView: UITableView!
     @IBOutlet weak var chatTextField: UITextField!
-    @IBOutlet weak var chatButton: UIButton!
+    @IBOutlet weak var chatSendButton: UIButton!
     
     @IBOutlet weak var streamView: MTHKView!
     @IBOutlet weak var whiteboardView: CanvasView!
     @IBOutlet weak var cameraPreviewView: CameraPreviewView!
+    
+    @IBOutlet weak var participantView: UIView!
+    @IBOutlet weak var chatView: UIView!
     
     // MARK: - PublishScreen
     private enum PublishScreenType: Int {
@@ -159,13 +165,17 @@ public class RoomViewController: UIViewController {
         
         titleLabel.text = "\(roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
         
+        participantButton.setImage(UIImage(systemName: "person.2.fill"), for: .selected)
+        participantButton.setImage(UIImage(systemName: "person.2"), for: .normal)
+        
+        chatButton.setImage(UIImage(systemName: "ellipses.bubble.fill"), for: .selected)
+        chatButton.setImage(UIImage(systemName: "ellipses.bubble"), for: .normal)
+        
         drawButton.setImage(UIImage(systemName: "pencil.tip.crop.circle.fill"), for: .selected)
         drawButton.setImage(UIImage(systemName: "pencil.tip.crop.circle"), for: .normal)
         
         cameraButton.setImage(UIImage(systemName: "camera.fill"), for: .selected)
         cameraButton.setImage(UIImage(systemName: "camera"), for: .normal)
-        
-        // ellipsis.bubble person.3
         
         switch role {
         case .instructor:
@@ -252,6 +262,20 @@ public class RoomViewController: UIViewController {
     }
     
     // MARK: - IBAction
+    @IBAction func onClickParticipant(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        UIView.animate(withDuration: 0.2, animations: { [weak self] in
+            self?.participantView.isHidden = !sender.isSelected
+        })
+    }
+    
+    @IBAction func onClickChat(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        UIView.animate(withDuration: 0.2, animations: { [weak self] in
+            self?.chatView.isHidden = !sender.isSelected
+        })
+    }
+    
     @IBAction func onClickCamera(_ sender: UIButton) {
         sender.isSelected.toggle()
         cameraPreviewView.isHidden.toggle()
@@ -263,7 +287,7 @@ public class RoomViewController: UIViewController {
         present(documentPicker, animated: true)
     }
     
-    @IBAction func onClickChatSend(_ sender: Any) {
+    @IBAction func onClickSendChat(_ sender: Any) {
         chatViewModel.sendChat(message: chatTextField.text ?? "")
         chatTextField.text = ""
     }
