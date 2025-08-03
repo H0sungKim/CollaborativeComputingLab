@@ -12,7 +12,7 @@ import UIKit
 class ParticipantTableViewCell: UITableViewCell {
 
     @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var iconImageView: UIImageView!
+    @IBOutlet weak var descriptionLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -25,7 +25,8 @@ class ParticipantTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func configure(participantEntity: ParticipantEntity) {
-        nameLabel.text = participantEntity.name
+    func configure(name: String, description: String) {
+        nameLabel.text = name
+        descriptionLabel.text = description
     }
 }

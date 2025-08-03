@@ -31,9 +31,9 @@ class DefaultDIProvider: DIProvider {
         return viewController
     }
     
-    func createRoomViewController(id: String, role: RoomRole, roomViewModel: RoomViewModel? = nil, chatViewModel: ChatViewModel? = nil, streamViewModel: StreamViewModel? = nil) -> RoomViewController {
+    func createRoomViewController(id: String, userName: String, role: RoomRole, roomViewModel: RoomViewModel? = nil, chatViewModel: ChatViewModel? = nil, streamViewModel: StreamViewModel? = nil) -> RoomViewController {
         let viewController: RoomViewController = RoomViewController.create()
-        viewController.inject(id: id, role: role, roomViewModel: roomViewModel ?? makeRoomViewModel(), chatViewModel: chatViewModel ?? makeChatViewModel(), streamViewModel: streamViewModel ?? makeStreamViewModel())
+        viewController.inject(id: id, userName: userName, role: role, roomViewModel: roomViewModel ?? makeRoomViewModel(), chatViewModel: chatViewModel ?? makeChatViewModel(), streamViewModel: streamViewModel ?? makeStreamViewModel())
         return viewController
     }
     

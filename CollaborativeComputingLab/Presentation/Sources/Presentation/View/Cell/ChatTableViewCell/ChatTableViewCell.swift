@@ -12,6 +12,7 @@ import UIKit
 class ChatTableViewCell: UITableViewCell {
 
     @IBOutlet weak var senderLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var messageLabel: UILabel!
     
     override func awakeFromNib() {
@@ -26,8 +27,9 @@ class ChatTableViewCell: UITableViewCell {
         
     }
     
-    func configure(chatEntity: ChatEntity) {
-        senderLabel.text = chatEntity.name
-        messageLabel.text = chatEntity.message
+    func configure(sender: String, description: String, message: String) {
+        senderLabel.text = sender
+        descriptionLabel.text = description
+        messageLabel.text = message
     }
 }

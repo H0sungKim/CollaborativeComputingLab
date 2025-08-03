@@ -76,6 +76,8 @@ public class RoomViewController: UIViewController {
         }
     }
     
+    private var instructor: String = ""
+    
     // MARK: - ChatTableView
     private var chatTableViewDelegate: TableViewDelegate?
     private var chatTableViewDataSource: UITableViewDiffableDataSource<ChatTableViewSection, ChatTableViewItem>?
@@ -89,6 +91,7 @@ public class RoomViewController: UIViewController {
     
     // MARK: - Dependency
     private var id: String!
+    private var userName: String!
     private var role: RoomRole!
     private var roomViewModel: RoomViewModel!
     private var chatViewModel: ChatViewModel!
@@ -100,12 +103,14 @@ public class RoomViewController: UIViewController {
     // MARK: - Inject
     public func inject(
         id: String,
+        userName: String,
         role: RoomRole,
         roomViewModel: RoomViewModel,
         chatViewModel: ChatViewModel,
         streamViewModel: StreamViewModel
     ) {
         self.id = id
+        self.userName = userName
         self.role = role
         self.roomViewModel = roomViewModel
         self.chatViewModel = chatViewModel
@@ -123,12 +128,14 @@ public class RoomViewController: UIViewController {
         .store(in: &cancellable)
         
         roomViewModel.participants.sink(receiveValue: { [weak self] participants in
-            self?.titleLabel.text = "\(self?.roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
+            guard let self else { return }
+            instructor = roomViewModel.participants.value.first?.name ?? ""
+            titleLabel.text = "\(instructor) 님의 강의실"
             
             var snapshot = NSDiffableDataSourceSnapshot<ParticipateTableViewSection, ParticipateTableViewItem>()
             snapshot.appendSections([.participant])
             snapshot.appendItems(participants.map({ ParticipateTableViewItem.participant($0) }), toSection: .participant)
-            self?.participantTableViewDataSource?.apply(snapshot, animatingDifferences: true)
+            participantTableViewDataSource?.apply(snapshot, animatingDifferences: true)
         })
         .store(in: &cancellable)
         
@@ -146,6 +153,10 @@ public class RoomViewController: UIViewController {
         configureChatTableView()
         configureParticipantTableView()
         
+        pdfView.isScrollEnabled = true
+        canvasProvider.setUserInteractionEnabled(false)
+        whiteboardView.isUserInteractionEnabled = false
+        
         titleLabel.text = "\(roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
         
         drawButton.setImage(UIImage(systemName: "pencil.tip.crop.circle.fill"), for: .selected)
@@ -153,6 +164,8 @@ public class RoomViewController: UIViewController {
         
         cameraButton.setImage(UIImage(systemName: "camera.fill"), for: .selected)
         cameraButton.setImage(UIImage(systemName: "camera"), for: .normal)
+        
+        // ellipsis.bubble person.3
         
         switch role {
         case .instructor:
@@ -314,11 +327,18 @@ extension RoomViewController {
         chatTableView.register(UINib(nibName: String(describing: ChatTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: ChatTableViewCell.self))
         
         chatTableViewDelegate = TableViewDelegate()
-        chatTableViewDataSource = UITableViewDiffableDataSource<ChatTableViewSection, ChatTableViewItem>(tableView: chatTableView, cellProvider: { tableView, indexPath, itemIdentifier in
+        chatTableViewDataSource = UITableViewDiffableDataSource<ChatTableViewSection, ChatTableViewItem>(tableView: chatTableView, cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
             switch itemIdentifier {
             case .chat(let chatEntity):
                 let cell: ChatTableViewCell = ChatTableViewCell.create(tableView: tableView, indexPath: indexPath)
-                cell.configure(chatEntity: chatEntity)
+                var description = ""
+                if chatEntity.name == self?.instructor {
+                    description = "강사"
+                }
+                if chatEntity.name == self?.userName {
+                    description = "나"
+                }
+                cell.configure(sender: chatEntity.name, description: description, message: chatEntity.message)
                 return cell
             }
         })
@@ -348,11 +368,18 @@ extension RoomViewController {
         participantTableView.register(UINib(nibName: String(describing: ParticipantTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: ParticipantTableViewCell.self))
         
         participantTableViewDelegate = TableViewDelegate()
-        participantTableViewDataSource = UITableViewDiffableDataSource<ParticipateTableViewSection, ParticipateTableViewItem>(tableView: participantTableView, cellProvider: { tableView, indexPath, itemIdentifier in
+        participantTableViewDataSource = UITableViewDiffableDataSource<ParticipateTableViewSection, ParticipateTableViewItem>(tableView: participantTableView, cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
             switch itemIdentifier {
             case .participant(let participantEntity):
                 let cell: ParticipantTableViewCell = ParticipantTableViewCell.create(tableView: tableView, indexPath: indexPath)
-                cell.configure(participantEntity: participantEntity)
+                var description = ""
+                if participantEntity.name == self?.instructor {
+                    description = "강사"
+                }
+                if participantEntity.name == self?.userName {
+                    description = "나"
+                }
+                cell.configure(name: participantEntity.name, description: description)
                 return cell
             }
         })

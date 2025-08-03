@@ -88,9 +88,10 @@ public class HomeViewController: UIViewController {
         })
         let actionCreate: UIAlertAction = UIAlertAction(title: "생성", style: .default, handler: { [weak self] _ in
             let id: String = UUID().uuidString
-            self?.roomViewModel.enterRoom(id: id, userName: alert.textFields?.first?.text ?? "")
+            let userName: String = alert.textFields?.first?.text ?? ""
+            self?.roomViewModel.enterRoom(id: id, userName: userName)
             guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
-            let roomViewController = viewControllerFactory.createRoomViewController(id: id, role: .instructor, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
+            let roomViewController = viewControllerFactory.createRoomViewController(id: id, userName: userName, role: .instructor, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
             Log.i(self?.roomViewModel.participants.value)
             self?.navigationController?.pushViewController(roomViewController, animated: true)
             self?.dismiss(animated: true, completion: nil)
@@ -125,9 +126,10 @@ extension HomeViewController: UITableViewDelegate {
             self?.dismiss(animated: true, completion: nil)
         })
         let actionEnter: UIAlertAction = UIAlertAction(title: "입장", style: .default, handler: { [weak self] _ in
-            self?.roomViewModel.enterRoom(id: roomEntity.id, userName: alert.textFields?.first?.text ?? "")
+            let userName = alert.textFields?.first?.text ?? ""
+            self?.roomViewModel.enterRoom(id: roomEntity.id, userName: userName)
             guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
-            let roomViewController = viewControllerFactory.createRoomViewController(id: roomEntity.id, role: .student, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
+            let roomViewController = viewControllerFactory.createRoomViewController(id: roomEntity.id, userName: userName, role: .student, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
             Log.i(self?.roomViewModel.participants.value)
             self?.navigationController?.pushViewController(roomViewController, animated: true)
             self?.dismiss(animated: true, completion: nil)
