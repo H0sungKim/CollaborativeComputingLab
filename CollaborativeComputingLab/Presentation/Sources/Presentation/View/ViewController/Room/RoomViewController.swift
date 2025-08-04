@@ -43,46 +43,14 @@ public class RoomViewController: UIViewController {
     @IBOutlet weak var whiteboardView: CanvasView!
     @IBOutlet weak var cameraPreviewView: CameraPreviewView!
     
+    @IBOutlet weak var grabberSlider: UISlider!
+    
     @IBOutlet weak var participantView: UIView!
     @IBOutlet weak var chatView: UIView!
     
-    // MARK: - PublishScreen
-    private enum PublishScreenType: Int {
-        case pdf = 0
-        case whiteboard
-        case none
-    }
-    
-    private var publishScreenType: PublishScreenType = .none {
-        didSet {
-            drawButton.isSelected = false
-            switch publishScreenType {
-            case .pdf:
-                drawButton.isHidden = false
-                clearButton.isHidden = true
-                undoButton.isHidden = true
-                
-                pdfView.isHidden = false
-                whiteboardView.isHidden = true
-                
-                pdfView.isScrollEnabled = !drawButton.isSelected
-                canvasProvider.setUserInteractionEnabled(drawButton.isSelected)
-            case .whiteboard:
-                drawButton.isHidden = false
-                clearButton.isHidden = false
-                undoButton.isHidden = false
-                
-                pdfView.isHidden = true
-                whiteboardView.isHidden = false
-                
-                whiteboardView.isUserInteractionEnabled = drawButton.isSelected
-            case .none:
-                break
-            }
-        }
-    }
-    
     private var instructor: String = ""
+    
+    @IBOutlet weak var pdfWhiteboardRatio: NSLayoutConstraint!
     
     // MARK: - ChatTableView
     private var chatTableViewDelegate: TableViewDelegate?
@@ -159,9 +127,13 @@ public class RoomViewController: UIViewController {
         configureChatTableView()
         configureParticipantTableView()
         
-        pdfView.isScrollEnabled = true
-        canvasProvider.setUserInteractionEnabled(false)
-        whiteboardView.isUserInteractionEnabled = false
+        cameraPreviewView.previewLayer.cornerRadius = 8
+        
+        grabberSlider.setThumbImage(UIImage(systemName: "poweron", withConfiguration: UIImage.SymbolConfiguration(pointSize: 64))?.withTintColor(.clear, renderingMode: .alwaysOriginal), for: .normal)
+        grabberSlider.setThumbImage(UIImage(systemName: "poweron", withConfiguration: UIImage.SymbolConfiguration(pointSize: 64))?.withTintColor(.clear, renderingMode: .alwaysOriginal), for: .highlighted)
+        
+        pdfView.layer.cornerRadius = 8
+        whiteboardView.layer.cornerRadius = 8
         
         titleLabel.text = "\(roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
         
@@ -179,7 +151,6 @@ public class RoomViewController: UIViewController {
         
         switch role {
         case .instructor:
-            publishScreenType = .pdf
             configurePDFView()
             cameraPreviewView.configure()
             if #available(iOS 17, *) {
@@ -190,9 +161,7 @@ public class RoomViewController: UIViewController {
                 await streamViewModel.configure(roomRole: role, outputView: nil)
             }
         case .student:
-            pdfOpenButton.isHidden = true
             publishView.isHidden = true
-            publishScreenType = .none
             Task {
                 await streamViewModel.configure(roomRole: role, outputView: streamView)
             }
@@ -294,26 +263,12 @@ public class RoomViewController: UIViewController {
     
     @IBAction func onClickDraw(_ sender: UIButton) {
         sender.isSelected.toggle()
-        switch publishScreenType {
-        case .pdf:
-            pdfView.isScrollEnabled = !sender.isSelected
-            canvasProvider.setUserInteractionEnabled(sender.isSelected)
-        case .whiteboard:
-            whiteboardView.isUserInteractionEnabled = sender.isSelected
-        case .none:
-            break
-        }
+        pdfView.isScrollEnabled = !sender.isSelected
+        canvasProvider.setUserInteractionEnabled(sender.isSelected)
     }
     
     @IBAction func onClickBack(_ sender: Any) {
         navigationController?.popViewController(animated: true)
-    }
-    
-    @IBAction func publishScreenChanged(_ sender: UISegmentedControl) {
-        if let publishScreenType = PublishScreenType(rawValue: sender.selectedSegmentIndex) {
-            self.publishScreenType = publishScreenType
-        }
-        Log.i(sender.selectedSegmentIndex)
     }
     
     @IBAction func onClickClear(_ sender: Any) {
@@ -322,6 +277,17 @@ public class RoomViewController: UIViewController {
     
     @IBAction func onClickUndo(_ sender: Any) {
         whiteboardView.undo()
+    }
+    
+    @IBAction func grabberMoved(_ sender: UISlider) {
+        Log.i(sender.value)
+        
+        let value = min(0.9, max(0.1, sender.value))
+        sender.value = value
+        
+        pdfWhiteboardRatio = pdfWhiteboardRatio.setMultiplier(multiplier: CGFloat(value / (1 - value)))
+        
+        whiteboardView.setNeedsDisplay()
     }
     
     // MARK: - RoomClosed

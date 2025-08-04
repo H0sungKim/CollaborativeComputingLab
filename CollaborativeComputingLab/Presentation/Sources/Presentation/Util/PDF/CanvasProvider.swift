@@ -17,7 +17,7 @@ class CanvasProvider: NSObject, @preconcurrency PDFPageOverlayViewProvider {
         guard let canvasView = canvasViewForPage[page] else {
             let canvasView = CanvasView()
             canvasView.backgroundColor = .clear
-            canvasView.isUserInteractionEnabled = true
+            canvasView.isUserInteractionEnabled = false
             canvasViewForPage[page] = canvasView
             return canvasView
         }
