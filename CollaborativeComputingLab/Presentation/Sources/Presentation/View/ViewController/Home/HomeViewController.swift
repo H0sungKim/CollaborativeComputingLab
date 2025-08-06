@@ -50,6 +50,7 @@ public class HomeViewController: UIViewController {
     public override func viewWillDisappear(_ animated: Bool) {
         
     }
+    
     private func configureRoomTableView() {
         roomTableView.register(UINib(nibName: String(describing: RoomTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: RoomTableViewCell.self))
         roomTableView.refreshControl = UIRefreshControl()

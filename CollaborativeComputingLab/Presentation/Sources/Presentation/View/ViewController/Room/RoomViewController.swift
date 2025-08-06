@@ -48,9 +48,10 @@ public class RoomViewController: UIViewController {
     @IBOutlet weak var participantView: UIView!
     @IBOutlet weak var chatView: UIView!
     
-    private var instructor: String = ""
-    
     @IBOutlet weak var pdfWhiteboardRatio: NSLayoutConstraint!
+    
+    // MARK: - Variable
+    private var instructor: String = ""
     
     // MARK: - ChatTableView
     private var chatTableViewDelegate: TableViewDelegate?
@@ -122,37 +123,14 @@ public class RoomViewController: UIViewController {
     // MARK: - Basic
     public override func viewDidLoad() {
         super.viewDidLoad()
+        
         bind()
-        
-        configureChatTableView()
-        configureParticipantTableView()
-        
-        cameraPreviewView.previewLayer.cornerRadius = 8
-        
-        grabberSlider.setThumbImage(UIImage(systemName: "poweron", withConfiguration: UIImage.SymbolConfiguration(pointSize: 64))?.withTintColor(.clear, renderingMode: .alwaysOriginal), for: .normal)
-        grabberSlider.setThumbImage(UIImage(systemName: "poweron", withConfiguration: UIImage.SymbolConfiguration(pointSize: 64))?.withTintColor(.clear, renderingMode: .alwaysOriginal), for: .highlighted)
-        
-        pdfView.layer.cornerRadius = 8
-        whiteboardView.layer.cornerRadius = 8
-        
-        titleLabel.text = "\(roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
-        
-        participantButton.setImage(UIImage(systemName: "person.2.fill"), for: .selected)
-        participantButton.setImage(UIImage(systemName: "person.2"), for: .normal)
-        
-        chatButton.setImage(UIImage(systemName: "ellipses.bubble.fill"), for: .selected)
-        chatButton.setImage(UIImage(systemName: "ellipses.bubble"), for: .normal)
-        
-        drawButton.setImage(UIImage(systemName: "pencil.tip.crop.circle.fill"), for: .selected)
-        drawButton.setImage(UIImage(systemName: "pencil.tip.crop.circle"), for: .normal)
-        
-        cameraButton.setImage(UIImage(systemName: "camera.fill"), for: .selected)
-        cameraButton.setImage(UIImage(systemName: "camera"), for: .normal)
+        configureView()
         
         switch role {
         case .instructor:
-            configurePDFView()
-            cameraPreviewView.configure()
+            configurePublishView()
+            
             if #available(iOS 17, *) {
                 cameraPreviewView.rotate(orientation: UIDevice.current.orientation)
             }
@@ -172,6 +150,7 @@ public class RoomViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         chatViewModel.connectWebSocket()
         roomViewModel.connectWebSocket()
         
@@ -212,6 +191,7 @@ public class RoomViewController: UIViewController {
     
     public override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        
         Task {
             await streamViewModel.setScreenSize()
         }
@@ -221,18 +201,51 @@ public class RoomViewController: UIViewController {
         }
     }
     
-    // MARK: - PDFView
+    // MARK: - Configure
+    private func configureView() {
+        configureChatTableView()
+        configureParticipantTableView()
+        
+        titleLabel.text = "\(roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
+        
+        participantButton.setImage(UIImage(systemName: "person.2.fill"), for: .selected)
+        participantButton.setImage(UIImage(systemName: "person.2"), for: .normal)
+        
+        chatButton.setImage(UIImage(systemName: "ellipses.bubble.fill"), for: .selected)
+        chatButton.setImage(UIImage(systemName: "ellipses.bubble"), for: .normal)
+    }
+    
+    private func configurePublishView() {
+        configurePDFView()
+        cameraPreviewView.configure()
+        
+        cameraPreviewView.previewLayer.cornerRadius = 8
+        
+        whiteboardView.layer.cornerRadius = 8
+        
+        grabberSlider.setThumbImage(UIImage(systemName: "poweron", withConfiguration: UIImage.SymbolConfiguration(pointSize: 64))?.withTintColor(.clear, renderingMode: .alwaysOriginal), for: .normal)
+        grabberSlider.setThumbImage(UIImage(systemName: "poweron", withConfiguration: UIImage.SymbolConfiguration(pointSize: 64))?.withTintColor(.clear, renderingMode: .alwaysOriginal), for: .highlighted)
+        
+        drawButton.setImage(UIImage(systemName: "pencil.tip.crop.circle.fill"), for: .selected)
+        drawButton.setImage(UIImage(systemName: "pencil.tip.crop.circle"), for: .normal)
+        
+        cameraButton.setImage(UIImage(systemName: "camera.fill"), for: .selected)
+        cameraButton.setImage(UIImage(systemName: "camera"), for: .normal)
+    }
+    
     private func configurePDFView() {
         pdfView.displayMode = .singlePageContinuous
         pdfView.pageOverlayViewProvider = canvasProvider
         pdfView.isInMarkupMode = true
         pdfView.isScrollEnabled = true
+        pdfView.layer.cornerRadius = 8
         canvasProvider.setUserInteractionEnabled(false)
     }
     
     // MARK: - IBAction
     @IBAction func onClickParticipant(_ sender: UIButton) {
         sender.isSelected.toggle()
+        whiteboardView.setNeedsDisplay()
         UIView.animate(withDuration: 0.2, animations: { [weak self] in
             self?.participantView.isHidden = !sender.isSelected
         })
@@ -240,6 +253,7 @@ public class RoomViewController: UIViewController {
     
     @IBAction func onClickChat(_ sender: UIButton) {
         sender.isSelected.toggle()
+        whiteboardView.setNeedsDisplay()
         UIView.animate(withDuration: 0.2, animations: { [weak self] in
             self?.chatView.isHidden = !sender.isSelected
         })
@@ -280,13 +294,9 @@ public class RoomViewController: UIViewController {
     }
     
     @IBAction func grabberMoved(_ sender: UISlider) {
-        Log.i(sender.value)
-        
         let value = min(0.9, max(0.1, sender.value))
         sender.value = value
-        
         pdfWhiteboardRatio = pdfWhiteboardRatio.setMultiplier(multiplier: CGFloat(value / (1 - value)))
-        
         whiteboardView.setNeedsDisplay()
     }
     
