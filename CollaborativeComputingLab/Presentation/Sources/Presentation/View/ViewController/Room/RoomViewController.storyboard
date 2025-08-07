@@ -122,7 +122,7 @@
                                                         </constraints>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="eMV-aN-qWq">
-                                                        <rect key="frame" x="16" y="16" width="55.5" height="134"/>
+                                                        <rect key="frame" x="16" y="16" width="55.5" height="184"/>
                                                         <subviews>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e8N-Nc-6Ff">
                                                                 <rect key="frame" x="0.0" y="0.0" width="55.5" height="34"/>
@@ -146,6 +146,14 @@
                                                                 <buttonConfiguration key="configuration" style="plain" image="pencil.tip.crop.circle" catalog="system"/>
                                                                 <connections>
                                                                     <action selector="onClickDraw:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Ytx-oy-8bD"/>
+                                                                </connections>
+                                                            </button>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LrC-UD-1h7">
+                                                                <rect key="frame" x="0.0" y="150" width="55.5" height="34"/>
+                                                                <state key="normal" title="Button"/>
+                                                                <buttonConfiguration key="configuration" style="plain" image="eraser" catalog="system"/>
+                                                                <connections>
+                                                                    <action selector="onClickErase:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="I4k-qX-WKq"/>
                                                                 </connections>
                                                             </button>
                                                         </subviews>
@@ -329,6 +337,7 @@
                         <outlet property="chatView" destination="a3e-ia-EfK" id="C6N-gX-hbX"/>
                         <outlet property="clearButton" destination="1fn-Vl-Qjs" id="3sE-Oe-J5r"/>
                         <outlet property="drawButton" destination="gYx-S7-apI" id="WOB-Ba-dOP"/>
+                        <outlet property="eraseButton" destination="LrC-UD-1h7" id="seq-Ay-592"/>
                         <outlet property="grabberSlider" destination="G36-vA-j5h" id="UcG-6u-9Pm"/>
                         <outlet property="participantButton" destination="610-zF-VTB" id="LLj-8V-ese"/>
                         <outlet property="participantTableView" destination="7VC-VE-gr5" id="8Mz-A7-ZIy"/>
@@ -353,6 +362,7 @@
         <image name="camera.fill" catalog="system" width="128" height="93"/>
         <image name="chevron.backward" catalog="system" width="97" height="128"/>
         <image name="ellipses.bubble.fill" catalog="system" width="128" height="110"/>
+        <image name="eraser" catalog="system" width="128" height="119"/>
         <image name="paperplane" catalog="system" width="128" height="119"/>
         <image name="pencil.tip.crop.circle" catalog="system" width="128" height="123"/>
         <image name="person.2.fill" catalog="system" width="128" height="86"/>

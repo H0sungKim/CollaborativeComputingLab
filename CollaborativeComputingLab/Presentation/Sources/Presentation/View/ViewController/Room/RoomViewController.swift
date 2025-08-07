@@ -30,6 +30,7 @@ public class RoomViewController: UIViewController {
     @IBOutlet weak var chatButton: UIButton!
     
     @IBOutlet weak var drawButton: UIButton!
+    @IBOutlet weak var eraseButton: UIButton!
     @IBOutlet weak var clearButton: UIButton!
     @IBOutlet weak var undoButton: UIButton!
     
@@ -131,9 +132,7 @@ public class RoomViewController: UIViewController {
         case .instructor:
             configurePublishView()
             
-            if #available(iOS 17, *) {
-                cameraPreviewView.rotate(orientation: UIDevice.current.orientation)
-            }
+            cameraPreviewView.rotate(orientation: UIDevice.current.orientation)
             cameraButton.isSelected = true
             Task {
                 await streamViewModel.configure(roomRole: role, outputView: nil)
@@ -196,9 +195,7 @@ public class RoomViewController: UIViewController {
             await streamViewModel.setScreenSize()
         }
         
-        if #available(iOS 17, *) {
-            cameraPreviewView.rotate(orientation: UIDevice.current.orientation)
-        }
+        cameraPreviewView.rotate(orientation: UIDevice.current.orientation)
     }
     
     // MARK: - Configure
@@ -228,6 +225,9 @@ public class RoomViewController: UIViewController {
         
         drawButton.setImage(UIImage(systemName: "pencil.tip.crop.circle.fill"), for: .selected)
         drawButton.setImage(UIImage(systemName: "pencil.tip.crop.circle"), for: .normal)
+        
+        eraseButton.setImage(UIImage(systemName: "eraser.fill"), for: .selected)
+        eraseButton.setImage(UIImage(systemName: "eraser"), for: .normal)
         
         cameraButton.setImage(UIImage(systemName: "camera.fill"), for: .selected)
         cameraButton.setImage(UIImage(systemName: "camera"), for: .normal)
@@ -277,8 +277,24 @@ public class RoomViewController: UIViewController {
     
     @IBAction func onClickDraw(_ sender: UIButton) {
         sender.isSelected.toggle()
-        pdfView.isScrollEnabled = !sender.isSelected
-        canvasProvider.setUserInteractionEnabled(sender.isSelected)
+        if drawButton.isSelected && eraseButton.isSelected {
+            eraseButton.isSelected = false
+        }
+        let editEnabled = drawButton.isSelected || eraseButton.isSelected
+        pdfView.isScrollEnabled = !editEnabled
+        canvasProvider.setTool(.pen)
+        canvasProvider.setUserInteractionEnabled(editEnabled)
+    }
+    
+    @IBAction func onClickErase(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        if drawButton.isSelected && eraseButton.isSelected {
+            drawButton.isSelected = false
+        }
+        let editEnabled = drawButton.isSelected || eraseButton.isSelected
+        pdfView.isScrollEnabled = !editEnabled
+        canvasProvider.setTool(.eraser)
+        canvasProvider.setUserInteractionEnabled(editEnabled)
     }
     
     @IBAction func onClickBack(_ sender: Any) {
