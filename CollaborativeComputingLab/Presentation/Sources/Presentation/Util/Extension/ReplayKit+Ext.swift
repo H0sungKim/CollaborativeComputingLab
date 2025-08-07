@@ -1,9 +1,11 @@
 //
 //  ReplayKit+Ext.swift
-//  Domain
+//  Presentation
 //
 //  Created by 김호성 on 2025.07.09.
 //
+
+import Domain
 
 import Foundation
 import UIKit
@@ -94,10 +96,10 @@ extension CVPixelBuffer {
 extension UIView {
     @MainActor
     fileprivate func getResizeRects() -> (from: CGRect, to: CGRect)? {
-        guard let window = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
-        let screenRect = window.screen.bounds
-        
-        let viewRect = frame
+//        guard let window = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
+//        let screenRect = window.screen.bounds
+        guard let screenRect = window?.screen.bounds else { return nil }
+        let viewRect = self.convert(bounds, to: window)
         return (from: screenRect, to: viewRect)
     }
 }
