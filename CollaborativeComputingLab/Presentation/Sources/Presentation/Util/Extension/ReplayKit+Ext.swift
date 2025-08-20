@@ -76,8 +76,9 @@ extension CVPixelBuffer {
     fileprivate func generateCMSampleBuffer(timingInfo: CMSampleTimingInfo) -> CMSampleBuffer? {
         var sampleBuffer: CMSampleBuffer?
         var timimgInfo: CMSampleTimingInfo = timingInfo
-        var videoInfo: CMVideoFormatDescription!
+        var videoInfo: CMVideoFormatDescription?
         CMVideoFormatDescriptionCreateForImageBuffer(allocator: nil, imageBuffer: self, formatDescriptionOut: &videoInfo)
+        guard let videoInfo else { return nil }
         CMSampleBufferCreateForImageBuffer(
             allocator: kCFAllocatorDefault,
             imageBuffer: self,
