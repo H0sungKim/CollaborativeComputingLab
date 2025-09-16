@@ -113,7 +113,7 @@
 
 \affil{\orgdiv{Department of Computer Engineering}, \orgname{Hongik University}, \orgaddress{ \city{Seoul}, \country{Korea}}}
 
-\abstract{기존 원격 교육 시스템은 대부분 강의자료와 화이트보드를 함께 배치하지 않아, 강의자료와 칠판을 함께 볼 수 있는 실제 강의 환경과 차이가 있다. 두 콘텐츠를 함께 배치하더라도 모바일 기기의 제한된 화면 크기로 인해 정보가 지나치게 축소되면 강의자의 활용과 학습자의 이해에 제약이 따른다. 본 보고서에서는, 강의자가 두 콘텐츠 영역의 크기를 자유롭게 조절할 수 있는 User-Adjustable UI 기반의 모바일 원격 교육 시스템을 설계하고 구현하였다. 이를 통해 학습자는 제한된 크기의 화면에서도 정보를 충분한 크기로 확인할 수 있어 실제 강의와 유사한 경험을 제공한다. 사용자 만족도 조사 결과, 제시된 시스템은 기존 시스템보다 높은 평가를 받아, User-Adjustable UI가 모바일 원격 교육 환경에서 학습 효과를 향상시킴을 확인하였다.}
+\abstract{기존 원격 교육 시스템은 대부분 강의 슬라이드와 화이트보드를 함께 배치하지 않아, 강의 슬라이드와 칠판을 함께 볼 수 있는 실제 강의 환경과 차이가 있다. 두 콘텐츠를 함께 배치하더라도 모바일 기기의 제한된 화면 크기로 인해 정보가 지나치게 축소되면 강의자의 활용과 학습자의 이해에 제약이 따른다. 본 보고서에서는, 강의자가 두 콘텐츠 영역의 크기를 자유롭게 조절할 수 있는 User-Adjustable UI 기반의 모바일 원격 교육 시스템을 설계하고 구현하였다. 이를 통해 학습자는 제한된 크기의 화면에서도 정보를 충분한 크기로 확인할 수 있어 실제 강의와 유사한 경험을 제공한다. 만족도 조사 결과, 제시된 시스템은 기존 시스템보다 높은 평가를 받아, User-Adjustable UI가 모바일 원격 교육 환경에서 학습 효과를 향상시킴을 확인하였다.}
 
 %%\keywords{keyword1, Keyword2, Keyword3, Keyword4}
 
@@ -127,11 +127,11 @@
 
 COVID-19 팬데믹으로 인해 전 세계적으로 대면 수업이 제한되면서 교육 현장은 급격한 변화를 맞이하였다. 이 과정에서 온라인 기반의 원격 교육이 대면 수업을 대체하는 핵심 수단으로 부상하였으며, 특히 모바일 기기를 활용한 원격 교육은 학습의 공간적 제약을 해소하고 접근성을 높였다. 결과적으로 모바일 원격 교육은 팬데믹 상황에서의 일시적인 대책을 넘어 새로운 교육 패러다임으로 자리매김하였다.
 
-팬데믹 기간 동안 교육 현장에는 Cisco Webex\cite{Webex}, Zoom\cite{Zoom}, Microsoft Teams\cite{MicrosoftTeams}, Google Meet\cite{GoogleMeet}와 같은 화상회의 기반의 원격 교육 플랫폼이 널리 활용되었다. 이러한 플랫폼들은 강의자료 공유, 채팅, 강사의 음성 및 영상 송출, 강의자료에 대한 실시간 주석 작성, 화이트보드, 참여자 명단 등 다양한 기능을 제공하여 비대면 환경에서도 원활한 수업 진행과 상호작용이 가능하도록 지원하였다.
+팬데믹 기간 동안 교육 현장에는 Cisco Webex\cite{Webex}, Zoom\cite{Zoom}, Microsoft Teams\cite{MicrosoftTeams}, Google Meet\cite{GoogleMeet}와 같은 화상회의 기반의 원격 교육 플랫폼이 널리 활용되었다. 이러한 플랫폼들은 강의 슬라이드 공유, 채팅, 강사의 음성 및 영상 송출, 강의 슬라이드에 대한 실시간 주석 작성, 화이트보드, 참여자 명단 등 다양한 기능을 제공하여 비대면 환경에서도 원활한 수업 진행과 상호작용이 가능하도록 지원하였다.
 
-그러나 기존 모바일 원격 교육 시스템들은 강의자료와 화이트보드를 함께 배치하지 않아, 강의자료와 칠판을 동시에 볼 수 있는 실제 강의 환경과 유사한 경험을 제공하지 못한다. 이러한 한계는 대면 강의를 온전히 대체하는 데 제약이 된다. 이를 보완하기 위해 두 콘텐츠를 한 화면에 병렬로 배치하는 방식이 고려될 수 있으나, 제한된 크기의 화면에서 정보가 지나치게 축소되면 오히려 강의자의 활용과 학습자의 이해에 부정적인 영향을 미칠 수 있다.
+그러나 기존 모바일 원격 교육 시스템들은 강의 슬라이드와 화이트보드를 함께 배치하지 않아, 강의 슬라이드와 칠판을 동시에 볼 수 있는 실제 강의 환경과 유사한 경험을 제공하지 못한다. 이러한 한계는 대면 강의를 온전히 대체하는 데 제약이 된다. 이를 보완하기 위해 두 콘텐츠를 한 화면에 병렬로 배치하는 방식이 고려될 수 있으나, 제한된 크기의 화면에서 정보가 지나치게 축소되면 오히려 강의자의 활용과 학습자의 이해에 부정적인 영향을 미칠 수 있다.
 
-따라서 본 보고서에서는 강의자료와 화이트보드를 함께 배치하면서도 제한된 크기의 화면 공간을 효율적으로 활용할 수 있는 User-Adjustable UI 기반의 모바일 원격 교육 시스템을 설계 및 구현하였다. 제시된 시스템에 적용된 User-Adjustable UI는 grabber를 통해 두 콘텐츠 영역의 크기를 자유롭게 조절할 수 있어서 강의 상황에 맞추어 필요한 정보를 유연하게 강조할 수 있다. 또한 제시된 시스템은 강의자료 공유, 채팅, 강사의 음성 및 영상 송출, 강의자료에 대한 실시간 주석 작성, 화이트보드, 참여자 명단 등 기존 원격 교육 시스템의 핵심 기능을 모두 포함하고 있다.
+따라서 본 보고서에서는 강의 슬라이드와 화이트보드를 함께 배치하면서도 제한된 크기의 화면 공간을 효율적으로 활용할 수 있는 User-Adjustable UI 기반의 모바일 원격 교육 시스템을 설계 및 구현하였다. 제시된 시스템에 적용된 User-Adjustable UI는 grabber를 통해 두 콘텐츠 영역의 크기를 자유롭게 조절할 수 있어서 강의 상황에 맞추어 필요한 정보를 유연하게 강조할 수 있다. 또한 제시된 시스템은 강의 슬라이드 공유, 채팅, 강사의 음성 및 영상 송출, 강의 슬라이드에 대한 실시간 주석 작성, 화이트보드, 참여자 명단 등 기존 원격 교육 시스템의 핵심 기능을 모두 포함하고 있다.
 
 \section{Design}\label{sec2}
 
@@ -186,7 +186,7 @@ WebSocket 서버는 모든 강의실을 UUID를 키로 하는 딕셔너리 형�
 \end{figure}
 
 \noindent
-그림\ref{fig4}는 강사측 클라이언트의 강의실화면을 보여준다. 해당 화면의 UI는 PDF 강의자료, 화이트보드, 강사 카메라 영상, 참여자 명단, 채팅창 등으로 구성된다. 각 요소에 대한 자세한 설명은 다음과 같다.
+그림\ref{fig4}는 강사측 클라이언트의 강의실화면을 보여준다. 해당 화면의 UI는 PDF 강의 슬라이드, 화이트보드, 강사 카메라 영상, 참여자 명단, 채팅창 등으로 구성된다. 각 요소에 대한 자세한 설명은 다음과 같다.
 
 \begin{figure}[H]
 \centering
@@ -195,9 +195,9 @@ WebSocket 서버는 모든 강의실을 UUID를 키로 하는 딕셔너리 형�
 \end{figure}
 
 \noindent
-PDF 강의자료는 Apple Framework인 PDFKit\cite{PDFKit}의 \verb+PDFView+를 사용하여 구현되었다. 좌측 상단 문서 모양 버튼을 누르면 \verb+UIDocumentPickerViewController+를 통해 기기에 저장된 PDF 파일을 선택할 수 있고 선택된 파일의 링크를 가져와서 \verb+PDFView+로 화면에 출력한다.
+PDF 강의 슬라이드는 Apple Framework인 PDFKit\cite{PDFKit}의 \verb+PDFView+를 사용하여 구현되었다. 좌측 상단 문서 모양 버튼을 누르면 \verb+UIDocumentPickerViewController+를 통해 기기에 저장된 PDF 파일을 선택할 수 있고 선택된 파일의 링크를 가져와서 \verb+PDFView+로 화면에 출력한다.
 
-강의자료의 주석 기능은 PDFKit의 \verb+PDFPageOverlayViewProvider+를 사용하여 각 \verb+PDFPage+의 \verb+overlayView+에 PencilKit\cite{PencilKit}의 \verb+PKCanvasView+를 추가하여 구현하였다. 좌측 상단의 펜 버튼과 지우개 버튼은 토글식으로 구현되어서 선택되어있는 버튼에 따라 \verb+PKTool+을 펜 또는 지우개로 설정한다. 둘 다 비활성화된 상태일 때는 PDF 문서 스크롤로 작동한다.
+강의 슬라이드의 주석 기능은 PDFKit의 \verb+PDFPageOverlayViewProvider+를 사용하여 각 \verb+PDFPage+의 \verb+overlayView+에 PencilKit\cite{PencilKit}의 \verb+PKCanvasView+를 추가하여 구현하였다. 좌측 상단의 펜 버튼과 지우개 버튼은 토글식으로 구현되어서 선택되어있는 버튼에 따라 \verb+PKTool+을 펜 또는 지우개로 설정한다. 둘 다 비활성화된 상태일 때는 PDF 문서 스크롤로 작동한다.
 
 화이트보드는 사용자의 터치 이벤트를 직접 감지하여 선을 그리는 방식으로 구현하였다. 터치 이벤트를 \verb+override+하여 사용자가 화면을 터치하면 \verb+touchesBegan+에서 새로운 \verb+UIBezierPath+ 객체를 생성하고 배열에 저장하며, 터치 이동 시에는 \verb+touchesMoved+에서 해당 객체에 좌표를 추가하고 \verb+setNeedsDisplay()+를 호출하여 화면을 갱신하였다. 저장된 \verb+UIBezierPath+들은 \verb+override+한 \verb+draw+ 함수에서 그려진다. 우측 상단 버튼들을 통해 undo와 clear 기능도 지원한다.
 
@@ -218,13 +218,13 @@ PDF 강의자료는 Apple Framework인 PDFKit\cite{PDFKit}의 \verb+PDFView+를 
 \end{figure}
 
 \noindent
-화면 녹화는 Apple Framework인 ReplayKit\cite{ReplayKit}을 사용하였다. ReplayKit은 전체 화면의 녹화 영상만을 제공하지만, 불필요한 UI의 전송을 방지하고 핵심 콘텐츠만 송출하기 위해 녹화 영상에서 강의자료와 화이트보드 영역만을 잘라내어 사용하였다. 음성은 AVAudioEngine을 통해 AVAudioBuffer 형태로 가져왔다.
+화면 녹화는 Apple Framework인 ReplayKit\cite{ReplayKit}을 사용하였다. ReplayKit은 전체 화면의 녹화 영상만을 제공하지만, 불필요한 UI의 전송을 방지하고 핵심 콘텐츠만 송출하기 위해 녹화 영상에서 강의 슬라이드와 화이트보드 영역만을 잘라내어 사용하였다. 음성은 AVAudioEngine을 통해 AVAudioBuffer 형태로 가져왔다.
 
 이렇게 가져온 영상과 음성은 \verb+StreamService+의 \verb+MediaMixer+에서 하나의 스트림으로 합성된다. 합성된 스트림의 송출은 HaishinKit.swift\cite{HaishinKit} 라이브러리를 기반으로 스트리밍 서버와 직접 RTMP 통신을 수행하는 RTMPService에 의해 이루어진다. RTMPService는 RTMPConnection을 통해 스트리밍 서버와의 연결을 수립하고, RTMPStream을 통해 송출과 수신을 한다. 이때, 서버에서 강의실 생성 시 부여한 UUID 기반의 고유한 키 값을 streamName으로 설정하여 알맞은 강의실에 연결해 송출과 수신을 수행한다.
 
-위 과정을 통해 RTMPService를 통해 강사의 화면과 음성은 실시간으로 송출되고, 학생들은 해당 강의실의 스트림을 수신할 수 있다. 이로써 강의자료와 화이트보드 두 핵심 콘텐츠를 학생에게 동시에 제공할 수 있는 기술적 기반이 마련되었다. 그러나 모바일 기기의 제한된 크기의 화면에서 두 핵심 콘텐츠가 과도하게 작아지지 않도록 하는 UI 설계가 필요하였다.
+위 과정을 통해 RTMPService를 통해 강사의 화면과 음성은 실시간으로 송출되고, 학생들은 해당 강의실의 스트림을 수신할 수 있다. 이로써 강의 슬라이드와 화이트보드 두 핵심 콘텐츠를 학생에게 동시에 제공할 수 있는 기술적 기반이 마련되었다. 그러나 모바일 기기의 제한된 크기의 화면에서 두 핵심 콘텐츠가 과도하게 작아지지 않도록 하는 UI 설계가 필요하였다.
 
-따라서 강의자가 상황에 맞게 두 콘텐츠 영역의 크기를 조절할 수 있는 User-Adjustable UI를 적용하였다. 그림\ref{fig7}, \ref{fig8}과 같이 강의자는 grabber를 드래그하여 강의자료와 화이트보드의 화면 비율을 자유롭게 조절하며 강의 상황에 따라 필요한 정보를 유연하게 강조할 수 있다.
+따라서 강의자가 상황에 맞게 두 콘텐츠 영역의 크기를 조절할 수 있는 User-Adjustable UI를 적용하였다. 그림\ref{fig7}, \ref{fig8}과 같이 강의자는 grabber를 드래그하여 강의 슬라이드와 화이트보드의 화면 비율을 자유롭게 조절하며 강의 상황에 따라 필요한 정보를 유연하게 강조할 수 있다.
 
 \begin{figure}[H]
 \centering
@@ -239,75 +239,72 @@ PDF 강의자료는 Apple Framework인 PDFKit\cite{PDFKit}의 \verb+PDFView+를 
 \end{figure}
 
 \noindent
-grabber는 \verb+UISlider+를 기반으로 구현되었으며, 사용자의 조작으로 value가 변경되면 \verb+valueChanged+ 이벤트를 통해 강의자료와 공유 화이트보드 화면 비율을 결정하는 \verb+NSLayoutConstraint+의 \verb+multiplier+값에 해당 값을 반영하였다. \verb+UISlider+는 투명하게 설정하여 화면에 드러나지 않고 로직적인 역할만을 수행하도록 하였다.
+grabber는 \verb+UISlider+를 기반으로 구현되었으며, 사용자의 조작으로 value가 변경되면 \verb+valueChanged+ 이벤트를 통해 강의 슬라이드와 공유 화이트보드 화면 비율을 결정하는 \verb+NSLayoutConstraint+의 \verb+multiplier+값에 해당 값을 반영하였다. \verb+UISlider+는 투명하게 설정하여 화면에 드러나지 않고 로직적인 역할만을 수행하도록 하였다.
 
 \section{Evaluation}\label{sec4}
 
-제시된 시스템의 학습 지원 효과와 사용 편의성을 검증하기 위해 사용자 만족도 조사를 실시하였다. 평가는 총 5명을 대상으로 진행되었으며, 비교 대상 시스템은 강의자료와 화이트보드를 함께 배치하지 않고 둘 중 하나만 표시 가능한 Cisco Webex, 강의자료와 화이트보드가 5:5로 고정된 시스템, User-Adjustable UI를 적용한 시스템 위 세 가지였다.
+제시된 시스템의 학습 지원 효과와 사용 편의성을 검증하기 위해 사용자 만족도 조사를 실시하였다. 평가는 총 5명을 대상으로 진행되었으며, 비교 대상 시스템은 강의 슬라이드와 화이트보드를 함께 배치하지 않고 둘 중 하나만 표시 가능한 Cisco Webex, 강의 슬라이드와 화이트보드가 5:5로 고정된 시스템, User-Adjustable UI를 적용한 시스템 위 세 가지였다.
 
-각 시스템을 활용하여 강의를 진행한 후, 다음 세 질문에 대한 응답을 조사하였다. 첫째, 강의자료는 학습하기에 충분히 잘 보였는가? 둘째, 그리기 기능(PDF 주석 또는 화이트보드)은 공간과 사용성 면에서 학습에 효과적으로 잘 활용되었는가? 셋째, 전체적으로 강의를 이해하기에 불편함은 없었는가? 각 항목에 대해 만족도에 따라 1점에서 5점을 평가하도록 하였으며, 그 결과는 아래의 표\ref{tab1}, \ref{tab2}, \ref{tab3}에서 확인할 수 있다.
+각 시스템을 활용하여 강의를 진행한 후, 다음 세 질문에 대한 응답을 조사하였다. 첫째, 강의 슬라이드는 얼마나 잘 보였는가? 둘째, 화이트보드는 얼마나 잘 보였는가? 셋째, 강의 슬라이드와 화이트보드를 사용한 강의는 얼마나 이해하기 쉬웠는가? 각 항목에 대해 만족도에 따라 1점에서 5점을 평가하도록 하였으며, 그 결과는 아래의 표\ref{tab1}, \ref{tab2}, \ref{tab3}에서 확인할 수 있다.
 
-표\ref{tab1}은 `강의자료가 학습하기에 충분히 잘 보였는가'에 대한 응답 결과다. Webex는 모든 응답자에게 최고 점수를 받아, 강의자료 단일 배치가 학습자의 가독성을 충분히 보장하였음을 확인할 수 있다. 그러나 5:5 고정 UI 시스템은 강의자료 영역이 작은 크기로 고정되어 있어 평균 2.6점으로 낮게 나타났다. User-Adjustable UI 시스템도 모든 응답자에게 최고 점수를 받았는데, 이는 상황에 따라 강의자료 영역을 확장할 수 있는 점이 학습자의 가독성을 충분히 확보할 수 있었다고 해석된다.
+표\ref{tab1}과 \ref{tab2}는 각각 `강의 슬라이드는 얼마나 잘 보였는가?'와 `화이트보드는 얼마나 잘 보였는가?'에 대한 응답 결과이다. Webex는 두 평가항목에서 모두 높은 점수를 받아, 강의 슬라이드나 화이트보드 둘 중 하나만 표시하는 것이 학습자의 가독성을 충분히 보장하였음을 확인할 수 있다. 반면 5:5 고정 UI 시스템은 슬라이드와 화이트보드를 동시에 제공하기 위해 두 영역이 작은 크기로 고정되어, 다른 두 시스템에 비해 유의미하게 낮은 평가를 받았다. 한편 User-Adjustable UI 시스템은 두 평가항목에서 모두 높은 점수를 받아, Webex와 비교해도 가독성 면에서 차이가 없음을 확인할 수 있었다. 이는 상황에 따라 강의 슬라이드나 화이트보드 영역을 확장할 수 있는 점이 학습자의 가독성을 충분히 확보할 수 있었다고 해석된다.
 
 \begin{table}[h]
-\caption{Respondents' perception of the clarity and visibility of lecture materials}\label{tab1}
+\caption{Respondents' perception of the visibility of a lecture slide}\label{tab1}
 \begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccc}
 \toprule%
 Target System & \multicolumn{5}{@{}c@{}}{Respondents} & Average\\\cmidrule{2-6}
-& 1 & 2 & 3 & 4 & 5 &\\
+& A & B & C & D & E &\\
 \midrule
 Webex  & 5 & 5 & 5 & 5 & 5 & 5 \\
 5:5 Fixed UI  & 1 & 5 & 1 & 2 & 4 & 2.6 \\
 User-Adjustable UI  & 5 & 5 & 5 & 5 & 5 & 5 \\
 \botrule
 \end{tabular*}
-\footnotetext{Question: Were the lecture materials clear and visible to support effective learning?}
+\footnotetext{Question: How clearly visible was the lecture slide?}
 \end{table}
 
-\noindent
-표\ref{tab2}는 `그리기 기능(PDF 주석 또는 화이트보드)은 공간과 사용성 면에서 학습에 효과적으로 잘 활용되었는가'에 대한 응답 결과다. Webex는 평균 3.8점으로, 강의자료에 주석이 가능하지만 화이트보드를 사용하기 위해서는 강의자료를 종료해야해서 강의자료와 화이트보드를 함께 활용하지 못한다는 한계가 반영된 것으로 보인다. 5:5 고정 UI 시스템은 평균 3.4점으로, 강의자료와 화이트보드를 함께 배치하긴 하지만 작은 크기로 고정되어 있어 효과적으로 활용되지 못했음을 보여준다. 반면에 User-Adjustable UI 시스템은 모든 응답자에게 최고 점수를 받았는데, 이는 강의자료를 확장하여 주석을 달거나 화이트보드를 확장하여 판서를 진행하는 등 상황에 맞는 활용이 가능했기 때문이다.
-
 \begin{table}[h]
-\caption{Respondents' perception of the usefulness and spatial sufficiency of the drawing feature (PDF annotation or whiteboard)}\label{tab2}
+\caption{Respondents' perception of the visibility of a whiteboard}\label{tab2}
 \begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccc}
 \toprule%
 Target System & \multicolumn{5}{@{}c@{}}{Respondents} & Average\\\cmidrule{2-6}
-& 1 & 2 & 3 & 4 & 5 &\\
+& A & B & C & D & E &\\
 \midrule
-Webex  & 5 & 4 & 3 & 3 & 4 & 3.8 \\
-5:5 Fixed UI  & 3 & 5 & 2 & 2 & 5 & 3.4 \\
-User-Adjustable UI  & 5 & 5 & 5 & 5 & 5 & 5 \\
+Webex  & 3 & 5 & 5 & 4 & 4 & 4.2 \\
+5:5 Fixed UI  & 1 & 3 & 2 & 3 & 5 & 2.8 \\
+User-Adjustable UI  & 5 & 4 & 4 & 5 & 5 & 4.6 \\
 \botrule
 \end{tabular*}
-\footnotetext{Question: Was the drawing feature (PDF annotation or whiteboard) effectively utilized for learning in terms of space and usability?}
+\footnotetext{Question: How clearly visible was the whiteboard?}
 \end{table}
 
 \noindent
-표\ref{tab3}은 `전체적으로 강의를 이해하기에 불편함은 없었는가'에 대한 응답 결과다. Webex는 평균 4.0점으로 긍정적인 평가를 받았지만 화이트보드 활용의 한계로 인해 약간의 감점을 받았다. 5:5 고정 UI 시스템은 평균 2.4점으로 가장 낮았는데, 많은 응답자들이 작은 크기의 강의자료로 인한 학습 경험 저하를 이유로 꼽았다. 반면, User-Adjustable UI 시스템은 평균 4.6점으로 가장 높은 점수를 받았다.
+표\ref{tab3}은 `강의 슬라이드와 화이트보드를 사용한 강의는 얼마나 이해하기 쉬웠는가?'에 대한 응답 결과이다. Webex는 평균 4.0점으로 긍정적인 평가를 받았지만 화이트보드를 사용하기 위해 강의 슬라이드를 종료해야 하는 제약으로 인해 약간의 감점을 받았다. 5:5 고정 UI 시스템은 평균 2.4점으로 가장 낮았는데, 많은 응답자들이 작은 크기의 강의 슬라이드로 인한 학습 경험 저하를 이유로 꼽았다. 반면, User-Adjustable UI 시스템은 평균 4.6점으로 가장 높은 점수를 받았는데, 이는 강의 슬라이드를 확장하여 강의 슬라이드 위주로 수업을 진행하거나 화이트보드를 확장하여 판서를 진행하는 등 상황에 맞는 활용이 가능하여 강의 이해도를 높일 수 있었기 때문이다.
 
 \begin{table}[h]
-\caption{Respondents' perception of the overall comprehensibility of a lecture}\label{tab3}
+\caption{Respondents' perception of the comprehensibility of a lecture with a lecture slide and a whiteboard combined}\label{tab3}
 \begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccc}
 \toprule%
 Target System & \multicolumn{5}{@{}c@{}}{Respondents} & Average\\\cmidrule{2-6}
-& 1 & 2 & 3 & 4 & 5 &\\
+& A & B & C & D & E &\\
 \midrule
 Webex  & 5 & 5 & 3 & 4 & 3 & 4 \\
 5:5 Fixed UI  & 3 & 2 & 2 & 1 & 4 & 2.4 \\
 User-Adjustable UI  & 4 & 4 & 5 & 5 & 5 & 4.6 \\
 \botrule
 \end{tabular*}
-\footnotetext{Question: Was the lecture overall easy to understand?}
+\footnotetext{Question: How comprehensibile was the lecture with a lecture slide and a whiteboard combined?}
 \end{table}
 
 \noindent
-세가지 시스템에 대한 만족도 조사 결과를 종합하면, 본 보고서에서 제시한 User-Adjustable UI 시스템은 기존 원격 교육 시스템(Webex)과 단순 병렬 제공하는 5:5 고정 UI 시스템에 비해 전반적으로 높은 사용자 만족도를 보였다. Webex는 강의자료를 크게 제공한다는 장점이 있으나 화이트보드와 동시에 활용하지 못한다는 한계가 있었고, 5:5 고정 UI 시스템은 강의자료와 화이트보드를 동시에 사용할 수 있으나 각 요소가 지나치게 작아 학습 효과가 저하되는 문제가 있었다. 반면, 본 보고서에서 제시된 User-Adjustable UI 시스템은 이 두 시스템의 상반된 한계를 보완하여 강의자료와 화이트보드를 동시에 충분한 크기로 제공할 수 있었다.
+세가지 시스템에 대한 만족도 조사 결과를 종합하면, 본 보고서에서 제시한 User-Adjustable UI 시스템은 기존 원격 교육 시스템(Webex)과 단순 병렬 제공하는 5:5 고정 UI 시스템에 비해 전반적으로 높은 사용자 만족도를 보였다. Webex는 강의 슬라이드를 크게 제공한다는 장점이 있으나 화이트보드와 동시에 활용하지 못한다는 한계가 있었고, 5:5 고정 UI 시스템은 강의 슬라이드와 화이트보드를 동시에 사용할 수 있으나 각 요소가 지나치게 작아 학습 효과가 저하되는 문제가 있었다. 반면, 본 보고서에서 제시된 User-Adjustable UI 시스템은 이 두 시스템의 상반된 한계를 보완하여 강의 슬라이드와 화이트보드를 동시에 충분한 크기로 제공할 수 있다는 점에서 효과적인 대안임이 확인되었다.
 
 \section{Conclusion}\label{sec5}
 
-본 보고서에서는 강의자료와 화이트보드를 동시에 시각적으로 제공하지 못하는 기존 시스템의 한계를 해결하기 위해 User-Adjustable UI 기반의 모바일 원격 교육 시스템을 설계 및 구현하였다. 제시된 시스템은 grabber를 통해 두 콘텐츠 영역의 비율을 상황에 맞게 조절할 수 있도록 하여, 제한된 크기의 모바일 기기 화면에서도 학습자가 필요한 정보를 충분한 크기로 확인할 수 있게 하였다. 또한 참여자 목록과 채팅창은 접이식 구조로 구현하여 불필요한 화면 점유를 최소화함으로써 제한된 화면 공간의 활용도를 높이고 학습 콘텐츠에 대한 시각적 집중을 강화하였다.
+본 보고서에서는 강의 슬라이드와 화이트보드를 동시에 시각적으로 제공하지 못하는 기존 시스템의 한계를 해결하기 위해 User-Adjustable UI 기반의 모바일 원격 교육 시스템을 설계 및 구현하였다. 제시된 시스템은 grabber를 통해 두 콘텐츠 영역의 비율을 상황에 맞게 조절할 수 있도록 하여, 제한된 크기의 모바일 기기 화면에서도 학습자가 필요한 정보를 충분한 크기로 확인할 수 있게 하였다. 또한 참여자 목록과 채팅창은 접이식 구조로 구현하여 불필요한 화면 점유를 최소화함으로써 제한된 화면 공간의 활용도를 높이고 학습 콘텐츠에 대한 시각적 집중을 강화하였다.
 
-사용자 만족도 조사 결과, 제시된 시스템은 평가 항목인 강의자료의 가독성, 그리기 기능의 활용성, 강의 이해도 세 측면에서 모두 다른 시스템보다 우수한 평가를 받아, User-Adjustable UI가 모바일 원격 교육 환경에서 학습 효과를 향상시키는 것을 확인하였다.
+사용자 만족도 조사 결과, 제시된 시스템은 평가 항목인 강의 슬라이드의 가독성, 화이트보드의 가독성, 강의 이해도 세 측면에서 모두 다른 시스템보다 우수한 평가를 받아, User-Adjustable UI가 모바일 원격 교육 환경에서 학습 효과를 향상시키는 것을 확인하였다.
 
 전체 소스코드는 \url{https://github.com/H0sungKim/CollaborativeComputingLab}에서 확인할 수 있다.
 
