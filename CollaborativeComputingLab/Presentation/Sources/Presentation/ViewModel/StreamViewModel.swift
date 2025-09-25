@@ -86,7 +86,7 @@ public final class DefaultStreamViewModel: StreamViewModel {
                 switch sampleBufferType {
                 case .video:
                     Task { [weak self] in
-                        guard let resizedSampleBuffer = await sampleBuffer.resize(to: view) else { return }
+                        guard let resizedSampleBuffer = await sampleBuffer.crop(to: view) else { return }
                         await self?.streamUseCase.appendBuffer(resizedSampleBuffer)
                     }
                 case .audioApp:

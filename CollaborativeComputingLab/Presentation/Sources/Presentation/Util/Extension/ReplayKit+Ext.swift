@@ -12,6 +12,17 @@ import UIKit
 import CoreMedia
 import CoreImage
 
+extension UIView {
+    @MainActor
+    fileprivate func getCropRects() -> (from: CGRect, to: CGRect)? {
+//        guard let window = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
+//        let screenRect = window.screen.bounds
+        guard let screenRect = window?.screen.bounds else { return nil }
+        let viewRect = self.convert(bounds, to: window)
+        return (from: screenRect, to: viewRect)
+    }
+}
+
 extension CMSampleBuffer {
     fileprivate var ciImage: CIImage? {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(self) else {
@@ -21,22 +32,22 @@ extension CMSampleBuffer {
         return CIImage(cvPixelBuffer: pixelBuffer)
     }
     
-    public func resize(to view: UIView) async -> CMSampleBuffer? {
+    public func crop(to view: UIView) async -> CMSampleBuffer? {
         guard let (fromRect, toRect) = await MainActor.run(body: {
-            view.getResizeRects()
+            return view.getCropRects()
         }) else {
             return nil
         }
         
         return ciImage?
-            .resize(from: fromRect, to: toRect)
+            .crop(from: fromRect, to: toRect)
             .generateCVPixelBuffer()?
             .generateCMSampleBuffer(timingInfo: CMSampleTimingInfo(duration: duration, presentationTimeStamp: presentationTimeStamp, decodeTimeStamp: decodeTimeStamp))
     }
 }
 
 extension CIImage {
-    fileprivate func resize(from: CGRect, to: CGRect) -> CIImage {
+    fileprivate func crop(from: CGRect, to: CGRect) -> CIImage {
         let ciImageWidth = extent.width
         let ciImageHeight = extent.height
         
@@ -91,16 +102,5 @@ extension CVPixelBuffer {
         )
         
         return sampleBuffer
-    }
-}
-
-extension UIView {
-    @MainActor
-    fileprivate func getResizeRects() -> (from: CGRect, to: CGRect)? {
-//        guard let window = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
-//        let screenRect = window.screen.bounds
-        guard let screenRect = window?.screen.bounds else { return nil }
-        let viewRect = self.convert(bounds, to: window)
-        return (from: screenRect, to: viewRect)
     }
 }
