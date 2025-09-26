@@ -31,22 +31,17 @@ public final class DefaultChatService: NSObject, ChatService, @unchecked Sendabl
     
     func receive() {
         webSocket.dataStream.sinkHandledCompletion(receiveValue: { [weak self] data in
-            guard let message = JSONManager.shared.decode(data: data, type: ServerMessage.self) else { return }
-            switch message {
-            case .newChat(let chatDTO):
-                Log.i("WebSocket received new chat: \(chatDTO)")
-                self?.chatStream.send(chatDTO)
-            default:
-                break
-            }
+            guard case let .newChat(chatDTO) = data.decode(type: ServerMessage.self) else { return }
+            Log.i("WebSocket received new chat: \(chatDTO)")
+            self?.chatStream.send(chatDTO)
         })
         .store(in: &cancellable)
     }
     
     public func send(messageDTO: MessageDTO) {
-        Log.i("Sending chat message: \(messageDTO)")
-        guard let messageData = JSONManager.shared.encode(codable: ClientMessage.sendChat(messageDTO)) else { return }
+        guard let messageData = ClientMessage.sendChat(messageDTO).encode() else { return }
         webSocket.send(data: messageData)
+        Log.i("Send chat message: \(messageDTO)")
     }
     
     public func connectWebSocket() {

@@ -36,7 +36,7 @@ public final class DefaultRoomService: RoomService {
     
     func receive() {
         webSocket.dataStream.sinkHandledCompletion(receiveValue: { [weak self] data in
-            guard let message = JSONManager.shared.decode(data: data, type: ServerMessage.self) else { return }
+            guard let message = data.decode(type: ServerMessage.self) else { return }
             switch message {
             case .availableRooms(let roomListDTO):
                 Log.i("WebSocket received availableRooms: \(roomListDTO)")
@@ -56,19 +56,19 @@ public final class DefaultRoomService: RoomService {
     
     public func requestRoomList() {
         Log.i("Sending requestRoomList message.")
-        guard let messageData = JSONManager.shared.encode(codable: ClientMessage.requestRoomList) else { return }
+        guard let messageData = ClientMessage.requestRoomList.encode() else { return }
         webSocket.send(data: messageData)
     }
     
     public func enterRoom(roomEntranceDTO: RoomEntranceDTO) {
         Log.i("Sending enterRoom message: \(roomEntranceDTO)")
-        guard let messageData = JSONManager.shared.encode(codable: ClientMessage.enterRoom(roomEntranceDTO)) else { return }
+        guard let messageData = ClientMessage.enterRoom(roomEntranceDTO).encode() else { return }
         webSocket.send(data: messageData)
     }
     
     public func exitRoom(roomExitDTO: RoomExitDTO) {
         Log.i("Sending exitRoom message: \(roomExitDTO)")
-        guard let messageData = JSONManager.shared.encode(codable: ClientMessage.leaveRoom (roomExitDTO)) else { return }
+        guard let messageData = ClientMessage.leaveRoom (roomExitDTO).encode() else { return }
         webSocket.send(data: messageData)
     }
     
