@@ -83,18 +83,10 @@ public final class DefaultStreamViewModel: StreamViewModel {
                     Log.e(error.localizedDescription)
                     return
                 }
-                switch sampleBufferType {
-                case .video:
-                    Task { [weak self] in
-                        guard let resizedSampleBuffer = await sampleBuffer.crop(to: view) else { return }
-                        await self?.streamUseCase.appendBuffer(resizedSampleBuffer)
-                    }
-                case .audioApp:
-                    break
-                case .audioMic:
-                    break
-                @unknown default:
-                    break
+                guard case .video = sampleBufferType else { return }
+                Task { [weak self] in
+                    guard let resizedSampleBuffer = await sampleBuffer.crop(to: view) else { return }
+                    await self?.streamUseCase.appendBuffer(resizedSampleBuffer)
                 }
             }, completionHandler: { error in
                 guard let error else { return }
