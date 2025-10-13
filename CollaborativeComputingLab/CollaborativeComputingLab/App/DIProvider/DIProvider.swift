@@ -14,7 +14,7 @@ import UIKit
 
 protocol DIProvider: ViewControllerFactory, ChatDIProvider, StreamDIProvider, RoomDIProvider { }
 
-class DefaultDIProvider: DIProvider {
+final class DefaultDIProvider: DIProvider {
     
     private let uri: String
     private let webSocket: WebSocket

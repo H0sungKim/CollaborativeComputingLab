@@ -9,7 +9,7 @@ import Domain
 
 import UIKit
 
-class ParticipantTableViewCell: UITableViewCell {
+final class ParticipantTableViewCell: UITableViewCell {
 
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!

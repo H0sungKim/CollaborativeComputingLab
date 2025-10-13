@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class CanvasView: UIView {
+final class CanvasView: UIView {
     public var strokeWidth: Float = 8
     public var strokeColor: UIColor = .black
     var paths: [UIBezierPath] = []

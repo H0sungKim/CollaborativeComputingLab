@@ -9,7 +9,7 @@ import Domain
 
 import UIKit
 
-class ChatTableViewCell: UITableViewCell {
+final class ChatTableViewCell: UITableViewCell {
 
     @IBOutlet weak var senderLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!

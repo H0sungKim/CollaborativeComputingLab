@@ -9,7 +9,7 @@ import Domain
 
 import UIKit
 
-class RoomTableViewCell: UITableViewCell {
+final class RoomTableViewCell: UITableViewCell {
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var subtitleLabel: UILabel!

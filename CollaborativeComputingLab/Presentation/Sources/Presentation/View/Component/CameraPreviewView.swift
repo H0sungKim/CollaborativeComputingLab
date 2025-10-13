@@ -10,7 +10,7 @@ import Domain
 @preconcurrency import AVFoundation
 import UIKit
 
-class CameraPreviewView: UIView {
+final class CameraPreviewView: UIView {
     
     private let session: AVCaptureSession = AVCaptureSession()
     

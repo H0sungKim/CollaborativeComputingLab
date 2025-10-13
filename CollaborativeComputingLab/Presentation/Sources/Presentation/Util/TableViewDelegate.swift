@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class TableViewDelegate: NSObject, UITableViewDelegate {
+final class TableViewDelegate: NSObject, UITableViewDelegate {
     
     init(didSelectRowAt: ( (_ tableView: UITableView, _ indexPath: IndexPath) -> Void)? = nil, scrollViewDidScroll: ( (_ scrollView: UIScrollView) -> Void)? = nil) {
         self.didSelectRowAt = didSelectRowAt

@@ -14,7 +14,7 @@ import AVFoundation
 
 import HaishinKit
 
-public class RoomViewController: UIViewController {
+public final class RoomViewController: UIViewController {
     
     // MARK: - IBOutlet
     @IBOutlet weak var titleLabel: UILabel!

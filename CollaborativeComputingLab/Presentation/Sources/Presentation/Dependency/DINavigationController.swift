@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public class DINavigationController: UINavigationController {
+public final class DINavigationController: UINavigationController {
     
     public var viewControllerFactory: ViewControllerFactory
     

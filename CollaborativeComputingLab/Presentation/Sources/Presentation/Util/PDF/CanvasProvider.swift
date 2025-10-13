@@ -10,7 +10,7 @@ import PDFKit
 import PencilKit
 
 @MainActor
-class CanvasProvider: NSObject, @preconcurrency PDFPageOverlayViewProvider {
+final class CanvasProvider: NSObject, @preconcurrency PDFPageOverlayViewProvider {
     
     private var canvasViewForPage: [PDFPage: PKCanvasView] = [:]
     
