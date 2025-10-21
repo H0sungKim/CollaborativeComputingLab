@@ -121,7 +121,7 @@ public final class RoomViewController: UIViewController {
         .store(in: &cancellable)
     }
     
-    // MARK: - Basic
+    // MARK: - Life Cycle
     public override func viewDidLoad() {
         super.viewDidLoad()
         
