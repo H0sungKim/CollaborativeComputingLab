@@ -46,7 +46,7 @@ public final class DefaultRoomService: RoomService {
                 self?.participantListStream.send(participantListDTO)
             case .roomClosed:
                 Log.i("WebSocket received roomClosed.")
-                self?.roomClosed.send(())
+                self?.roomClosed.send()
             default:
                 break
             }
