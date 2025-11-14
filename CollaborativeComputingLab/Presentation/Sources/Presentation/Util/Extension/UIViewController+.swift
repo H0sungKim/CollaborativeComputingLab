@@ -7,11 +7,10 @@
 
 import UIKit
 
-extension UIViewController {
+extension UIViewController: Identifiable {
     public class func create<T: UIViewController>() -> T {
-        let identifier: String = String(describing: T.self)
-        let sb = UIStoryboard(name: identifier, bundle: Bundle.presentation)
-        let vc = sb.instantiateViewController(withIdentifier: identifier) as! T
-        return vc
+        let storyboard = UIStoryboard(name: identifier, bundle: Bundle.presentation)
+        let viewController = storyboard.instantiateViewController(withIdentifier: identifier) as! T
+        return viewController
     }
 }
