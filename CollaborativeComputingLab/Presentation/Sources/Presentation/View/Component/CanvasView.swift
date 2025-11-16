@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 
 final class CanvasView: UIView {
-    public var strokeWidth: Float = 8
-    public var strokeColor: UIColor = .black
+    var strokeWidth: Float = 4
+    var strokeColor: UIColor = .black
     var paths: [UIBezierPath] = []
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
