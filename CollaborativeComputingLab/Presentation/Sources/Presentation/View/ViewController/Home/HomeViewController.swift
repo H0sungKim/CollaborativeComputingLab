@@ -83,25 +83,26 @@ public final class HomeViewController: UIViewController {
     }
     
     private func presentCreateRoomAlert() {
-        let alert: UIAlertController = UIAlertController(title: "강의실을 생성합니다.", message: "이름을 입력하시오.", preferredStyle: .alert)
-        let actionCancel: UIAlertAction = UIAlertAction(title: "취소", style: .default, handler: { [weak self] _ in
-            self?.dismiss(animated: true, completion: nil)
+        let alert: UIAlertController = UIAlertController(title: "강의실을 생성합니다.", message: "이름을 입력하시오.", preferredStyle: .alert).configured({ target in
+            let actionCancel: UIAlertAction = UIAlertAction(title: "취소", style: .default, handler: { [weak self] _ in
+                self?.dismiss(animated: true, completion: nil)
+            })
+            let actionCreate: UIAlertAction = UIAlertAction(title: "생성", style: .default, handler: { [weak self] _ in
+                let id: String = UUID().uuidString
+                let userName: String = target.textFields?.first?.text ?? ""
+                self?.roomViewModel.enterRoom(id: id, userName: userName)
+                guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
+                let roomViewController = viewControllerFactory.createRoomViewController(id: id, userName: userName, role: .instructor, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
+                Log.i(self?.roomViewModel.participants.value)
+                self?.navigationController?.pushViewController(roomViewController, animated: true)
+                self?.dismiss(animated: true, completion: nil)
+            })
+            target.addTextField(configurationHandler: { textField in
+                textField.placeholder = "홍길동"
+            })
+            target.addAction(actionCancel)
+            target.addAction(actionCreate)
         })
-        let actionCreate: UIAlertAction = UIAlertAction(title: "생성", style: .default, handler: { [weak self] _ in
-            let id: String = UUID().uuidString
-            let userName: String = alert.textFields?.first?.text ?? ""
-            self?.roomViewModel.enterRoom(id: id, userName: userName)
-            guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
-            let roomViewController = viewControllerFactory.createRoomViewController(id: id, userName: userName, role: .instructor, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
-            Log.i(self?.roomViewModel.participants.value)
-            self?.navigationController?.pushViewController(roomViewController, animated: true)
-            self?.dismiss(animated: true, completion: nil)
-        })
-        alert.addTextField(configurationHandler: { textField in
-            textField.placeholder = "홍길동"
-        })
-        alert.addAction(actionCancel)
-        alert.addAction(actionCreate)
         present(alert, animated: true, completion: nil)
     }
 }
@@ -122,24 +123,25 @@ extension HomeViewController: UITableViewDelegate {
     }
     
     private func presentEnterRoomAlert(roomEntity: RoomEntity) {
-        let alert: UIAlertController = UIAlertController(title: "\(roomEntity.participants.first ?? "알수없음")님의 강의실에 입장합니다.", message: "이름을 입력하시오.", preferredStyle: .alert)
-        let actionCancel: UIAlertAction = UIAlertAction(title: "취소", style: .default, handler: { [weak self] _ in
-            self?.dismiss(animated: true, completion: nil)
+        let alert: UIAlertController = UIAlertController(title: "\(roomEntity.participants.first ?? "알수없음")님의 강의실에 입장합니다.", message: "이름을 입력하시오.", preferredStyle: .alert).configured({ target in
+            let actionCancel: UIAlertAction = UIAlertAction(title: "취소", style: .default, handler: { [weak self] _ in
+                self?.dismiss(animated: true, completion: nil)
+            })
+            let actionEnter: UIAlertAction = UIAlertAction(title: "입장", style: .default, handler: { [weak self] _ in
+                let userName = target.textFields?.first?.text ?? ""
+                self?.roomViewModel.enterRoom(id: roomEntity.id, userName: userName)
+                guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
+                let roomViewController = viewControllerFactory.createRoomViewController(id: roomEntity.id, userName: userName, role: .student, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
+                Log.i(self?.roomViewModel.participants.value)
+                self?.navigationController?.pushViewController(roomViewController, animated: true)
+                self?.dismiss(animated: true, completion: nil)
+            })
+            target.addTextField(configurationHandler: { textField in
+                textField.placeholder = "홍길동"
+            })
+            target.addAction(actionCancel)
+            target.addAction(actionEnter)
         })
-        let actionEnter: UIAlertAction = UIAlertAction(title: "입장", style: .default, handler: { [weak self] _ in
-            let userName = alert.textFields?.first?.text ?? ""
-            self?.roomViewModel.enterRoom(id: roomEntity.id, userName: userName)
-            guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
-            let roomViewController = viewControllerFactory.createRoomViewController(id: roomEntity.id, userName: userName, role: .student, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
-            Log.i(self?.roomViewModel.participants.value)
-            self?.navigationController?.pushViewController(roomViewController, animated: true)
-            self?.dismiss(animated: true, completion: nil)
-        })
-        alert.addTextField(configurationHandler: { textField in
-            textField.placeholder = "홍길동"
-        })
-        alert.addAction(actionCancel)
-        alert.addAction(actionEnter)
         present(alert, animated: true, completion: nil)
     }
 }

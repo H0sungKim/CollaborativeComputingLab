@@ -16,11 +16,12 @@ final class CanvasView: UIView {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         guard let point = touches.first?.location(in: self) else { return }
-        let path = UIBezierPath()
-        path.lineCapStyle = .round
-        path.lineJoinStyle = .round
-        path.lineWidth = CGFloat(strokeWidth)
-        path.move(to: point)
+        let path = UIBezierPath().configured({
+            $0.lineCapStyle = .round
+            $0.lineJoinStyle = .round
+            $0.lineWidth = CGFloat(strokeWidth)
+            $0.move(to: point)
+        })
         paths.append(path)
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {

@@ -16,11 +16,12 @@ final class CanvasProvider: NSObject, @preconcurrency PDFPageOverlayViewProvider
     
     func pdfView(_ view: PDFView, overlayViewFor page: PDFPage) -> UIView? {
         guard let canvasView = canvasViewForPage[page] else {
-            let canvasView = PKCanvasView(frame: view.bounds)
-            canvasView.drawingPolicy = .anyInput
-            canvasView.isUserInteractionEnabled = false
-            canvasView.backgroundColor = .clear
-            canvasView.tool = PKInkingTool(.pen, color: .red, width: 10)
+            let canvasView = PKCanvasView(frame: view.bounds).configured({
+                $0.drawingPolicy = .anyInput
+                $0.isUserInteractionEnabled = false
+                $0.backgroundColor = .clear
+                $0.tool = PKInkingTool(.pen, color: .red, width: 10)
+            })
             canvasViewForPage[page] = canvasView
             return canvasView
         }

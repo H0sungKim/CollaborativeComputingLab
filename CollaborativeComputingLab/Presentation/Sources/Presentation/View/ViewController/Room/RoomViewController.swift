@@ -265,8 +265,9 @@ public final class RoomViewController: UIViewController {
     }
     
     @IBAction func onClickFile(_ sender: Any) {
-        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.pdf], asCopy: true)
-        documentPicker.delegate = self
+        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.pdf], asCopy: true).configured({
+            $0.delegate = self
+        })
         present(documentPicker, animated: true)
     }
     
@@ -318,12 +319,13 @@ public final class RoomViewController: UIViewController {
     
     // MARK: - RoomClosed
     private func presentCloseRoomAlert() {
-        let alert: UIAlertController = UIAlertController(title: "강의실이 종료되었습니다.", message: "", preferredStyle: .alert)
-        let actionClose: UIAlertAction = UIAlertAction(title: "확인", style: .default, handler: { [weak self] _ in
-            self?.navigationController?.popViewController(animated: true)
-            self?.dismiss(animated: true, completion: nil)
-        })
-        alert.addAction(actionClose)
+        let alert: UIAlertController = UIAlertController(title: "강의실이 종료되었습니다.", message: "", preferredStyle: .alert).configured { target in
+            let actionClose: UIAlertAction = UIAlertAction(title: "확인", style: .default, handler: { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+                self?.dismiss(animated: true, completion: nil)
+            })
+            target.addAction(actionClose)
+        }
         present(alert, animated: true, completion: nil)
     }
 }

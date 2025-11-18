@@ -21,8 +21,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        let navigationController: DINavigationController = DINavigationController(viewControllerFactory: diProvider ,rootViewController: diProvider.createHomeViewController(roomViewModel: nil))
-        navigationController.navigationBar.isHidden = true
+        let navigationController: DINavigationController = DINavigationController(
+            viewControllerFactory: diProvider,
+            rootViewController: diProvider.createHomeViewController(roomViewModel: nil)
+        ).configured({
+            $0.navigationBar.isHidden = true
+        })
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
     }
