@@ -7,12 +7,12 @@
 
 import Foundation
 
-protocol Identifiable {
-    static var identifier: String { get }
+protocol TypeIdentifiable {
+    static var typeIdentifier: String { get }
 }
 
-extension Identifiable {
-    static var identifier : String {
+extension TypeIdentifiable {
+    static var typeIdentifier : String {
         return String(describing: self)
     }
 }

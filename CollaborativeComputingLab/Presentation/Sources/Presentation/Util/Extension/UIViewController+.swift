@@ -7,10 +7,10 @@
 
 import UIKit
 
-extension UIViewController: Identifiable {
+extension UIViewController: TypeIdentifiable {
     public class func create<T: UIViewController>() -> T {
-        let storyboard = UIStoryboard(name: identifier, bundle: .presentation)
-        let viewController = storyboard.instantiateViewController(withIdentifier: identifier) as! T
+        let storyboard = UIStoryboard(name: typeIdentifier, bundle: .presentation)
+        let viewController = storyboard.instantiateViewController(withIdentifier: typeIdentifier) as! T
         return viewController
     }
 }

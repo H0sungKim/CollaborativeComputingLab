@@ -9,6 +9,6 @@ import UIKit
 
 extension UITableView {
     func register(_ cellClass: UITableViewCell.Type) {
-        register(UINib(nibName: cellClass.identifier, bundle: .presentation), forCellReuseIdentifier: cellClass.identifier)
+        register(UINib(nibName: cellClass.typeIdentifier, bundle: .presentation), forCellReuseIdentifier: cellClass.typeIdentifier)
     }
 }
