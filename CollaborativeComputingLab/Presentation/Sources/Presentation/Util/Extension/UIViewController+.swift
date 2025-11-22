@@ -9,7 +9,7 @@ import UIKit
 
 extension UIViewController: Identifiable {
     public class func create<T: UIViewController>() -> T {
-        let storyboard = UIStoryboard(name: identifier, bundle: Bundle.presentation)
+        let storyboard = UIStoryboard(name: identifier, bundle: .presentation)
         let viewController = storyboard.instantiateViewController(withIdentifier: identifier) as! T
         return viewController
     }

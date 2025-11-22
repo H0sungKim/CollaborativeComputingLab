@@ -342,7 +342,7 @@ extension RoomViewController {
     }
     
     private func configureChatTableView() {
-        chatTableView.register(UINib(nibName: String(describing: ChatTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: ChatTableViewCell.self))
+        chatTableView.register(ChatTableViewCell.self)
         
         chatTableViewDelegate = TableViewDelegate()
         chatTableViewDataSource = UITableViewDiffableDataSource<ChatTableViewSection, ChatTableViewItem>(tableView: chatTableView, cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
@@ -383,7 +383,7 @@ extension RoomViewController {
     }
     
     private func configureParticipantTableView() {
-        participantTableView.register(UINib(nibName: String(describing: ParticipantTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: ParticipantTableViewCell.self))
+        participantTableView.register(ParticipantTableViewCell.self)
         
         participantTableViewDelegate = TableViewDelegate()
         participantTableViewDataSource = UITableViewDiffableDataSource<ParticipateTableViewSection, ParticipateTableViewItem>(tableView: participantTableView, cellProvider: { [weak self] tableView, indexPath, itemIdentifier in

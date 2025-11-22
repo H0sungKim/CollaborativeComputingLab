@@ -52,7 +52,7 @@ public final class HomeViewController: UIViewController {
     }
     
     private func configureRoomTableView() {
-        roomTableView.register(UINib(nibName: String(describing: RoomTableViewCell.self), bundle: Bundle.presentation), forCellReuseIdentifier: String(describing: RoomTableViewCell.self))
+        roomTableView.register(RoomTableViewCell.self)
         roomTableView.refreshControl = UIRefreshControl()
         roomTableView.refreshControl?.addTarget(self, action: #selector(roomTableViewRefreshed), for: .valueChanged)
         roomTableView.delegate = self
