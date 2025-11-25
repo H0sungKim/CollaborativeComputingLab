@@ -26,13 +26,13 @@ final class DefaultDIProvider: DIProvider {
     
     // MARK: - ViewControllerFactory
     func createHomeViewController(roomViewModel: RoomViewModel? = nil) -> HomeViewController {
-        let viewController: HomeViewController = HomeViewController.create()
+        let viewController: HomeViewController = HomeViewController.instantiate()
         viewController.inject(roomViewModel: roomViewModel ?? makeRoomViewModel())
         return viewController
     }
     
     func createRoomViewController(id: String, userName: String, role: RoomRole, roomViewModel: RoomViewModel? = nil, chatViewModel: ChatViewModel? = nil, streamViewModel: StreamViewModel? = nil) -> RoomViewController {
-        let viewController: RoomViewController = RoomViewController.create()
+        let viewController: RoomViewController = RoomViewController.instantiate()
         viewController.inject(id: id, userName: userName, role: role, roomViewModel: roomViewModel ?? makeRoomViewModel(), chatViewModel: chatViewModel ?? makeChatViewModel(), streamViewModel: streamViewModel ?? makeStreamViewModel())
         return viewController
     }

@@ -12,10 +12,9 @@ public protocol Configurable {
 }
 
 extension Configurable where Self: AnyObject {
-    @inlinable
-    public func configured(_ block: (_ target: Self) throws -> Void) rethrows -> Self {
-      try block(self)
-      return self
+    @inlinable public func configured(_ block: (_ target: Self) throws -> Void) rethrows -> Self {
+        try block(self)
+        return self
     }
 }
 

@@ -59,7 +59,7 @@ public final class HomeViewController: UIViewController {
         roomTableViewDataSource = UITableViewDiffableDataSource<RoomTableViewSection, RoomTableViewItem>(tableView: roomTableView, cellProvider: { tableView, indexPath, itemIdentifier in
             switch itemIdentifier {
             case .room(let roomEntity):
-                let cell: RoomTableViewCell = RoomTableViewCell.create(tableView: tableView, indexPath: indexPath)
+                let cell: RoomTableViewCell = tableView.dequeueReusableCell(RoomTableViewCell.self, indexPath: indexPath)
                 cell.configure(roomEntity: roomEntity)
                 return cell
             }

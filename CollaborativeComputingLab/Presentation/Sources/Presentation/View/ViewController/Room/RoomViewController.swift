@@ -348,7 +348,7 @@ extension RoomViewController {
         chatTableViewDataSource = UITableViewDiffableDataSource<ChatTableViewSection, ChatTableViewItem>(tableView: chatTableView, cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
             switch itemIdentifier {
             case .chat(let chatEntity):
-                let cell: ChatTableViewCell = ChatTableViewCell.create(tableView: tableView, indexPath: indexPath)
+                let cell: ChatTableViewCell = tableView.dequeueReusableCell(ChatTableViewCell.self, indexPath: indexPath)
                 var description = ""
                 if chatEntity.name == self?.instructor {
                     description = "강사"
@@ -389,7 +389,7 @@ extension RoomViewController {
         participantTableViewDataSource = UITableViewDiffableDataSource<ParticipateTableViewSection, ParticipateTableViewItem>(tableView: participantTableView, cellProvider: { [weak self] tableView, indexPath, itemIdentifier in
             switch itemIdentifier {
             case .participant(let participantEntity):
-                let cell: ParticipantTableViewCell = ParticipantTableViewCell.create(tableView: tableView, indexPath: indexPath)
+                let cell: ParticipantTableViewCell = tableView.dequeueReusableCell(ParticipantTableViewCell.self, indexPath: indexPath)
                 var description = ""
                 if participantEntity.name == self?.instructor {
                     description = "강사"

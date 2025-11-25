@@ -8,9 +8,9 @@
 import UIKit
 
 extension UIViewController: TypeIdentifiable {
-    public class func create<T: UIViewController>() -> T {
+    public class func instantiate() -> Self {
         let storyboard = UIStoryboard(name: typeIdentifier, bundle: .presentation)
-        let viewController = storyboard.instantiateViewController(withIdentifier: typeIdentifier) as! T
+        let viewController = storyboard.instantiateViewController(withIdentifier: typeIdentifier) as! Self
         return viewController
     }
 }
