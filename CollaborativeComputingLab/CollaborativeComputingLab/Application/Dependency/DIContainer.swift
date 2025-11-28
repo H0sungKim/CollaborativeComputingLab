@@ -13,8 +13,9 @@ import Foundation
 import UIKit
 
 protocol AppFactory: ViewControllerFactory, ChatFactory, StreamFactory, RoomFactory { }
+typealias DIContainer = AppFactory
 
-final class DefaultDIContainer: AppFactory {
+final class DefaultDIContainer: DIContainer {
     
     private let uri: String
     

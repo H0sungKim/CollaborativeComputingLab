@@ -12,7 +12,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    let diProvider: DIProvider = DefaultDIProvider(uri: Bundle.main.uri!)
+    let diContainer: DIContainer = DefaultDIContainer(uri: Bundle.main.uri!)
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -22,8 +22,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         let navigationController: DINavigationController = DINavigationController(
-            viewControllerFactory: diProvider,
-            rootViewController: diProvider.createHomeViewController(roomViewModel: nil)
+            viewControllerFactory: diContainer,
+            rootViewController: diContainer.createHomeViewController(roomViewModel: nil)
         ).configured({
             $0.navigationBar.isHidden = true
         })
