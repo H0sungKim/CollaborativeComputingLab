@@ -18,7 +18,7 @@ public final class Log {
     private init() { }
     
     public enum OutputMethod {
-        public typealias Closure = (_ object: Any?) -> Void
+        public typealias Closure = (_ object: Any?...) -> Void
         
         case oslog
         case nslog
@@ -26,26 +26,26 @@ public final class Log {
         case custom(Closure)
     }
     
-    public class func d(_ object: Any?, method: OutputMethod = .oslog, filename: String = #file, line: Int = #line, funcName: String = #function) {
+    public static func d(_ objects: Any?..., separator: String = " ", method: OutputMethod = .oslog, filename: String = #file, line: Int = #line, funcName: String = #function) {
         #if DEBUG
-        log(object, level: .debug, method: method, filename: filename, line: line, funcName: funcName)
+        log(objects, separator: separator, level: .debug, method: method, filename: filename, line: line, funcName: funcName)
         #endif
     }
     
-    public class func i(_ object: Any?, method: OutputMethod = .oslog, filename: String = #file, line: Int = #line, funcName: String = #function) {
-        log(object, level: .info, method: method, filename: filename, line: line, funcName: funcName)
+    public static func i(_ objects: Any?..., separator: String = " ", method: OutputMethod = .oslog, filename: String = #file, line: Int = #line, funcName: String = #function) {
+        log(objects, separator: separator, level: .info, method: method, filename: filename, line: line, funcName: funcName)
     }
     
-    public class func n(_ object: Any?, method: OutputMethod = .oslog, filename: String = #file, line: Int = #line, funcName: String = #function) {
-        log(object, level: .notice, method: method, filename: filename, line: line, funcName: funcName)
+    public static func n(_ objects: Any?..., separator: String = " ", method: OutputMethod = .oslog, filename: String = #file, line: Int = #line, funcName: String = #function) {
+        log(objects, separator: separator, level: .notice, method: method, filename: filename, line: line, funcName: funcName)
     }
     
-    public class func e(_ object: Any?, method: OutputMethod = .oslog, filename: String = #file, line: Int = #line, funcName: String = #function) {
-        log(object, level: .error, method: method, filename: filename, line: line, funcName: funcName)
+    public static func e(_ objects: Any?..., separator: String = " ", method: OutputMethod = .oslog, filename: String = #file, line: Int = #line, funcName: String = #function) {
+        log(objects, separator: separator, level: .error, method: method, filename: filename, line: line, funcName: funcName)
     }
     
-    public class func f(_ object: Any?, method: OutputMethod = .oslog, filename: String = #file, line: Int = #line, funcName: String = #function) {
-        log(object, level: .fault, method: method, filename: filename, line: line, funcName: funcName)
+    public static func f(_ objects: Any?..., separator: String = " ", method: OutputMethod = .oslog, filename: String = #file, line: Int = #line, funcName: String = #function) {
+        log(objects, separator: separator, level: .fault, method: method, filename: filename, line: line, funcName: funcName)
     }
     
     private enum Level: String {
@@ -71,10 +71,10 @@ public final class Log {
         }
     }
     
-    private class func log(_ object: Any?, level: Level, method: OutputMethod, filename: String, line: Int, funcName: String) {
+    private static func log(_ objects: [Any?], separator: String, level: Level, method: OutputMethod, filename: String, line: Int, funcName: String) {
         guard enabled else { return }
-        let object: Any = object ?? "nil"
-        let message: String = "\(dateFormatter.string(from: Date())) [\(level.rawValue)] [\(getThreadName())] [\(getFileName(filename)):\(line)] \(funcName) : \(object)"
+        let objectsMessage: String = objects.map({ "\($0 ?? "nil")" }).joined(separator: separator)
+        let message: String = "\(dateFormatter.string(from: Date())) [\(level.rawValue)] [\(getThreadName())] [\(getFileName(filename)):\(line)] \(funcName) : \(objectsMessage)"
         switch method {
         case .oslog:
             logger.log(level: level.osLogType, "\(message)")
@@ -83,7 +83,7 @@ public final class Log {
         case .print:
             print(message)
         case .custom(let closure):
-            closure(object)
+            closure(objects)
         }
     }
     
@@ -93,11 +93,11 @@ public final class Log {
         return dateFormatter
     }()
     
-    private class func getFileName(_ file: String) -> String {
+    private static func getFileName(_ file: String) -> String {
         return file.components(separatedBy: "/").last ?? file
     }
     
-    private class func getThreadName() -> String {
+    private static func getThreadName() -> String {
         if Thread.current.isMainThread {
             return "Main"
         } else {
