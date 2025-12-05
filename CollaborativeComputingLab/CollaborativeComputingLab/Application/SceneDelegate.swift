@@ -23,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         let navigationController: DINavigationController = DINavigationController(
             viewControllerFactory: diContainer,
-            rootViewController: diContainer.createHomeViewController(roomViewModel: nil)
+            rootViewController: diContainer.buildHomeViewController(roomViewModel: nil)
         ).configured({
             $0.navigationBar.isHidden = true
         })

@@ -92,7 +92,7 @@ public final class HomeViewController: UIViewController {
                 let userName: String = target.textFields?.first?.text ?? ""
                 self?.roomViewModel.enterRoom(id: id, userName: userName)
                 guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
-                let roomViewController = viewControllerFactory.createRoomViewController(id: id, userName: userName, role: .instructor, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
+                let roomViewController = viewControllerFactory.buildRoomViewController(id: id, userName: userName, role: .instructor, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
                 Log.i(self?.roomViewModel.participants.value)
                 self?.navigationController?.pushViewController(roomViewController, animated: true)
                 self?.dismiss(animated: true, completion: nil)
@@ -131,7 +131,7 @@ extension HomeViewController: UITableViewDelegate {
                 let userName = target.textFields?.first?.text ?? ""
                 self?.roomViewModel.enterRoom(id: roomEntity.id, userName: userName)
                 guard let viewControllerFactory = (self?.navigationController as? DINavigationController)?.viewControllerFactory else { return }
-                let roomViewController = viewControllerFactory.createRoomViewController(id: roomEntity.id, userName: userName, role: .student, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
+                let roomViewController = viewControllerFactory.buildRoomViewController(id: roomEntity.id, userName: userName, role: .student, roomViewModel: self?.roomViewModel, chatViewModel: nil, streamViewModel: nil)
                 Log.i(self?.roomViewModel.participants.value)
                 self?.navigationController?.pushViewController(roomViewController, animated: true)
                 self?.dismiss(animated: true, completion: nil)

@@ -9,6 +9,6 @@ import Foundation
 import UIKit
 
 public protocol ViewControllerFactory {
-    func createHomeViewController(roomViewModel: RoomViewModel?) -> HomeViewController
-    func createRoomViewController(id: String, userName: String, role: RoomRole, roomViewModel: RoomViewModel?, chatViewModel: ChatViewModel?, streamViewModel: StreamViewModel?) -> RoomViewController
+    func buildHomeViewController(roomViewModel: RoomViewModel?) -> HomeViewController
+    func buildRoomViewController(id: String, userName: String, role: RoomRole, roomViewModel: RoomViewModel?, chatViewModel: ChatViewModel?, streamViewModel: StreamViewModel?) -> RoomViewController
 }

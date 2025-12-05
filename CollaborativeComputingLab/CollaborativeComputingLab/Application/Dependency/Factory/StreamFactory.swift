@@ -14,38 +14,32 @@ import Foundation
 import HaishinKit
 
 protocol StreamFactory {
-    func makeRTMPService() -> RTMPService
-    func makeStreamService() -> StreamService
+    func buildStreamRepository() -> StreamRepository
+    func buildStreamRepository(rtmpService: RTMPService, streamService: StreamService) -> StreamRepository
     
-    func makeStreamRepository() -> StreamRepository
-    func makeStreamRepository(rtmpService: RTMPService, streamService: StreamService) -> StreamRepository
+    func buildStreamUseCase() -> StreamUseCase
+    func buildStreamUseCase(streamRepository: StreamRepository) -> StreamUseCase
     
-    func makeStreamUseCase() -> StreamUseCase
-    func makeStreamUseCase(streamRepository: StreamRepository) -> StreamUseCase
-    
-    func makeStreamViewModel() -> StreamViewModel
-    func makeStreamViewModel(streamUseCase: StreamUseCase) -> StreamViewModel
+    func buildStreamViewModel() -> StreamViewModel
+    func buildStreamViewModel(streamUseCase: StreamUseCase) -> StreamViewModel
 }
 
 extension StreamFactory {
-    func makeStreamRepository() -> StreamRepository {
-        return DefaultStreamRepository(rtmpService: makeRTMPService(), streamService: makeStreamService())
-    }
-    func makeStreamRepository(rtmpService: RTMPService, streamService: StreamService) -> StreamRepository {
+    func buildStreamRepository(rtmpService: RTMPService, streamService: StreamService) -> StreamRepository {
         return DefaultStreamRepository(rtmpService: rtmpService, streamService: streamService)
     }
     
-    func makeStreamUseCase() -> StreamUseCase {
-        return DefaultStreamUseCase(streamRepository: makeStreamRepository())
+    func buildStreamUseCase() -> StreamUseCase {
+        return DefaultStreamUseCase(streamRepository: buildStreamRepository())
     }
-    func makeStreamUseCase(streamRepository: StreamRepository) -> StreamUseCase {
+    func buildStreamUseCase(streamRepository: StreamRepository) -> StreamUseCase {
         return DefaultStreamUseCase(streamRepository: streamRepository)
     }
     
-    func makeStreamViewModel() -> StreamViewModel {
-        return DefaultStreamViewModel(streamUseCase: makeStreamUseCase())
+    func buildStreamViewModel() -> StreamViewModel {
+        return DefaultStreamViewModel(streamUseCase: buildStreamUseCase())
     }
-    func makeStreamViewModel(streamUseCase: StreamUseCase) -> StreamViewModel {
+    func buildStreamViewModel(streamUseCase: StreamUseCase) -> StreamViewModel {
         return DefaultStreamViewModel(streamUseCase: streamUseCase)
     }
 }

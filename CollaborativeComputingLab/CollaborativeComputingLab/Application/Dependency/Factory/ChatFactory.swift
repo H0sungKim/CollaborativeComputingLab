@@ -12,37 +12,32 @@ import Presentation
 import Foundation
 
 protocol ChatFactory {
-    func makeChatService() -> ChatService
+    func buildChatRepository() -> ChatRepository
+    func buildChatRepository(chatService: ChatService) -> ChatRepository
     
-    func makeChatRepository() -> ChatRepository
-    func makeChatRepository(chatService: ChatService) -> ChatRepository
+    func buildChatUseCase() -> ChatUseCase
+    func buildChatUseCase(chatRepository: ChatRepository) -> ChatUseCase
     
-    func makeChatUseCase() -> ChatUseCase
-    func makeChatUseCase(chatRepository: ChatRepository) -> ChatUseCase
-    
-    func makeChatViewModel() -> ChatViewModel
-    func makeChatViewModel(chatUseCase: ChatUseCase) -> ChatViewModel
+    func buildChatViewModel() -> ChatViewModel
+    func buildChatViewModel(chatUseCase: ChatUseCase) -> ChatViewModel
 }
 
 extension ChatFactory {
-    func makeChatRepository() -> ChatRepository {
-        return DefaultChatRepository(chatService: makeChatService())
-    }
-    func makeChatRepository(chatService: ChatService) -> ChatRepository {
+    func buildChatRepository(chatService: ChatService) -> ChatRepository {
         return DefaultChatRepository(chatService: chatService)
     }
     
-    func makeChatUseCase() -> ChatUseCase {
-        return DefaultChatUseCase(chatRepository: makeChatRepository())
+    func buildChatUseCase() -> ChatUseCase {
+        return DefaultChatUseCase(chatRepository: buildChatRepository())
     }
-    func makeChatUseCase(chatRepository: ChatRepository) -> ChatUseCase {
+    func buildChatUseCase(chatRepository: ChatRepository) -> ChatUseCase {
         return DefaultChatUseCase(chatRepository: chatRepository)
     }
     
-    func makeChatViewModel() -> ChatViewModel {
-        return DefaultChatViewModel(chatUseCase: makeChatUseCase())
+    func buildChatViewModel() -> ChatViewModel {
+        return DefaultChatViewModel(chatUseCase: buildChatUseCase())
     }
-    func makeChatViewModel(chatUseCase: ChatUseCase) -> ChatViewModel {
+    func buildChatViewModel(chatUseCase: ChatUseCase) -> ChatViewModel {
         return DefaultChatViewModel(chatUseCase: chatUseCase)
     }
 }

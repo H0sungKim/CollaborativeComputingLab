@@ -12,37 +12,32 @@ import Presentation
 import Foundation
 
 protocol RoomFactory {
-    func makeRoomService() -> RoomService
+    func buildRoomRepository() -> RoomRepository
+    func buildRoomRepository(roomService: RoomService) -> RoomRepository
     
-    func makeRoomRepository() -> RoomRepository
-    func makeRoomRepository(roomService: RoomService) -> RoomRepository
+    func buildRoomUseCase() -> RoomUseCase
+    func buildRoomUseCase(roomRepository: RoomRepository) -> RoomUseCase
     
-    func makeRoomUseCase() -> RoomUseCase
-    func makeRoomUseCase(roomRepository: RoomRepository) -> RoomUseCase
-    
-    func makeRoomViewModel() -> RoomViewModel
-    func makeRoomViewModel(roomUseCase: RoomUseCase) -> RoomViewModel
+    func buildRoomViewModel() -> RoomViewModel
+    func buildRoomViewModel(roomUseCase: RoomUseCase) -> RoomViewModel
 }
 
 extension RoomFactory {
-    func makeRoomRepository() -> RoomRepository {
-        return DefaultRoomRepository(roomService: makeRoomService())
-    }
-    func makeRoomRepository(roomService: RoomService) -> RoomRepository {
+    func buildRoomRepository(roomService: RoomService) -> RoomRepository {
         return DefaultRoomRepository(roomService: roomService)
     }
     
-    func makeRoomUseCase() -> RoomUseCase {
-        return DefaultRoomUseCase(roomRepository: makeRoomRepository())
+    func buildRoomUseCase() -> RoomUseCase {
+        return DefaultRoomUseCase(roomRepository: buildRoomRepository())
     }
-    func makeRoomUseCase(roomRepository: RoomRepository) -> RoomUseCase {
+    func buildRoomUseCase(roomRepository: RoomRepository) -> RoomUseCase {
         return DefaultRoomUseCase(roomRepository: roomRepository)
     }
     
-    func makeRoomViewModel() -> RoomViewModel {
-        return DefaultRoomViewModel(roomUseCase: makeRoomUseCase())
+    func buildRoomViewModel() -> RoomViewModel {
+        return DefaultRoomViewModel(roomUseCase: buildRoomUseCase())
     }
-    func makeRoomViewModel(roomUseCase: RoomUseCase) -> RoomViewModel {
+    func buildRoomViewModel(roomUseCase: RoomUseCase) -> RoomViewModel {
         return DefaultRoomViewModel(roomUseCase: roomUseCase)
     }
 }
