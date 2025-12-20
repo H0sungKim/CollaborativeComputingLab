@@ -24,7 +24,7 @@ let package = Package(
         .target(
             name: "Data",
             dependencies: [
-                "Domain",
+                .product(name: "Domain", package: "Domain"),
                 .product(name: "HaishinKit", package: "HaishinKit.swift")
             ]
         ),
