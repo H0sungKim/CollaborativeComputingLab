@@ -6,6 +6,7 @@
 //
 
 import Domain
+import DTO
 
 import Foundation
 import Combine

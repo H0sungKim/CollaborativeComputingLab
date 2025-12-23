@@ -16,11 +16,11 @@ public struct RoomExitDTO: DTO {
         self.id = id
     }
     
-    init(entity: RoomExitEntity) {
+    package init(entity: RoomExitEntity) {
         self.id = entity.id
     }
     
-    var entity: RoomExitEntity {
+    package var entity: RoomExitEntity {
         return RoomExitEntity(id: id ?? "")
     }
 }

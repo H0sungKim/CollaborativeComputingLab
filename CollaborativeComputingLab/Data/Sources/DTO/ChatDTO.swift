@@ -18,12 +18,12 @@ public struct ChatDTO: DTO {
         self.message = message
     }
     
-    init(entity: ChatEntity) {
+    package init(entity: ChatEntity) {
         self.name = entity.name
         self.message = entity.message
     }
     
-    var entity: ChatEntity {
+    package var entity: ChatEntity {
         return ChatEntity(
             name: name ?? "",
             message: message ?? ""

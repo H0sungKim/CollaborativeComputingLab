@@ -18,12 +18,12 @@ public struct RoomEntranceDTO: DTO {
         self.userName = userName
     }
     
-    init(entity: RoomEntranceEntity) {
+    package init(entity: RoomEntranceEntity) {
         self.id = entity.id
         self.userName = entity.userName
     }
     
-    var entity: RoomEntranceEntity {
+    package var entity: RoomEntranceEntity {
         return RoomEntranceEntity(
             id: id ?? "",
             userName: userName ?? ""

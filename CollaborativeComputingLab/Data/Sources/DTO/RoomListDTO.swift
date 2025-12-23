@@ -39,11 +39,11 @@ public struct RoomListDTO: MultipleDTO {
         self.rooms = rooms
     }
     
-    init(entities: [RoomEntity]) {
+    package init(entities: [RoomEntity]) {
         self.rooms = entities.map({ RoomDTO(entity: $0) })
     }
     
-    var entities: [RoomEntity] {
+    package var entities: [RoomEntity] {
         return rooms?.map(\.entity) ?? []
     }
 }

@@ -26,7 +26,7 @@ public final actor RTMPService {
         stream = RTMPStream(connection: connection)
     }
     
-    func publish(streamName: String) async {
+    package func publish(streamName: String) async {
         do {
             let connectionResponse = try await connection.connect(uri)
             Log.i(connectionResponse)
@@ -37,7 +37,7 @@ public final actor RTMPService {
         }
     }
     
-    func play(streamName: String) async {
+    package func play(streamName: String) async {
         do {
             let connectionResponse = try await connection.connect(uri)
             Log.i("\(connectionResponse)")
@@ -48,7 +48,7 @@ public final actor RTMPService {
         }
     }
     
-    func close() async {
+    package func close() async {
         do {
             try await connection.close()
         } catch {
@@ -56,15 +56,15 @@ public final actor RTMPService {
         }
     }
     
-    func addOutput(_ output: HKStreamOutput) async {
+    package func addOutput(_ output: HKStreamOutput) async {
         await stream.addOutput(output)
     }
     
-    func attachAudioPlayer(audioPlayer: AudioPlayer) async {
+    package func attachAudioPlayer(audioPlayer: AudioPlayer) async {
         await stream.attachAudioPlayer(audioPlayer)
     }
     
-    func getStream() -> RTMPStream {
+    package func getStream() -> RTMPStream {
         return stream
     }
 }

@@ -33,11 +33,11 @@ public struct ParticipantListDTO: MultipleDTO {
         self.participants = participants
     }
     
-    init(entities: [ParticipantEntity]) {
+    package init(entities: [ParticipantEntity]) {
         self.participants = entities.map({ ParticipantDTO(entity: $0) })
     }
     
-    var entities: [ParticipantEntity] {
+    package var entities: [ParticipantEntity] {
         return participants?.map(\.entity) ?? []
     }
 }

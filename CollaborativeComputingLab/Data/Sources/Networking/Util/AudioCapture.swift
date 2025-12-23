@@ -12,11 +12,11 @@ import Foundation
 
 import HaishinKit
 
-public protocol AudioCaptureDelegate: AnyObject {
+protocol AudioCaptureDelegate: AnyObject {
     func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime)
 }
 
-public final class AudioCapture {
+final class AudioCapture {
     public var isRunning = false
     weak var delegate: (any AudioCaptureDelegate)?
     private let audioEngine: AVAudioEngine

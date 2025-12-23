@@ -12,7 +12,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "Data",
-            targets: ["Data"]),
+            targets: ["Data", "DTO", "Networking", "RepositoryImpl"]),
     ],
     dependencies: [
         .package(name: "Domain", path: "../Domain"),
@@ -24,9 +24,22 @@ let package = Package(
         .target(
             name: "Data",
             dependencies: [
-                .product(name: "Domain", package: "Domain"),
-                .product(name: "HaishinKit", package: "HaishinKit.swift")
+//                .product(name: "Domain", package: "Domain"),
+                "DTO",
+                "Networking",
+                "RepositoryImpl",
             ]
         ),
+        .target(name: "DTO", dependencies: [
+            .product(name: "Domain", package: "Domain"),
+        ]),
+        .target(name: "Networking", dependencies: [
+            "DTO",
+            .product(name: "HaishinKit", package: "HaishinKit.swift"),
+        ]),
+        .target(name: "RepositoryImpl", dependencies: [
+            "DTO",
+            "Networking",
+        ]),
     ]
 )

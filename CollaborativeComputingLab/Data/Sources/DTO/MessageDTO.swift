@@ -16,11 +16,11 @@ public struct MessageDTO: DTO {
         self.message = message
     }
     
-    init(entity: MessageEntity) {
+    package init(entity: MessageEntity) {
         self.message = entity.message
     }
     
-    var entity: MessageEntity {
+    package var entity: MessageEntity {
         return MessageEntity(message: message ?? "")
     }
 }

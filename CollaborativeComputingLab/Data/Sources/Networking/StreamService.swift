@@ -23,7 +23,7 @@ public final actor StreamService {
         
     }
     
-    func attachMedia(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async {
+    package func attachMedia(video: sending AVCaptureDevice?, audio: sending AVCaptureDevice?) async {
         do {
             try await mixer.attachVideo(video, track: 1) { videoUnit in
                 videoUnit.isVideoMirrored = true
@@ -34,7 +34,7 @@ public final actor StreamService {
         }
     }
     
-    func detachMedia() async {
+    package func detachMedia() async {
         do {
             try await mixer.attachAudio(nil)
             try await mixer.attachVideo(nil, track: 0)
@@ -44,24 +44,24 @@ public final actor StreamService {
         }
     }
     
-    func startMixer() async {
+    package func startMixer() async {
         await mixer.startRunning()
     }
     
-    func stopMixer() async {
+    package func stopMixer() async {
         await mixer.stopRunning()
     }
     
-    @ScreenActor func setScreenSize(orientation: UIDeviceOrientation) async {
+    @ScreenActor package func setScreenSize(orientation: UIDeviceOrientation) async {
         mixer.screen.size = orientation.isLandscape ? CGSize(width: 1280, height: 720) : CGSize(width: 720, height: 1280)
     }
     
-    @ScreenActor func configureScreen(orientation: UIDeviceOrientation) async {
+    @ScreenActor package func configureScreen(orientation: UIDeviceOrientation) async {
         await setScreenSize(orientation: orientation)
         mixer.screen.backgroundColor = UIColor.clear.cgColor
     }
     
-    @ScreenActor func configureVideoScreenObject() async {
+    @ScreenActor package func configureVideoScreenObject() async {
         videoScreenObject.cornerRadius = 16.0
         videoScreenObject.track = 1
         videoScreenObject.horizontalAlignment = .right
@@ -74,52 +74,52 @@ public final actor StreamService {
         }
     }
     
-    func configureAudio(audioEngine: AVAudioEngine) {
+    package func configureAudio(audioEngine: AVAudioEngine) {
         Task {
             audioPlayer = AudioPlayer(audioEngine: audioEngine)
         }
         audioCapture = AudioCapture(audioEngine: audioEngine)
     }
     
-    func configureVideoMixerSettings() async {
+    package func configureVideoMixerSettings() async {
         var videoMixerSettings = await mixer.videoMixerSettings
         videoMixerSettings.mode = .offscreen
         await mixer.setVideoMixerSettings(videoMixerSettings)
     }
     
-    func setAudioCaptureDelegate() {
+    package func setAudioCaptureDelegate() {
         audioCapture.delegate = self
     }
     
-    func removeAudioCaptureDelegate() {
+    package func removeAudioCaptureDelegate() {
         audioCapture.delegate = nil
     }
     
-    func setMonitoringEnabled(_ monitoringEnabled: Bool) async {
+    package func setMonitoringEnabled(_ monitoringEnabled: Bool) async {
         await mixer.setMonitoringEnabled(monitoringEnabled)
     }
     
-    func setVideoOrientation(_ orientation: UIDeviceOrientation) async {
+    package func setVideoOrientation(_ orientation: UIDeviceOrientation) async {
         if let videoOrientation = DeviceUtil.videoOrientation(by: orientation) {
             await mixer.setVideoOrientation(videoOrientation)
         }
     }
     
-    func getAudioPlayer() -> AudioPlayer {
+    package func getAudioPlayer() -> AudioPlayer {
         return audioPlayer
     }
     
-    func addOutputStream(stream: RTMPStream) async {
+    package func addOutputStream(stream: RTMPStream) async {
         await mixer.addOutput(stream)
     }
     
-    func appendBuffer(_ sampleBuffer: CMSampleBuffer) async {
+    package func appendBuffer(_ sampleBuffer: CMSampleBuffer) async {
         await mixer.append(sampleBuffer, track: 0)
     }
 }
 
 extension StreamService: @preconcurrency AudioCaptureDelegate {
-    public func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime) {
+    func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime) {
         Task {
             await mixer.append(buffer, when: time)
         }

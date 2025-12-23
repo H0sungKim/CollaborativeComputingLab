@@ -9,7 +9,7 @@ import Domain
 
 import Foundation
 
-enum ClientMessage {
+package enum ClientMessage {
     case requestRoomList
     case enterRoom(RoomEntranceDTO)
     case leaveRoom(RoomExitDTO)
@@ -24,7 +24,7 @@ enum ClientMessage {
 }
 
 extension ClientMessage: Codable {
-    init(from decoder: Decoder) throws {
+    package init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(String.self, forKey: .type)
         switch ClientMessageType(rawValue: type) {
@@ -41,7 +41,7 @@ extension ClientMessage: Codable {
         }
     }
     
-    func encode(to encoder: Encoder) throws {
+    package func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .requestRoomList:
