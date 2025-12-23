@@ -12,10 +12,11 @@ import AVFoundation
 import UIKit
 
 import HaishinKit
+import RTMPHaishinKit
 
 public final actor StreamService {
-    private let mixer: MediaMixer = MediaMixer(multiCamSessionEnabled: true, multiTrackAudioMixingEnabled: true, useManualCapture: true)
-    private var audioCapture: AudioCapture!
+    private let mixer: MediaMixer = MediaMixer(captureSessionMode: .single, multiTrackAudioMixingEnabled: true)
+    private var audioCapture: AudioEngineCapture!
     @ScreenActor private lazy var videoScreenObject: VideoTrackScreenObject = VideoTrackScreenObject()
     private var audioPlayer: AudioPlayer!
     
@@ -28,7 +29,7 @@ public final actor StreamService {
             try await mixer.attachVideo(video, track: 1) { videoUnit in
                 videoUnit.isVideoMirrored = true
             }
-            try await mixer.attachAudio(audio)
+            try await mixer.attachAudio(audio, track: 0)
         } catch {
             Log.e(error.localizedDescription)
         }
@@ -78,7 +79,7 @@ public final actor StreamService {
         Task {
             audioPlayer = AudioPlayer(audioEngine: audioEngine)
         }
-        audioCapture = AudioCapture(audioEngine: audioEngine)
+        audioCapture = AudioEngineCapture(audioEngine: audioEngine)
     }
     
     package func configureVideoMixerSettings() async {
@@ -118,8 +119,8 @@ public final actor StreamService {
     }
 }
 
-extension StreamService: @preconcurrency AudioCaptureDelegate {
-    func audioCapture(_ audioCapture: AudioCapture, buffer: AVAudioBuffer, time: AVAudioTime) {
+extension StreamService: @preconcurrency AudioEngineCaptureDelegate {
+    func audioCapture(_ audioCapture: AudioEngineCapture, buffer: AVAudioPCMBuffer, time: AVAudioTime) {
         Task {
             await mixer.append(buffer, when: time)
         }

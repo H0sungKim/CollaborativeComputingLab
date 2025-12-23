@@ -7,16 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9610C9662DBE71F9006B9AA2 /* Data in Frameworks */ = {isa = PBXBuildFile; productRef = 9610C9652DBE71F9006B9AA2 /* Data */; };
-		9610C9682DBE71F9006B9AA2 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 9610C9672DBE71F9006B9AA2 /* Domain */; };
-		9610C96A2DBE71F9006B9AA2 /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 9610C9692DBE71F9006B9AA2 /* Presentation */; };
+		96600B4D2EFA7D65007EE6D9 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 96600B4C2EFA7D65007EE6D9 /* Domain */; };
+		96600B502EFA7D6F007EE6D9 /* Data in Frameworks */ = {isa = PBXBuildFile; productRef = 96600B4F2EFA7D6F007EE6D9 /* Data */; };
+		96600B532EFA7D75007EE6D9 /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 96600B522EFA7D75007EE6D9 /* Presentation */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		9610C8712DBCA39D006B9AA2 /* CollaborativeComputingLab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CollaborativeComputingLab.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9610C9612DBE6EF1006B9AA2 /* Presentation */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Presentation; sourceTree = "<group>"; };
-		9610C9622DBE6FFE006B9AA2 /* Domain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Domain; sourceTree = "<group>"; };
-		9610C9632DBE7010006B9AA2 /* Data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Data; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,9 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9610C9682DBE71F9006B9AA2 /* Domain in Frameworks */,
-				9610C96A2DBE71F9006B9AA2 /* Presentation in Frameworks */,
-				9610C9662DBE71F9006B9AA2 /* Data in Frameworks */,
+				96600B502EFA7D6F007EE6D9 /* Data in Frameworks */,
+				96600B532EFA7D75007EE6D9 /* Presentation in Frameworks */,
+				96600B4D2EFA7D65007EE6D9 /* Domain in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,9 +54,6 @@
 		9610C8682DBCA39D006B9AA2 = {
 			isa = PBXGroup;
 			children = (
-				9610C9632DBE7010006B9AA2 /* Data */,
-				9610C9622DBE6FFE006B9AA2 /* Domain */,
-				9610C9612DBE6EF1006B9AA2 /* Presentation */,
 				9610C8732DBCA39D006B9AA2 /* CollaborativeComputingLab */,
 				9610C9642DBE71F9006B9AA2 /* Frameworks */,
 				9610C8722DBCA39D006B9AA2 /* Products */,
@@ -101,9 +95,9 @@
 			);
 			name = CollaborativeComputingLab;
 			packageProductDependencies = (
-				9610C9652DBE71F9006B9AA2 /* Data */,
-				9610C9672DBE71F9006B9AA2 /* Domain */,
-				9610C9692DBE71F9006B9AA2 /* Presentation */,
+				96600B4C2EFA7D65007EE6D9 /* Domain */,
+				96600B4F2EFA7D6F007EE6D9 /* Data */,
+				96600B522EFA7D75007EE6D9 /* Presentation */,
 			);
 			productName = CollaborativeComputingLab;
 			productReference = 9610C8712DBCA39D006B9AA2 /* CollaborativeComputingLab.app */;
@@ -133,6 +127,9 @@
 			mainGroup = 9610C8682DBCA39D006B9AA2;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				96600B4B2EFA7D65007EE6D9 /* XCLocalSwiftPackageReference "../Domain" */,
+				96600B4E2EFA7D6F007EE6D9 /* XCLocalSwiftPackageReference "../Data" */,
+				96600B512EFA7D75007EE6D9 /* XCLocalSwiftPackageReference "../Presentation" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9610C8722DBCA39D006B9AA2 /* Products */;
@@ -361,16 +358,31 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCSwiftPackageProductDependency section */
-		9610C9652DBE71F9006B9AA2 /* Data */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Data;
+/* Begin XCLocalSwiftPackageReference section */
+		96600B4B2EFA7D65007EE6D9 /* XCLocalSwiftPackageReference "../Domain" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Domain;
 		};
-		9610C9672DBE71F9006B9AA2 /* Domain */ = {
+		96600B4E2EFA7D6F007EE6D9 /* XCLocalSwiftPackageReference "../Data" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Data;
+		};
+		96600B512EFA7D75007EE6D9 /* XCLocalSwiftPackageReference "../Presentation" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Presentation;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		96600B4C2EFA7D65007EE6D9 /* Domain */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Domain;
 		};
-		9610C9692DBE71F9006B9AA2 /* Presentation */ = {
+		96600B4F2EFA7D6F007EE6D9 /* Data */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Data;
+		};
+		96600B522EFA7D75007EE6D9 /* Presentation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Presentation;
 		};

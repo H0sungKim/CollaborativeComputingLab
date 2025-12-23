@@ -208,8 +208,8 @@ public final class RoomViewController: UIViewController {
         participantButton.setImage(UIImage(systemName: "person.2.fill"), for: .selected)
         participantButton.setImage(UIImage(systemName: "person.2"), for: .normal)
         
-        chatButton.setImage(UIImage(systemName: "ellipses.bubble.fill"), for: .selected)
-        chatButton.setImage(UIImage(systemName: "ellipses.bubble"), for: .normal)
+        chatButton.setImage(UIImage(systemName: "ellipsis.bubble.fill"), for: .selected)
+        chatButton.setImage(UIImage(systemName: "ellipsis.bubble"), for: .normal)
     }
     
     private func configurePublishView() {

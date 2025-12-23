@@ -5,10 +5,19 @@
       location = "group:README.md">
    </FileRef>
    <FileRef
-      location = "group:CollaborativeComputingLab/CollaborativeComputingLab.xcodeproj">
+      location = "group:Source/Data">
    </FileRef>
    <FileRef
-      location = "group:Server/Server.xcodeproj">
+      location = "group:Source/Domain">
+   </FileRef>
+   <FileRef
+      location = "group:Source/Presentation">
+   </FileRef>
+   <FileRef
+      location = "group:Source/Client/CollaborativeComputingLab.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Source/Server/Server.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Paper">

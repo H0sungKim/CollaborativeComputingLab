@@ -11,6 +11,7 @@ import Foundation
 import AVFoundation
 
 import HaishinKit
+import RTMPHaishinKit
 
 public final actor RTMPService {
     
@@ -56,7 +57,7 @@ public final actor RTMPService {
         }
     }
     
-    package func addOutput(_ output: HKStreamOutput) async {
+    package func addOutput(_ output: StreamOutput) async {
         await stream.addOutput(output)
     }
     

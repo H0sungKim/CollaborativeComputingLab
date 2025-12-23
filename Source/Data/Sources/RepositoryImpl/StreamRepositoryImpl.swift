@@ -38,7 +38,7 @@ public final class DefaultStreamRepository: StreamRepository {
     }
     
     public func addOutputView(_ view: UIView) async {
-        if let output = view as? (any HKStreamOutput) {
+        if let output = view as? (any StreamOutput) {
             await rtmpService.addOutput(output)
         }
     }
