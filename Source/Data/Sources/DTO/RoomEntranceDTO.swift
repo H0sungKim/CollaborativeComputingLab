@@ -5,9 +5,9 @@
 //  Created by 김호성 on 2025.06.26.
 //
 
-import Domain
-
 import Foundation
+
+import Domain
 
 public struct RoomEntranceDTO: DTO {
     public let id: String?

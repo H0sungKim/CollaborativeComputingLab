@@ -5,9 +5,9 @@
 //  Created by 김호성 on 2021/11/22.
 //
 
-import Core
-
 import UIKit
+
+import Core
 
 extension UIViewController: TypeIdentifiable {
     public class func instantiate() -> Self {

@@ -5,16 +5,14 @@
 //  Created by 김호성 on 2025.05.11.
 //
 
-import Log
-
-import Domain
-
-import UIKit
-import Foundation
 import AVFoundation
+import UIKit
 import ReplayKit
 
 import HaishinKit
+
+import Log
+import Domain
 
 public protocol StreamViewModelInput {
     func configure(roomRole: RoomRole, outputView: UIView?) async

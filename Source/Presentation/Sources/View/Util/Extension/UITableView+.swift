@@ -5,9 +5,9 @@
 //  Created by 김호성 on 2025.11.22.
 //
 
-import Core
-
 import UIKit
+
+import Core
 
 extension UITableView {
     func register(_ cellClass: UITableViewCell.Type) {

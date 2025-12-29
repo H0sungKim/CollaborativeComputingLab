@@ -5,11 +5,11 @@
 //  Created by 김호성 on 2025.03.04.
 //
 
+import Foundation
+
 import Data
 import Domain
 import Presentation
-
-import Foundation
 
 protocol ChatFactory {
     func buildChatRepository() -> ChatRepository

@@ -1,6 +1,6 @@
 //
 //  WebSocketError.swift
-//  Domain
+//  Data
 //
 //  Created by 김호성 on 2025.06.23.
 //

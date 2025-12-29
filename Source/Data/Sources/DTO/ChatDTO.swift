@@ -5,9 +5,9 @@
 //  Created by 김호성 on 2025.04.28.
 //
 
-import Domain
-
 import Foundation
+
+import Domain
 
 public struct ChatDTO: DTO {
     public let name: String?

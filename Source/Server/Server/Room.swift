@@ -5,9 +5,9 @@
 //  Created by 김호성 on 2025.06.29.
 //
 
-import Entity
-
 import Foundation
+
+import Entity
 
 final class Room {
     let id: String

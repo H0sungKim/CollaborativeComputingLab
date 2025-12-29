@@ -5,10 +5,10 @@
 //  Created by 김호성 on 2025.04.28.
 //
 
-import Entity
-
 import Foundation
 import Combine
+
+import Entity
 
 public protocol ChatRepository {
     var chatStream: AnyPublisher<ChatEntity, Never> { get }

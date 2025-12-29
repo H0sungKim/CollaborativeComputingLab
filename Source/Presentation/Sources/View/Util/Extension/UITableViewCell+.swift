@@ -5,9 +5,9 @@
 //  Created by 김호성 on 2025.03.31.
 //
 
-import Core
-
 import UIKit
+
+import Core
 
 extension UITableViewCell: TypeIdentifiable {
     

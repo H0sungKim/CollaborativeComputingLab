@@ -5,9 +5,9 @@
 //  Created by 김호성 on 2025.04.27.
 //
 
-import Domain
-
 import UIKit
+
+import Domain
 
 final class ChatTableViewCell: UITableViewCell {
 

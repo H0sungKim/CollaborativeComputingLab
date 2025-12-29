@@ -5,9 +5,9 @@
 //  Created by 김호성 on 2025.07.02.
 //
 
-import Domain
-
 import UIKit
+
+import Domain
 
 final class RoomTableViewCell: UITableViewCell {
 

@@ -5,9 +5,9 @@
 //  Created by 김호성 on 2025.05.12.
 //
 
-import Domain
-
 import Foundation
+
+import Domain
 
 public enum RoomRole: Int, Sendable {
     case instructor = 0

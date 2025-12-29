@@ -5,14 +5,12 @@
 //  Created by 김호성 on 2025.04.28.
 //
 
-import ViewModel
-
-import Core
-
-import Domain
-
 import Combine
 import UIKit
+
+import Core
+import Domain
+import ViewModel
 
 public final class HomeViewController: UIViewController {
     

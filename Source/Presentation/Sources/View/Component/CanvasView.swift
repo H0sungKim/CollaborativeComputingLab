@@ -5,9 +5,9 @@
 //  Created by 김호성 on 2025.05.03.
 //
 
-import Core
-
 import UIKit
+
+import Core
 
 final class CanvasView: UIView {
     var strokeWidth: Float = 4
