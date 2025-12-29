@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		969E95C22EFBB341003FBA97 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 969E95C12EFBB341003FBA97 /* Domain */; };
+		969E95C52EFBB34E003FBA97 /* Data in Frameworks */ = {isa = PBXBuildFile; productRef = 969E95C42EFBB34E003FBA97 /* Data */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		96BB8C6E2E096D8600AB92EF /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -35,6 +40,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				969E95C52EFBB34E003FBA97 /* Data in Frameworks */,
+				969E95C22EFBB341003FBA97 /* Domain in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +92,8 @@
 			);
 			name = Server;
 			packageProductDependencies = (
+				969E95C12EFBB341003FBA97 /* Domain */,
+				969E95C42EFBB34E003FBA97 /* Data */,
 			);
 			productName = Server;
 			productReference = 96BB8C702E096D8600AB92EF /* Server */;
@@ -114,6 +123,10 @@
 			);
 			mainGroup = 96BB8C672E096D8600AB92EF;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				969E95C02EFBB341003FBA97 /* XCLocalSwiftPackageReference "../Domain" */,
+				969E95C32EFBB34E003FBA97 /* XCLocalSwiftPackageReference "../Data" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 96BB8C712E096D8600AB92EF /* Products */;
 			projectDirPath = "";
@@ -305,6 +318,28 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		969E95C02EFBB341003FBA97 /* XCLocalSwiftPackageReference "../Domain" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Domain;
+		};
+		969E95C32EFBB34E003FBA97 /* XCLocalSwiftPackageReference "../Data" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Data;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		969E95C12EFBB341003FBA97 /* Domain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Domain;
+		};
+		969E95C42EFBB34E003FBA97 /* Data */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Data;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 96BB8C682E096D8600AB92EF /* Project object */;
 }

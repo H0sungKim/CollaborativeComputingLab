@@ -5,11 +5,9 @@
 //  Created by 김호성 on 2025.06.26.
 //
 
-import Domain
-
 import Foundation
 
-package enum ClientMessage {
+public enum ClientMessage {
     case requestRoomList
     case enterRoom(RoomEntranceDTO)
     case leaveRoom(RoomExitDTO)
@@ -24,7 +22,7 @@ package enum ClientMessage {
 }
 
 extension ClientMessage: Codable {
-    package init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(String.self, forKey: .type)
         switch ClientMessageType(rawValue: type) {
@@ -41,7 +39,7 @@ extension ClientMessage: Codable {
         }
     }
     
-    package func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .requestRoomList:

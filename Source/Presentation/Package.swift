@@ -12,11 +12,12 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "Presentation",
-            targets: ["Presentation"]),
+            targets: ["Presentation"]
+        ),
     ],
     dependencies: [
         .package(name: "Domain", path: "../Domain"),
-        .package(url: "https://github.com/HaishinKit/HaishinKit.swift.git", from: "2.0.8")
+        .package(url: "https://github.com/HaishinKit/HaishinKit.swift.git", "0.0.0"..."2.2.3"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -24,9 +25,18 @@ let package = Package(
         .target(
             name: "Presentation",
             dependencies: [
-                .product(name: "Domain", package: "Domain"),
-                .product(name: "HaishinKit", package: "HaishinKit.swift")
+//                .product(name: "Domain", package: "Domain"),
+//                .product(name: "HaishinKit", package: "HaishinKit.swift"),
+                "ViewModel",
+                "View",
             ]
         ),
+        .target(name: "ViewModel", dependencies: [
+            .product(name: "Domain", package: "Domain"),
+            .product(name: "HaishinKit", package: "HaishinKit.swift"),
+        ]),
+        .target(name: "View", dependencies: [
+            "ViewModel",
+        ])
     ]
 )

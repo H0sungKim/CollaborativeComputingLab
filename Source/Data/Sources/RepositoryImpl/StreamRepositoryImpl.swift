@@ -5,14 +5,17 @@
 //  Created by 김호성 on 2025.05.10.
 //
 
-import Domain
+// Package Internal Target
 import DTO
 import Networking
 
-import Foundation
-import AVFoundation
-import UIKit
+// Layer
+import Domain
 
+// Apple Framework
+import AVFoundation
+
+// Third-party Framework
 import HaishinKit
 
 public final class DefaultStreamRepository: StreamRepository {
@@ -37,8 +40,8 @@ public final class DefaultStreamRepository: StreamRepository {
         await rtmpService.close()
     }
     
-    public func addOutputView(_ view: UIView) async {
-        if let output = view as? (any StreamOutput) {
+    public func addOutput(_ output: Any) async {
+        if let output = output as? (any StreamOutput) {
             await rtmpService.addOutput(output)
         }
     }
@@ -83,11 +86,11 @@ public final class DefaultStreamRepository: StreamRepository {
         await streamService.setMonitoringEnabled(monitoringEnabled)
     }
     
-    public func setVideoOrientation(_ orientation: UIDeviceOrientation) async {
+    public func setVideoOrientation(_ orientation: AVCaptureVideoOrientation) async {
         await streamService.setVideoOrientation(orientation)
     }
     
-    public func setScreenSize(orientation: UIDeviceOrientation) async {
+    public func setScreenSize(orientation: AVCaptureVideoOrientation) async {
         await streamService.setScreenSize(orientation: orientation)
     }
     
@@ -95,7 +98,7 @@ public final class DefaultStreamRepository: StreamRepository {
         await streamService.configureVideoMixerSettings()
     }
     
-    public func configureScreen(orientation: UIDeviceOrientation) async {
+    public func configureScreen(orientation: AVCaptureVideoOrientation) async {
         await streamService.configureScreen(orientation: orientation)
     }
     

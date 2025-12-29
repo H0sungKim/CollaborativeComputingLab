@@ -11,21 +11,21 @@ import Foundation
 
 public struct RoomListDTO: MultipleDTO {
     
-    struct RoomDTO: DTO {
-        let id: String?
-        let participants: [String]?
+    public struct RoomDTO: DTO {
+        public let id: String?
+        public let participants: [String]?
         
-        init(id: String?, participants: [String]?) {
+        public init(id: String?, participants: [String]?) {
             self.id = id
             self.participants = participants
         }
         
-        init(entity: RoomEntity) {
+        public init(entity: RoomEntity) {
             self.id = entity.id
             self.participants = entity.participants
         }
         
-        var entity: RoomEntity {
+        public var entity: RoomEntity {
             return RoomEntity(
                 id: id ?? "",
                 participants: participants ?? []
@@ -33,17 +33,17 @@ public struct RoomListDTO: MultipleDTO {
         }
     }
     
-    let rooms: [RoomDTO]?
+    public let rooms: [RoomDTO]?
     
-    init(rooms: [RoomDTO]?) {
+    public init(rooms: [RoomDTO]?) {
         self.rooms = rooms
     }
     
-    package init(entities: [RoomEntity]) {
+    public init(entities: [RoomEntity]) {
         self.rooms = entities.map({ RoomDTO(entity: $0) })
     }
     
-    package var entities: [RoomEntity] {
+    public var entities: [RoomEntity] {
         return rooms?.map(\.entity) ?? []
     }
 }

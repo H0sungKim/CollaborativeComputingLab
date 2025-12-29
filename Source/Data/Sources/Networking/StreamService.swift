@@ -5,11 +5,12 @@
 //  Created by 김호성 on 2025.05.18.
 //
 
+import Log
+
 import Domain
 
-import Foundation
 import AVFoundation
-import UIKit
+import Foundation
 
 import HaishinKit
 import RTMPHaishinKit
@@ -53,20 +54,27 @@ public final actor StreamService {
         await mixer.stopRunning()
     }
     
-    @ScreenActor package func setScreenSize(orientation: UIDeviceOrientation) async {
-        mixer.screen.size = orientation.isLandscape ? CGSize(width: 1280, height: 720) : CGSize(width: 720, height: 1280)
+    @ScreenActor package func setScreenSize(orientation: AVCaptureVideoOrientation) async {
+        switch orientation {
+        case .portrait, .portraitUpsideDown:
+            mixer.screen.size = CGSize(width: 720, height: 1280)
+        case .landscapeRight, .landscapeLeft:
+            mixer.screen.size = CGSize(width: 1280, height: 720)
+        @unknown default:
+            Log.e("Unknown orientation")
+        }
     }
     
-    @ScreenActor package func configureScreen(orientation: UIDeviceOrientation) async {
+    @ScreenActor package func configureScreen(orientation: AVCaptureVideoOrientation) async {
         await setScreenSize(orientation: orientation)
-        mixer.screen.backgroundColor = UIColor.clear.cgColor
+        mixer.screen.backgroundColor = CGColor(gray: 0, alpha: 0)
     }
     
     @ScreenActor package func configureVideoScreenObject() async {
         videoScreenObject.cornerRadius = 16.0
         videoScreenObject.track = 1
         videoScreenObject.horizontalAlignment = .right
-        videoScreenObject.layoutMargin = UIEdgeInsets(top: 16, left: 0, bottom: 0, right: 16)
+//        videoScreenObject.layoutMargin = NSEdgeInsets(top: 16, left: 0, bottom: 0, right: 16)
         videoScreenObject.size = CGSize(width: 160 * 2, height: 90 * 2)
         do {
             try mixer.screen.addChild(videoScreenObject)
@@ -100,10 +108,8 @@ public final actor StreamService {
         await mixer.setMonitoringEnabled(monitoringEnabled)
     }
     
-    package func setVideoOrientation(_ orientation: UIDeviceOrientation) async {
-        if let videoOrientation = DeviceUtil.videoOrientation(by: orientation) {
-            await mixer.setVideoOrientation(videoOrientation)
-        }
+    package func setVideoOrientation(_ orientation: AVCaptureVideoOrientation) async {
+        await mixer.setVideoOrientation(orientation)
     }
     
     package func getAudioPlayer() -> AudioPlayer {

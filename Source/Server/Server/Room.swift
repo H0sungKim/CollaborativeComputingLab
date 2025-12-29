@@ -5,6 +5,8 @@
 //  Created by 김호성 on 2025.06.29.
 //
 
+import Entity
+
 import Foundation
 
 final class Room {

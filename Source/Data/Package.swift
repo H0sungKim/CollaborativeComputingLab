@@ -7,12 +7,14 @@ let package = Package(
     name: "Data",
     platforms: [
         .iOS(.v18),
+        .macOS(.v15),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "Data",
-            targets: ["Data", "DTO", "Networking", "RepositoryImpl"]),
+            targets: ["Data"]
+        ),
     ],
     dependencies: [
         .package(name: "Domain", path: "../Domain"),
@@ -21,9 +23,7 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "Data",
-            dependencies: [
+        .target(name: "Data", dependencies: [
 //                .product(name: "Domain", package: "Domain"),
                 "DTO",
                 "Networking",
@@ -39,7 +39,6 @@ let package = Package(
             .product(name: "RTMPHaishinKit", package: "HaishinKit.swift"),
         ]),
         .target(name: "RepositoryImpl", dependencies: [
-            "DTO",
             "Networking",
         ]),
     ]

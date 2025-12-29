@@ -11,33 +11,33 @@ import Foundation
 
 public struct ParticipantListDTO: MultipleDTO {
     
-    struct ParticipantDTO: DTO {
-        let name: String?
+    public struct ParticipantDTO: DTO {
+        public let name: String?
         
-        init(name: String?) {
+        public init(name: String?) {
             self.name = name
         }
         
-        init(entity: ParticipantEntity) {
+        public init(entity: ParticipantEntity) {
             self.name = entity.name
         }
         
-        var entity: ParticipantEntity {
+        public var entity: ParticipantEntity {
             return ParticipantEntity(name: name ?? "")
         }
     }
     
-    let participants: [ParticipantDTO]?
+    public let participants: [ParticipantDTO]?
     
-    init(participants: [ParticipantDTO]?) {
+    public init(participants: [ParticipantDTO]?) {
         self.participants = participants
     }
     
-    package init(entities: [ParticipantEntity]) {
+    public init(entities: [ParticipantEntity]) {
         self.participants = entities.map({ ParticipantDTO(entity: $0) })
     }
     
-    package var entities: [ParticipantEntity] {
+    public var entities: [ParticipantEntity] {
         return participants?.map(\.entity) ?? []
     }
 }

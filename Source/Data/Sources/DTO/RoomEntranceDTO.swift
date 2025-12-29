@@ -10,20 +10,20 @@ import Domain
 import Foundation
 
 public struct RoomEntranceDTO: DTO {
-    let id: String?
-    let userName: String?
+    public let id: String?
+    public let userName: String?
     
-    init(id: String?, userName: String?) {
+    public init(id: String?, userName: String?) {
         self.id = id
         self.userName = userName
     }
     
-    package init(entity: RoomEntranceEntity) {
+    public init(entity: RoomEntranceEntity) {
         self.id = entity.id
         self.userName = entity.userName
     }
     
-    package var entity: RoomEntranceEntity {
+    public var entity: RoomEntranceEntity {
         return RoomEntranceEntity(
             id: id ?? "",
             userName: userName ?? ""

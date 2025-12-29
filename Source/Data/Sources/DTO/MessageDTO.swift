@@ -10,17 +10,17 @@ import Domain
 import Foundation
 
 public struct MessageDTO: DTO {
-    let message: String?
+    public let message: String?
     
-    init(message: String?) {
+    public init(message: String?) {
         self.message = message
     }
     
-    package init(entity: MessageEntity) {
+    public init(entity: MessageEntity) {
         self.message = entity.message
     }
     
-    package var entity: MessageEntity {
+    public var entity: MessageEntity {
         return MessageEntity(message: message ?? "")
     }
 }

@@ -10,17 +10,17 @@ import Domain
 import Foundation
 
 public struct RoomExitDTO: DTO {
-    let id: String?
+    public let id: String?
     
-    init(id: String?) {
+    public init(id: String?) {
         self.id = id
     }
     
-    package init(entity: RoomExitEntity) {
+    public init(entity: RoomExitEntity) {
         self.id = entity.id
     }
     
-    package var entity: RoomExitEntity {
+    public var entity: RoomExitEntity {
         return RoomExitEntity(id: id ?? "")
     }
 }

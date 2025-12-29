@@ -9,7 +9,7 @@ import Domain
 
 import Foundation
 
-package protocol MultipleDTO: Codable {
+public protocol MultipleDTO: Codable {
     associatedtype EntityType: Entity
     
     var entities: [EntityType] { get }

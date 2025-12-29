@@ -5,11 +5,14 @@
 //  Created by 김호성 on 2025.06.25.
 //
 
-import Domain
 import DTO
 
-import Foundation
+import Core
+
+import Domain
+
 import Combine
+import Foundation
 
 public protocol ChatService: URLSessionWebSocketDelegate {
     var chatStream: PassthroughSubject<ChatDTO, Never> { get }

@@ -10,20 +10,20 @@ import Domain
 import Foundation
 
 public struct ChatDTO: DTO {
-    let name: String?
-    let message: String?
+    public let name: String?
+    public let message: String?
     
-    init(name: String?, message: String?) {
+    public init(name: String?, message: String?) {
         self.name = name
         self.message = message
     }
     
-    package init(entity: ChatEntity) {
+    public init(entity: ChatEntity) {
         self.name = entity.name
         self.message = entity.message
     }
     
-    package var entity: ChatEntity {
+    public var entity: ChatEntity {
         return ChatEntity(
             name: name ?? "",
             message: message ?? ""
