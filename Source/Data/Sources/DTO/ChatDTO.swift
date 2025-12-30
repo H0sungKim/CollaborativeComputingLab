@@ -9,7 +9,7 @@ import Foundation
 
 import Domain
 
-public struct ChatDTO: DTO {
+public struct ChatDTO: Codable {
     public let name: String?
     public let message: String?
     
@@ -17,7 +17,10 @@ public struct ChatDTO: DTO {
         self.name = name
         self.message = message
     }
-    
+}
+
+// MARK: - Entity Mapping
+extension ChatDTO {
     public init(entity: ChatEntity) {
         self.name = entity.name
         self.message = entity.message

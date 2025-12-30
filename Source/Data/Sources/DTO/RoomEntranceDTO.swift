@@ -9,7 +9,7 @@ import Foundation
 
 import Domain
 
-public struct RoomEntranceDTO: DTO {
+public struct RoomEntranceDTO: Codable {
     public let id: String?
     public let userName: String?
     
@@ -17,7 +17,10 @@ public struct RoomEntranceDTO: DTO {
         self.id = id
         self.userName = userName
     }
-    
+}
+
+// MARK: - Entity Mapping
+extension RoomEntranceDTO {
     public init(entity: RoomEntranceEntity) {
         self.id = entity.id
         self.userName = entity.userName

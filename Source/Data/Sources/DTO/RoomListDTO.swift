@@ -9,9 +9,17 @@ import Foundation
 
 import Domain
 
-public struct RoomListDTO: MultipleDTO {
+public struct RoomListDTO: Codable {
     
-    public struct RoomDTO: DTO {
+    public let rooms: [RoomDTO]?
+    
+    public init(rooms: [RoomDTO]?) {
+        self.rooms = rooms
+    }
+}
+
+extension RoomListDTO {
+    public struct RoomDTO: Codable {
         public let id: String?
         public let participants: [String]?
         
@@ -19,31 +27,30 @@ public struct RoomListDTO: MultipleDTO {
             self.id = id
             self.participants = participants
         }
-        
-        public init(entity: RoomEntity) {
-            self.id = entity.id
-            self.participants = entity.participants
-        }
-        
-        public var entity: RoomEntity {
-            return RoomEntity(
-                id: id ?? "",
-                participants: participants ?? []
-            )
-        }
     }
-    
-    public let rooms: [RoomDTO]?
-    
-    public init(rooms: [RoomDTO]?) {
-        self.rooms = rooms
-    }
-    
+}
+
+// MARK: - Entity Mapping
+extension RoomListDTO {
     public init(entities: [RoomEntity]) {
         self.rooms = entities.map({ RoomDTO(entity: $0) })
     }
     
     public var entities: [RoomEntity] {
         return rooms?.map(\.entity) ?? []
+    }
+}
+
+extension RoomListDTO.RoomDTO {
+    public init(entity: RoomEntity) {
+        self.id = entity.id
+        self.participants = entity.participants
+    }
+    
+    public var entity: RoomEntity {
+        return RoomEntity(
+            id: id ?? "",
+            participants: participants ?? []
+        )
     }
 }

@@ -9,13 +9,16 @@ import Foundation
 
 import Domain
 
-public struct MessageDTO: DTO {
+public struct MessageDTO: Codable {
     public let message: String?
     
     public init(message: String?) {
         self.message = message
     }
-    
+}
+
+// MARK: - Entity Mapping
+extension MessageDTO {
     public init(entity: MessageEntity) {
         self.message = entity.message
     }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct RoomEntranceEntity: Entity {
+public struct RoomEntranceEntity: Codable {
     public let id: String
     public let userName: String
     

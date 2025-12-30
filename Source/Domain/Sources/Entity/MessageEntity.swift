@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct MessageEntity: Entity {
+public struct MessageEntity: Codable {
     public let message: String
     
     public init(message: String) {

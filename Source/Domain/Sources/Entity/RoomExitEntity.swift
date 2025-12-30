@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct RoomExitEntity: Entity {
+public struct RoomExitEntity: Codable {
     public let id: String
     
     public init(id: String) {

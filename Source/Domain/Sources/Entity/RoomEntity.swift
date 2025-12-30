@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct RoomEntity: Entity, Hashable, Sendable {
+public struct RoomEntity: Codable, Hashable, Sendable {
     public let id: String
     public let participants: [String]
     

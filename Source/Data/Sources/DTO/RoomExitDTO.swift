@@ -9,13 +9,16 @@ import Foundation
 
 import Domain
 
-public struct RoomExitDTO: DTO {
+public struct RoomExitDTO: Codable {
     public let id: String?
     
     public init(id: String?) {
         self.id = id
     }
-    
+}
+
+// MARK: - Entity Mapping
+extension RoomExitDTO {
     public init(entity: RoomExitEntity) {
         self.id = entity.id
     }
