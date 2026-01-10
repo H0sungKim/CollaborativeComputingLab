@@ -2,18 +2,16 @@
 
 **A Prototype of Live Mobile Learning System (using RTMP)**
 
-> ⚠️ This project is a research prototype developed for academic purposes and is not intended for production use.
+The project was developed as part of research activities at the **Collaborative Computing Lab (CCL), Hongik University**.
 
-This repository contains a research prototype of a live mobile learning system designed to provide a learning experience comparable to real-world classroom lectures.
+Our goal is to provide a mobile learning experience comparable to real-world classroom lectures.
 
-The system provides the following key features:
+## Key Features
 * Real-time audio / video lecture streaming
 * Multi-room lecture support
 * Live chat for real-time interaction between instructors and students
 * Annotatable PDF slides and a whiteboard
 * User-Adjustable UI that allows instructors to dynamically control the screen ratio between slides and the whiteboard
-
-The project was developed as part of research activities at the **Collaborative Computing Lab (CCL), Hongik University**.
 
 ## Reports
 

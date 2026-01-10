@@ -12,21 +12,18 @@ import os
 @available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *)
 public final class Log {
     
+    private static let enabled: Bool = true
+    
     private static let subsystem: String = Bundle.main.bundleIdentifier ?? "com.ccl.collaborativecomputinglab"
     private static let logger: Logger = Logger(subsystem: subsystem, category: "Log")
     
-    private static let enabled: Bool = true
+    private static let dateFormatter: DateFormatter = {
+        let dateFormatter: DateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+        return dateFormatter
+    }()
     
     private init() { }
-    
-    public enum OutputMethod {
-        public typealias Closure = (_ object: Any?...) -> Void
-        
-        case oslog
-        case nslog
-        case print
-        case custom(Closure)
-    }
     
     /// Logs a debug message.
     /// - Note: These logs are only compiled and executed in DEBUG builds.
@@ -56,6 +53,31 @@ public final class Log {
         log(objects, separator: separator, level: .fault, method: method, filename: filename, line: line, funcName: funcName)
     }
     
+    private static func log(_ objects: [Any?], separator: String, level: Level, method: OutputMethod, filename: String, line: Int, funcName: String) {
+        guard enabled else { return }
+        let objectsMessage: String = objects.map({ "\($0 ?? "nil")" }).joined(separator: separator)
+        let message: String = "\(dateFormatter.string(from: Date())) [\(level.rawValue)] [\(getThreadName())] [\(getFileName(filename)):\(line)] \(funcName) : \(objectsMessage)"
+        switch method {
+        case .oslog:
+            logger.log(level: level.osLogType, "\(message)")
+        case .nslog:
+            NSLog(message)
+        case .print:
+            print(message)
+        case .custom(let closure):
+            closure(objects)
+        }
+    }
+    
+    public enum OutputMethod {
+        public typealias Closure = (_ objects: Any?...) -> Void
+        
+        case oslog
+        case nslog
+        case print
+        case custom(Closure)
+    }
+    
     private enum Level: String {
         case debug  = "DEBUG"
         case info   = "INFO"
@@ -78,28 +100,6 @@ public final class Log {
             }
         }
     }
-    
-    private static func log(_ objects: [Any?], separator: String, level: Level, method: OutputMethod, filename: String, line: Int, funcName: String) {
-        guard enabled else { return }
-        let objectsMessage: String = objects.map({ "\($0 ?? "nil")" }).joined(separator: separator)
-        let message: String = "\(dateFormatter.string(from: Date())) [\(level.rawValue)] [\(getThreadName())] [\(getFileName(filename)):\(line)] \(funcName) : \(objectsMessage)"
-        switch method {
-        case .oslog:
-            logger.log(level: level.osLogType, "\(message)")
-        case .nslog:
-            NSLog(message)
-        case .print:
-            print(message)
-        case .custom(let closure):
-            closure(objects)
-        }
-    }
-    
-    private static let dateFormatter: DateFormatter = {
-        let dateFormatter: DateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-        return dateFormatter
-    }()
     
     private static func getFileName(_ file: String) -> String {
         return file.components(separatedBy: "/").last ?? file
