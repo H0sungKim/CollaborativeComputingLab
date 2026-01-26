@@ -5,9 +5,6 @@
       location = "group:README.md">
    </FileRef>
    <FileRef
-      location = "group:Source/Core">
-   </FileRef>
-   <FileRef
       location = "group:Source/Data">
    </FileRef>
    <FileRef

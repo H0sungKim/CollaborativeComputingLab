@@ -9,7 +9,6 @@
 import UIKit
 
 import Domain
-import Log
 
 final class CameraPreviewView: UIView {
     

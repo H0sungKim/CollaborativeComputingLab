@@ -9,7 +9,7 @@ import Foundation
 import PDFKit
 import PencilKit
 
-import Core
+import Domain
 
 @MainActor
 final class CanvasProvider: NSObject, @preconcurrency PDFPageOverlayViewProvider {

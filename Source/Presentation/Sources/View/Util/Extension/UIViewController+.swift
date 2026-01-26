@@ -7,7 +7,7 @@
 
 import UIKit
 
-import Core
+import Domain
 
 extension UIViewController: TypeIdentifiable {
     public class func instantiate() -> Self {

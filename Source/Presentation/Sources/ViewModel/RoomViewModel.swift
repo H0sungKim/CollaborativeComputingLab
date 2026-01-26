@@ -8,7 +8,6 @@
 import Foundation
 import Combine
 
-import Core
 import Domain
 
 public protocol RoomViewModelInput {

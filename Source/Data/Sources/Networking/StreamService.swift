@@ -12,7 +12,6 @@ import HaishinKit
 import RTMPHaishinKit
 
 import Domain
-import Log
 
 public final actor StreamService {
     private let mixer: MediaMixer = MediaMixer(captureSessionMode: .single, multiTrackAudioMixingEnabled: true)

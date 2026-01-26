@@ -7,7 +7,7 @@
 
 import UIKit
 
-import Core
+import Domain
 
 final class CanvasView: UIView {
     var strokeWidth: Float = 4

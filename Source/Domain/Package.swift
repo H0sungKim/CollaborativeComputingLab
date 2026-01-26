@@ -17,7 +17,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(name: "Core", path: "../Core"),
+        
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -27,9 +27,7 @@ let package = Package(
             "Repository",
             "UseCase",
         ]),
-        .target(name: "Entity", dependencies: [
-            .product(name: "Core", package: "Core")
-        ]),
+        .target(name: "Entity"),
         .target(name: "Repository", dependencies: [
             "Entity",
         ]),

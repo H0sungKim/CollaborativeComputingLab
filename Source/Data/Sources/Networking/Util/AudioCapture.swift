@@ -11,7 +11,6 @@ import Foundation
 import HaishinKit
 
 import Domain
-import Log
 
 protocol AudioEngineCaptureDelegate: AnyObject {
     func audioCapture(_ audioCapture: AudioEngineCapture, buffer: AVAudioPCMBuffer, time: AVAudioTime)

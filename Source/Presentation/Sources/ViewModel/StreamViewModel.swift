@@ -11,7 +11,6 @@ import ReplayKit
 
 import HaishinKit
 
-import Log
 import Domain
 
 public protocol StreamViewModelInput {

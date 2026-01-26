@@ -8,8 +8,8 @@
 import Combine
 import Foundation
 
-import Core
 import Domain
+
 import DTO
 
 public protocol ChatService: URLSessionWebSocketDelegate {

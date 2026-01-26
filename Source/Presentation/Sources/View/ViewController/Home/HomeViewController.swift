@@ -8,8 +8,8 @@
 import Combine
 import UIKit
 
-import Core
 import Domain
+
 import ViewModel
 
 public final class HomeViewController: UIViewController {

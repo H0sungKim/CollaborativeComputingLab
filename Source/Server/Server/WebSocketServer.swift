@@ -8,7 +8,6 @@
 import Foundation
 import Network
 
-import Core
 import DTO
 import Entity
 

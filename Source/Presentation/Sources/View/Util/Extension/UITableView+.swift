@@ -7,7 +7,7 @@
 
 import UIKit
 
-import Core
+import Domain
 
 extension UITableView {
     func register(_ cellClass: UITableViewCell.Type) {

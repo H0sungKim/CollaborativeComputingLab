@@ -9,7 +9,6 @@ import Combine
 import Foundation
 
 import Domain
-import Log
 
 public final class WebSocket: NSObject, @unchecked Sendable {
     
