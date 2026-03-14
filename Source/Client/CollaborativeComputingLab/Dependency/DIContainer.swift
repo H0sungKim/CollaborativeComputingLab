@@ -9,18 +9,20 @@ import Data
 import Domain
 import Presentation
 
-import Foundation
 import UIKit
 
-protocol AppFactory: ViewControllerFactory, ChatFactory, StreamFactory, RoomFactory { }
-typealias DIContainer = AppFactory
+typealias DependencyFactory = ViewControllerFactory &
+                              
+                              ChatViewModelFactory &
+                              StreamFactory &
+                              RoomFactory
 
-final class DefaultDIContainer: DIContainer {
+final class DIContainer: DependencyFactory {
     
     private let uri: String
     
     // MARK: - Root Dependency
-    private lazy var webSocket: WebSocket = WebSocket(url: URL(string: "ws://\(uri):8080")!)
+    lazy var webSocket: WebSocket = WebSocket(url: URL(string: "ws://\(uri):8080")!)
     private lazy var chatService: ChatService = DefaultChatService(webSocket: webSocket)
     private lazy var roomService: RoomService = DefaultRoomService(webSocket: webSocket)
     private lazy var rtmpService: RTMPService = RTMPService(uri: uri)
@@ -40,13 +42,8 @@ final class DefaultDIContainer: DIContainer {
     
     func buildRoomViewController(id: String, userName: String, role: RoomRole, roomViewModel: RoomViewModel? = nil, chatViewModel: ChatViewModel? = nil, streamViewModel: StreamViewModel? = nil) -> RoomViewController {
         return RoomViewController.instantiate().configured({
-            $0.inject(id: id, userName: userName, role: role, roomViewModel: roomViewModel ?? buildRoomViewModel(), chatViewModel: chatViewModel ?? buildChatViewModel(), streamViewModel: streamViewModel ?? buildStreamViewModel())
+            $0.inject(id: id, userName: userName, role: role, roomViewModel: roomViewModel ?? buildRoomViewModel(), chatViewModel: chatViewModel ?? makeChatViewModel(), streamViewModel: streamViewModel ?? buildStreamViewModel())
         })
-    }
-    
-    // MARK: - Root Dependency Injection
-    func buildChatRepository() -> ChatRepository {
-        return buildChatRepository(chatService: chatService)
     }
     
     func buildStreamRepository() -> StreamRepository {
