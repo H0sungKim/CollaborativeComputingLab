@@ -33,7 +33,7 @@
 
 \begin{document}
 %
-\title{Live Mobile Learning System with User-Adjustable UI}
+\title{Live Mobile Learning System with Resizable Split Panes}
 %
 %\titlerunning{Abbreviated paper title}
 % If the paper title is too long for the running head, you can set
@@ -59,7 +59,7 @@ Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
 \begin{abstract}
 Most existing live mobile distance learning systems do not display presentation slides and a whiteboard simultaneously, resulting in a discrepancy from a real classroom where both can be viewed together. Even when both are displayed simultaneously, the limited screen size of mobile devices can significantly compromise their visibility, negatively affecting both instructor's usability and students' comprehension. Therefore, we propose a live mobile distance learning system with a user-adjustable UI that allows instructors to dynamically resize the slides and whiteboard areas. This system allows students to maintain sufficient visibility on limited screen sizes, providing an experience closer to that of a real classroom. The results of our preliminary evaluation show that the proposed system outperforms existing systems in visibility and comprehensibility, demonstrating that a user-adjustable UI can effectively enhance learning performance in mobile remote education environments.
 
-\keywords{Live mobile learning \and Whiteboard \and Annotation}
+\keywords{Live mobile learning \and Whiteboard \and Annotation \and Resizable split panes}
 \end{abstract}
 %
 %
@@ -84,42 +84,32 @@ Figure~\ref{fig1} shows the run-time communication architecture of the proposed 
 \caption{Communication architecture of the proposed system} \label{fig1}
 \end{figure}
 
-% The system consists of a server and clients. 서버는 NGINX 서버와 WebSocket 서버로 이루어져있다. NGINX 서버는 RTMP(Real-Time Messaging Protocol)에 의해 강사측 모바일 클라이언트로부터 슬라이드, 주석, 화이트보드, 강사 캠 영상, 음성이 포함된 영상을 받아서 학생측 모바일 클라이언트에게 전달한다. WebSocket서버는 강의실 생성, 입장 및 퇴장, 강의실 종료, 강의실 목록 조회, 참여자 명단 동기화 등 강의실 관리 기능과 채팅 기능을 담당한다. 두 서버는 macOS 환경에서 Xcode Command Line Tool로 통합되어 하나의 Xcode Target으로 실행된다.
-The system consists of a server and multiple clients. The server is composed of an NGINX server and a WebSocket server. The NGINX server multicasts receives a stream—including lecture slides, annotations, whiteboard content, instructor camera video, and audio—from the instructor’s mobile client via the RTMP (Real-Time Messaging Protocol), and delivers it to student clients in real time. The WebSocket server handles classroom management functionalities, including room creation, entry and exit, room termination, room list retrieval, participant synchronization, and chat. Both servers are integrated and executed as a single Xcode target using Xcode Command Line Tools in a macOS environment, allowing unified deployment and management.
+The system consists of a server and tablet clients. The server is composed of signaling server and a streaming server.
+The signaling server is responsible for centralized session management and real-time coordination among clients. It is implemented using the NWProtocolWebSocket of Swift Network Framework\cite{Network} and runs as an Xcode Command Line Tool. The signaling server provides multi-classroom functionalities, including classroom creation, termination, joining, leaving and chat. It handles multiple message types by using Codable based enum and manages multiple classrooms using a dictionary keyed by UUIDs.
+The streaming server operates as a separate process from the signaling server but is integrated into a single Xcode target. It is executed by invoking the NGINX executable along with its configuration file through Swift's Process() API. It uses the RTMP (Real-Time Messaging Protocol)\cite{RTMP} to receive video streams including presentation slides with annotation, whiteboard, instructor camera video, and audio from the instructor client, and delivers them to student clients in real time.
 
-% 스트리밍 서버는 서버 실행 시 \verb+Process()+를 통해 nginx.exe 실행파일과 nginx.conf 설정파일을 프로그램적으로 호출하여 자동으로 실행되며, 종료 시에도 동일한 방식으로 제어된다. 이를 통해 운영자는 별도의 명령 입력 없이 안정적으로 서버를 일원화하여 관리할 수 있다.
-The streaming server is automatically launched when the server starts by programmatically executing the nginx binary and configuration file using \verb+Process()+. It is also terminated in the same manner. This approach enables stable and centralized server management without requiring manual command-line operations.
+Figure~\ref{fig2} shows the home screen. Users can either join an existing classroom as a student or create a new room using the "+" button to start a lecture as an instructor. The room list is updated in real time via communication with the signaling server, and users can also manually refresh the list by pulling down the UITableView. Both room creation and entry are handled by sending an Enter Room message to the server.
 
-%% WebSocket 서버는 Swift Network Framework\cite{Network}의 \verb+NWProtocolWebSocket+을 기반으로 구현되었으며, 강의실 생성·종료·입장·퇴장, 강의실 목록 조회, 참여자 명단 동기화 등 다중 강의실 기능과 채팅 기능을 제공한다. 이처럼 다양한 기능을 제공하기 위해 서버-클라이언트 간 통신에는 \verb+Codable+을 상속한 \verb+enum+을 사용하여 기능 확장을 용이하게 하고 다양한 종류의 메세지를 주고받을 수 있도록 하였다.
-%The WebSocket server is implemented using \verb+NWProtocolWebSocket+ from the Apple Network Framework\cite{Network}. It supports multi-room functionality and chat by handling events such as room creation, termination, entry, exit, room list updates, and participant synchronization. To efficiently support various message types and ensure extensibility, communication between the server and clients is designed using a \verb+Codable+-based \verb+enum+, allowing structured and scalable message handling.
-%
-%% WebSocket 서버는 모든 강의실을 UUID를 키로 하는 딕셔너리 형태로 관리한다. 강의실 목록이 변경되면 Available Room 메세지를 모든 클라이언트에게 브로드캐스트한다. Enter Room 또는 Leave Room 메세지를 수신하면 해당 클라이언트를 관련 강의실에 등록하거나 제거한다. 강의자가 퇴장하면 해당 강의실의 모든 학생에게 Room Closed 메세지를 전송하여 강의 종료를 알린다. 참여자 명단 변경이나 채팅 메세지 수신 시, 해당 강의실의 모든 클라이언트에게 각각 Participant Updated 메세지 또는 채팅 메세지를 동일 강의실 내 모든 클라이언트에게 브로드캐스트한다.
-%The WebSocket server manages all classrooms using a dictionary with UUID keys. When the room list changes, an Available Room message is broadcast to all clients. Upon receiving Enter Room or Leave Room messages, the server registers or removes the client from the corresponding room. When an instructor leaves, a Room Closed message is broadcast to all participants in the room. Similarly, participant updates and chat messages are broadcast only to clients within the same room.
-%
-%% 그림\ref{fig3}은 홈화면을 보여준다. 홈화면에서는 강의실 목록들 중 하나를 선택하여 학생으로 입장하거나 우측 하단의 +버튼을 눌러 강의실을 새로 생성하여 강사로 수업을 시작할 수 있다. 강의실 목록은 WebSocket 서버와의 통신을 통해 실시간으로 갱신되며, 강의실 명단 \verb+UITableView+를 아래로 스크롤하여 수동으로 새로고침할 수도 있다. 강의실 입장과 생성 이벤트는 Enter Room 메세지를 WebSocket 서버에 전송하여 처리된다.
-%Figure~\ref{fig3} shows the home screen of the application. Users can either join an existing classroom as a student or create a new room using the "+" button to start a lecture as an instructor. The room list is updated in real time via communication with the WebSocket server, and users can also manually refresh the list by pulling down the \verb+UITableView+. Both room creation and entry are handled by sending an Enter Room message to the server.
-%
-%\begin{figure}
-%\includegraphics[width=\textwidth]{fig3.png}
-%\caption{User interface of a home screen} \label{fig3}
-%\end{figure}
-%
-%% 그림\ref{fig4}는 강사측 클라이언트의 강의실화면을 보여준다. 해당 화면의 UI는 PDF 강의 슬라이드, 화이트보드, 강사 카메라 영상, 참여자 명단, 채팅창 등으로 구성된다. 각 요소에 대한 자세한 설명은 다음과 같다.
-%\noindent
-%Figure~\ref{fig4} shows the instructor-side classroom interface. The UI consists of lecture slides (PDF), a whiteboard, instructor camera video, a participant list, and a chat panel. Detailed descriptions of each component are as follows.
-%
-%\begin{figure}
-%\includegraphics[width=\textwidth]{fig4.jpg}
-%\caption{User interface of a classroom screen} \label{fig4}
-%\end{figure}
-%
+\begin{figure}
+\includegraphics[width=\textwidth]{fig2.png}
+\caption{User interface of a home view} \label{fig2}
+\end{figure}
+
+\noindent
+Figure~\ref{fig3} shows the instructor client's classroom interface. The UI consists of presentation slides, a whiteboard, instructor camera video, a participant list, and a chat. Detailed descriptions of each component are as follows.
+
+\begin{figure}
+\includegraphics[width=\textwidth]{fig3.jpg}
+\caption{User interface of a classroom view} \label{fig3}
+\end{figure}
+
 %% PDF 강의 슬라이드는 Apple Framework인 PDFKit\cite{PDFKit}의 \verb+PDFView+를 사용하여 구현되었다. 좌측 상단 문서 모양 버튼을 누르면 \verb+UIDocumentPickerViewController+를 통해 기기에 저장된 PDF 파일을 선택할 수 있고 선택된 파일의 링크를 가져와서 \verb+PDFView+로 화면에 출력한다.
 %\noindent
 %Lecture slides are implemented using \verb+PDFView+ from PDFKit\cite{PDFKit}. Instructors can select a PDF file stored on the device via \verb+UIDocumentPickerViewController+, and the selected file is rendered using \verb+PDFView+.
 %
 %% 강의 슬라이드의 주석 기능은 PDFKit의 \verb+PDFPageOverlayViewProvider+를 사용하여 각 \verb+PDFPage+의 \verb+overlayView+에 PencilKit\cite{PencilKit}의 \verb+PKCanvasView+를 추가하여 구현하였다. 좌측 상단의 펜 버튼과 지우개 버튼은 토글식으로 구현되어서 선택되어있는 버튼에 따라 \verb+PKTool+을 펜 또는 지우개로 설정한다. 둘 다 비활성화된 상태일 때는 PDF 문서 스크롤로 작동한다.
-%Annotation on slides is implemented using \verb+PDFPageOverlayViewProvider+, where a \verb+PKCanvasView+ from PencilKit\cite{PencilKit} is added to the \verb+overlayView+ of each \verb+PDFPage+. Pen and eraser tools are implemented as toggle buttons, which switch the \verb+PKTool+ accordingly. When both tools are disabled, the view behaves as a scrollable PDF document.
-%
+Annotation on slides is implemented using PDFPageOverlayViewProvider, where a PKCanvasView of PencilKit\cite{PencilKit} is added to the \verb+overlayView+ of each \verb+PDFPage+. Pen and eraser tools are implemented as toggle buttons, which switch the \verb+PKTool+ accordingly. When both tools are disabled, the view behaves as a scrollable PDF document.
+
 %% 화이트보드는 사용자의 터치 이벤트를 직접 감지하여 선을 그리는 방식으로 구현하였다. 터치 이벤트를 \verb+override+하여 사용자가 화면을 터치하면 \verb+touchesBegan+에서 새로운 \verb+UIBezierPath+ 객체를 생성하고 배열에 저장하며, 터치 이동 시에는 \verb+touchesMoved+에서 해당 객체에 좌표를 추가하고 \verb+setNeedsDisplay()+를 호출하여 화면을 갱신하였다. 저장된 \verb+UIBezierPath+들은 \verb+override+한 \verb+draw+ 함수에서 그려진다. 우측 상단 버튼들을 통해 undo와 clear 기능도 지원한다.
 %The whiteboard is implemented by directly handling touch events. A new \verb+UIBezierPath+ is created in \verb+touchesBegan+ and stored in an array. As the user moves their finger, points are appended in \verb+touchesMoved+, and \verb+setNeedsDisplay()+ is called to update the view. All stored paths are rendered in the overridden \verb+draw+ method. Undo and clear functionalities are also provided.
 %
@@ -128,19 +118,17 @@ The streaming server is automatically launched when the server starts by program
 %
 %% 그림\ref{fig4}, \ref{fig5}, \ref{fig6}과 같이 참여자 목록과 채팅창은 접이식 구조로 구현하여 불필요한 화면 점유를 최소화하였다. 두 구성요소는 \verb+UIStackView+에 포함되어 있으며, 우측 상단 각각의 토글 버튼에 따라 \verb+isHidden+ 속성을 조정함으로써 열고 닫을 수 있도록 구현하였다.
 %As shown in Figures~\ref{fig4}, ~\ref{fig5}, and ~\ref{fig6}, the participant list and chat panel are implemented as collapsible UI components to minimize unnecessary screen usage. These components are embedded in a \verb+UIStackView+, and their visibility is controlled by toggling the \verb+isHidden+ property via corresponding buttons.
-%
-%\begin{figure}[H]
-%\centering
-%\includegraphics[width=0.9\textwidth]{fig5.png}
-%\caption{User interface of a classroom screen with participants panel hidden}\label{fig5}
-%\end{figure}
-%
-%\begin{figure}[H]
-%\centering
-%\includegraphics[width=0.9\textwidth]{fig6.png}
-%\caption{User interface of a classroom screen with participants and chat panels hidden}\label{fig6}
-%\end{figure}
-%
+
+\begin{figure}
+\includegraphics[width=\textwidth]{fig4.png}
+\caption{User interface of a classroom view with participants panel hidden} \label{fig4}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\textwidth]{fig5.png}
+\caption{User interface of a classroom view with participants and chat panels hidden} \label{fig5}
+\end{figure}
+
 %% 화면 녹화는 Apple Framework인 ReplayKit\cite{ReplayKit}을 사용하였다. ReplayKit은 전체 화면의 녹화 영상만을 제공하지만, 불필요한 UI의 전송을 방지하고 핵심 콘텐츠만 송출하기 위해 녹화 영상에서 강의 슬라이드와 화이트보드 영역만을 잘라내어 사용하였다. 음성은 AVAudioEngine을 통해 AVAudioBuffer 형태로 가져왔다.
 %\noindent
 %Screen recording is implemented using ReplayKit\cite{ReplayKit}. Although ReplayKit provides full-screen recording, only the regions corresponding to the lecture slides and whiteboard are cropped and transmitted to avoid unnecessary UI elements and focus on essential content. Audio is captured as \verb+AVAudioBuffer+ using \verb+AVAudioEngine+.
@@ -153,19 +141,17 @@ The streaming server is automatically launched when the server starts by program
 %
 %% 따라서 강의자가 상황에 맞게 두 콘텐츠 영역의 크기를 조절할 수 있는 User-Adjustable UI를 적용하였다. 그림\ref{fig7}, \ref{fig8}과 같이 강의자는 grabber를 드래그하여 강의 슬라이드와 화이트보드의 화면 비율을 자유롭게 조절하며 강의 상황에 따라 필요한 정보를 유연하게 강조할 수 있다.
 %To address this issue, a user-adjustable UI is introduced. As shown in Figures~\ref{fig7} and~\ref{fig8}, instructors can dynamically adjust the relative sizes of the slide and whiteboard areas by dragging a grabber. This allows flexible emphasis on different types of content depending on the lecture context.
-%
-%\begin{figure}[H]
-%\centering
-%\includegraphics[width=0.9\textwidth]{fig7.png}
-%\caption{User interface with an expanded lecture slide area}\label{fig7}
-%\end{figure}
-%
-%\begin{figure}[H]
-%\centering
-%\includegraphics[width=0.9\textwidth]{fig8.png}
-%\caption{User interface with an expanded whiteboard area}\label{fig8}
-%\end{figure}
-%
+
+\begin{figure}
+\includegraphics[width=\textwidth]{fig6.png}
+\caption{User interface of a classroom view an expanded presentation slide area} \label{fig6}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\textwidth]{fig7.png}
+\caption{User interface of a classroom view with an expanded whiteboard area} \label{fig7}
+\end{figure}
+
 %% grabber는 \verb+UISlider+를 기반으로 구현되었으며, 사용자의 조작으로 value가 변경되면 \verb+valueChanged+ 이벤트를 통해 강의 슬라이드와 공유 화이트보드 화면 비율을 결정하는 \verb+NSLayoutConstraint+의 \verb+multiplier+값에 해당 값을 반영하였다. \verb+UISlider+는 투명하게 설정하여 화면에 드러나지 않고 로직적인 역할만을 수행하도록 하였다.
 %\noindent
 %The grabber is implemented based on a \verb+UISlider+. When the slider value changes, the \verb+valueChanged+ event updates the \verb+multiplier+ of the \verb+NSLayoutConstraint+ that determines the layout ratio between the slide and whiteboard views. The slider itself is visually hidden, serving only as a logical control element.
@@ -187,28 +173,28 @@ The proposed user-adjustable UI system achieved high scores in both categories, 
 
 \begin{table}
 \caption{Respondents' perception of the visibility of a lecture slide}\label{tab1}
-\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lccccccc}
 \toprule%
-Target System & \multicolumn{5}{@{}c@{}}{Respondents} & Average\\\cmidrule{2-6}
-& A & B & C & D & E &\\
+Target System & \multicolumn{5}{@{}c@{}}{Respondents} & Mean & SD \\\cmidrule{2-6}
+& A & B & C & D & E & & \\
 \midrule
-Webex  & 5 & 5 & 5 & 5 & 5 & 5 \\
-5:5 Fixed UI  & 1 & 5 & 1 & 2 & 4 & 2.6 \\
-User-Adjustable UI  & 5 & 5 & 5 & 5 & 5 & 5 \\
+Webex  & 5 & 5 & 5 & 5 & 5 & 5 & 0 \\
+5:5 Fixed UI  & 1 & 5 & 1 & 2 & 4 & 2.6 & 1.82 \\
+User-Adjustable UI  & 5 & 5 & 5 & 5 & 5 & 5 & 0 \\
 \bottomrule
 \end{tabular*}
 \end{table}
 
 \begin{table}
 \caption{Respondents' perception of the visibility of a whiteboard}\label{tab2}
-\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lccccccc}
 \toprule%
-Target System & \multicolumn{5}{@{}c@{}}{Respondents} & Average\\\cmidrule{2-6}
-& A & B & C & D & E &\\
+Target System & \multicolumn{5}{@{}c@{}}{Respondents} & Mean & SD \\\cmidrule{2-6}
+& A & B & C & D & E & & \\
 \midrule
-Webex  & 3 & 5 & 5 & 4 & 4 & 4.2 \\
-5:5 Fixed UI  & 1 & 3 & 2 & 3 & 5 & 2.8 \\
-User-Adjustable UI  & 5 & 4 & 4 & 5 & 5 & 4.6 \\
+Webex  & 3 & 5 & 5 & 4 & 4 & 4.2 & 0.84 \\
+5:5 Fixed UI  & 1 & 3 & 2 & 3 & 5 & 2.8 & 1.49 \\
+User-Adjustable UI  & 5 & 4 & 4 & 5 & 5 & 4.6 & 0.55 \\
 \bottomrule
 \end{tabular*}
 \end{table}
@@ -221,14 +207,14 @@ In contrast, the proposed system achieved the highest average score of 4.6. Part
 
 \begin{table}
 \caption{Respondents' perception of the comprehensibility of a lecture with a lecture slide and a whiteboard combined}\label{tab3}
-\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccc}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lccccccc}
 \toprule%
-Target System & \multicolumn{5}{@{}c@{}}{Respondents} & Average\\\cmidrule{2-6}
-& A & B & C & D & E &\\
+Target System & \multicolumn{5}{@{}c@{}}{Respondents} & Mean & SD \\\cmidrule{2-6}
+& A & B & C & D & E & & \\
 \midrule
-Webex  & 5 & 5 & 3 & 4 & 3 & 4 \\
-5:5 Fixed UI  & 3 & 2 & 2 & 1 & 4 & 2.4 \\
-User-Adjustable UI  & 4 & 4 & 5 & 5 & 5 & 4.6 \\
+Webex  & 5 & 5 & 3 & 4 & 3 & 4 & 1 \\
+5:5 Fixed UI  & 3 & 2 & 2 & 1 & 4 & 2.4 & 1.15 \\
+User-Adjustable UI  & 4 & 4 & 5 & 5 & 5 & 4.6 & 0.55 \\
 \bottomrule
 \end{tabular*}
 \end{table}
