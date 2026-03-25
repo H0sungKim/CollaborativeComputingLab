@@ -1,0 +1,3 @@
+[submodule "CollaborativeComputingLab-Private"]
+	path = CollaborativeComputingLab-Private
+	url = git@github.com:H0sungKim/CollaborativeComputingLab-Private.git
