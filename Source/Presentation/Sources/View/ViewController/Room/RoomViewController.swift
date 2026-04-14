@@ -28,6 +28,8 @@ public final class RoomViewController: UIViewController {
     @IBOutlet weak var pdfOpenButton: UIButton!
     @IBOutlet weak var pdfView: PDFView!
     
+    @IBOutlet weak var whiteboardScrollView: UIScrollView!
+    
     @IBOutlet weak var participantButton: UIButton!
     @IBOutlet weak var chatButton: UIButton!
     
@@ -212,6 +214,29 @@ public final class RoomViewController: UIViewController {
         
         chatButton.setImage(UIImage(systemName: "ellipsis.bubble.fill"), for: .selected)
         chatButton.setImage(UIImage(systemName: "ellipsis.bubble"), for: .normal)
+        
+        whiteboardScrollView.panGestureRecognizer.allowedTouchTypes = [
+            NSNumber(value: UITouch.TouchType.direct.rawValue),
+//            NSNumber(value: UITouch.TouchType.indirect.rawValue),
+//            NSNumber(value: UITouch.TouchType.indirectPointer.rawValue),
+        ]
+        whiteboardScrollView.panGestureRecognizer.allowedPressTypes = [
+            NSNumber(value: UITouch.TouchType.direct.rawValue),
+//            NSNumber(value: UITouch.TouchType.indirect.rawValue),
+//            NSNumber(value: UITouch.TouchType.indirectPointer.rawValue),
+        ]
+        whiteboardScrollView.delegate = self
+        
+        whiteboardScrollView.zoomScale = 5.0 / 9.0
+        whiteboardScrollView.maximumZoomScale = 1.0
+        whiteboardScrollView.minimumZoomScale = 1.0 / 9.0
+        
+//        whiteboardScrollView.pinchGestureRecognizer?.allowedTouchTypes = [
+//            NSNumber(value: UITouch.TouchType.direct.rawValue),
+//        ]
+//        whiteboardScrollView.pinchGestureRecognizer?.allowedPressTypes = [
+//            NSNumber(value: UITouch.TouchType.direct.rawValue),
+//        ]
     }
     
     private func configurePublishView() {
@@ -317,6 +342,7 @@ public final class RoomViewController: UIViewController {
         sender.value = value
         pdfWhiteboardRatio = pdfWhiteboardRatio.setMultiplier(multiplier: CGFloat(value / (1 - value)))
         whiteboardView.setNeedsDisplay()
+        whiteboardScrollView.zoomScale = CGFloat((10.0 - sender.value * 10.0) / 9.0)
     }
     
     // MARK: - RoomClosed
@@ -418,5 +444,14 @@ extension RoomViewController {
 extension RoomViewController: UIDocumentPickerDelegate {
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         pdfView.document = PDFDocument(url: urls.first!)
+    }
+}
+
+extension RoomViewController: UIScrollViewDelegate {
+    public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        if scrollView === whiteboardScrollView {
+            return whiteboardView
+        }
+        return nil
     }
 }

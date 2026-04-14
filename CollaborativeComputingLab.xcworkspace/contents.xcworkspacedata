@@ -20,9 +20,6 @@
       location = "group:Source/Server/Server.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Paper">
-   </FileRef>
-   <FileRef
-      location = "group:Docs">
+      location = "group:CollaborativeComputingLab-Private">
    </FileRef>
 </Workspace>

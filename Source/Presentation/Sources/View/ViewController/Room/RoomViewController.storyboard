@@ -111,13 +111,41 @@
                                                                     <constraint firstItem="YeT-rf-yyd" firstAttribute="leading" secondItem="8E5-7R-c3F" secondAttribute="leading" id="gYZ-bn-eJb"/>
                                                                 </constraints>
                                                             </view>
-                                                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="23l-eh-UK8" customClass="CanvasView" customModule="View">
+                                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bUq-gi-ILb">
                                                                 <rect key="frame" x="400" y="0.0" width="392" height="1235"/>
-                                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                <subviews>
+                                                                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.10000000000000001" maximumZoomScale="4" translatesAutoresizingMaskIntoConstraints="NO" id="kvP-M9-ETL">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="392" height="1235"/>
+                                                                        <subviews>
+                                                                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="23l-eh-UK8" customClass="CanvasView" customModule="View">
+                                                                                <rect key="frame" x="0.0" y="0.0" width="713" height="7128"/>
+                                                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                                <constraints>
+                                                                                    <constraint firstAttribute="width" secondItem="23l-eh-UK8" secondAttribute="height" multiplier="1:10" id="tjH-rz-Ukk"/>
+                                                                                </constraints>
+                                                                            </view>
+                                                                        </subviews>
+                                                                        <constraints>
+                                                                            <constraint firstItem="23l-eh-UK8" firstAttribute="bottom" secondItem="cf3-2Q-bJd" secondAttribute="bottom" id="Ce7-Nq-5jB"/>
+                                                                            <constraint firstItem="23l-eh-UK8" firstAttribute="top" secondItem="cf3-2Q-bJd" secondAttribute="top" id="WBA-kf-uu7"/>
+                                                                            <constraint firstItem="23l-eh-UK8" firstAttribute="leading" secondItem="cf3-2Q-bJd" secondAttribute="leading" id="bS8-1w-bZd"/>
+                                                                            <constraint firstItem="23l-eh-UK8" firstAttribute="trailing" secondItem="cf3-2Q-bJd" secondAttribute="trailing" id="xan-I5-g8S"/>
+                                                                        </constraints>
+                                                                        <viewLayoutGuide key="contentLayoutGuide" id="cf3-2Q-bJd"/>
+                                                                        <viewLayoutGuide key="frameLayoutGuide" id="d3P-wE-vzj"/>
+                                                                    </scrollView>
+                                                                </subviews>
+                                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                                <constraints>
+                                                                    <constraint firstItem="kvP-M9-ETL" firstAttribute="top" secondItem="bUq-gi-ILb" secondAttribute="top" id="7Xd-cr-Bho"/>
+                                                                    <constraint firstAttribute="bottom" secondItem="kvP-M9-ETL" secondAttribute="bottom" id="Erf-hp-f9q"/>
+                                                                    <constraint firstItem="kvP-M9-ETL" firstAttribute="leading" secondItem="bUq-gi-ILb" secondAttribute="leading" id="I8b-Uu-k0R"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="kvP-M9-ETL" secondAttribute="trailing" id="uTP-Jl-K7h"/>
+                                                                </constraints>
                                                             </view>
                                                         </subviews>
                                                         <constraints>
-                                                            <constraint firstItem="7lQ-y8-wga" firstAttribute="width" secondItem="23l-eh-UK8" secondAttribute="width" id="r0S-pg-qaz"/>
+                                                            <constraint firstItem="7lQ-y8-wga" firstAttribute="width" secondItem="bUq-gi-ILb" secondAttribute="width" id="NpI-GU-8Rg"/>
                                                         </constraints>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="eMV-aN-qWq">
@@ -204,6 +232,7 @@
                                                     <constraint firstItem="hlb-Lp-xDW" firstAttribute="leading" secondItem="DbS-y6-R0c" secondAttribute="leading" id="O4K-k8-Ads"/>
                                                     <constraint firstItem="G36-vA-j5h" firstAttribute="centerY" secondItem="DbS-y6-R0c" secondAttribute="centerY" id="OBT-OV-QkK"/>
                                                     <constraint firstItem="Uct-3N-lBy" firstAttribute="top" secondItem="DbS-y6-R0c" secondAttribute="top" constant="16" id="Uld-pm-qEP"/>
+                                                    <constraint firstItem="23l-eh-UK8" firstAttribute="width" secondItem="DbS-y6-R0c" secondAttribute="width" multiplier="0.9" id="ajC-Kk-9c9"/>
                                                     <constraint firstAttribute="trailing" secondItem="Uct-3N-lBy" secondAttribute="trailing" constant="16" id="fWN-Nr-qRw"/>
                                                     <constraint firstAttribute="bottom" secondItem="hlb-Lp-xDW" secondAttribute="bottom" id="fwT-bt-7g4"/>
                                                     <constraint firstAttribute="trailing" secondItem="G36-vA-j5h" secondAttribute="trailing" id="gk0-5x-n3l"/>
@@ -343,11 +372,12 @@
                         <outlet property="participantView" destination="AkS-TI-XFA" id="Fgh-2K-0ye"/>
                         <outlet property="pdfOpenButton" destination="e8N-Nc-6Ff" id="SIu-X0-Rwk"/>
                         <outlet property="pdfView" destination="AKZ-Cc-g31" id="rzC-Rz-JwM"/>
-                        <outlet property="pdfWhiteboardRatio" destination="r0S-pg-qaz" id="V9e-2p-Tda"/>
+                        <outlet property="pdfWhiteboardRatio" destination="NpI-GU-8Rg" id="c1u-4c-lWQ"/>
                         <outlet property="publishView" destination="DbS-y6-R0c" id="NDt-yl-hpk"/>
                         <outlet property="streamView" destination="npM-F4-5wY" id="Qgo-r0-lS1"/>
                         <outlet property="titleLabel" destination="oUw-qf-wwy" id="YeM-2H-lbz"/>
                         <outlet property="undoButton" destination="F46-NO-Y2a" id="SA9-Uj-L5r"/>
+                        <outlet property="whiteboardScrollView" destination="kvP-M9-ETL" id="DKT-Kh-GIh"/>
                         <outlet property="whiteboardView" destination="23l-eh-UK8" id="dYa-GL-xyt"/>
                     </connections>
                 </viewController>
@@ -369,10 +399,10 @@
         <image name="text.document" catalog="system" width="115" height="128"/>
         <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="separatorColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.12" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

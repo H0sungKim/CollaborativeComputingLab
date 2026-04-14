@@ -10,7 +10,7 @@ import UIKit
 import Domain
 
 final class CanvasView: UIView {
-    var strokeWidth: Float = 4
+    var strokeWidth: Float = 5
     var strokeColor: UIColor = .black
     var paths: [UIBezierPath] = []
     
