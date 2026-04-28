@@ -28,6 +28,7 @@ final class WebSocketServer {
     }
     
     func start() {
+        Log.i(listener.debugDescription)
         listener.newConnectionHandler = newConnectionHandler
         listener.start(queue: queue)
         Log.i("Server started listening on port \(port)")

@@ -22,6 +22,7 @@ public final class WebSocket: NSObject, @unchecked Sendable {
     var isConnected: CurrentValueSubject<Bool, Never> = .init(false)
     
     public init(url: URL) {
+        Log.i(url)
         self.url = url
         super.init()
     }

@@ -81,11 +81,11 @@ public final actor StreamService {
         }
     }
     
-    package func configureAudio(audioEngine: AVAudioEngine) {
+    package func configureAudio(audioEngine: SendableAudioEngine) {
         Task {
-            audioPlayer = AudioPlayer(audioEngine: audioEngine)
+            audioPlayer = AudioPlayer(audioEngine: audioEngine.engine)
         }
-        audioCapture = AudioEngineCapture(audioEngine: audioEngine)
+        audioCapture = AudioEngineCapture(audioEngine: audioEngine.engine)
     }
     
     package func configureVideoMixerSettings() async {
@@ -128,5 +128,13 @@ extension StreamService: @preconcurrency AudioEngineCaptureDelegate {
         Task {
             await mixer.append(buffer, when: time)
         }
+    }
+}
+
+// temp
+public final class SendableAudioEngine: @unchecked Sendable {
+    let engine: AVAudioEngine
+    public init(engine: AVAudioEngine) {
+        self.engine = engine
     }
 }

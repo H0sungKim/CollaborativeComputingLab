@@ -45,6 +45,7 @@ public final class RoomViewController: UIViewController {
     @IBOutlet weak var chatSendButton: UIButton!
     
     @IBOutlet weak var streamView: MTHKView!
+    @IBOutlet weak var whiteboardContainerView: UIView!
     @IBOutlet weak var whiteboardView: CanvasView!
     @IBOutlet weak var cameraPreviewView: CameraPreviewView!
     
@@ -110,11 +111,12 @@ public final class RoomViewController: UIViewController {
         roomViewModel.participants.sink(receiveValue: { [weak self] participants in
             guard let self else { return }
             instructor = roomViewModel.participants.value.first?.name ?? ""
-            titleLabel.text = "\(instructor) 님의 강의실"
+            titleLabel.text = "\(instructor)'s Classroom"
             
             var snapshot = NSDiffableDataSourceSnapshot<ParticipateTableViewSection, ParticipateTableViewItem>()
             snapshot.appendSections([.participant])
             snapshot.appendItems(participants.map({ ParticipateTableViewItem.participant($0) }), toSection: .participant)
+            snapshot.appendItems([ParticipateTableViewItem.participant(.init(name: "Jangho Lee")), ParticipateTableViewItem.participant(.init(name: "hoon"))], toSection: .participant)
             participantTableViewDataSource?.apply(snapshot, animatingDifferences: true)
         })
         .store(in: &cancellable)
@@ -207,7 +209,7 @@ public final class RoomViewController: UIViewController {
         configureChatTableView()
         configureParticipantTableView()
         
-        titleLabel.text = "\(roomViewModel.participants.value.first?.name ?? "") 님의 강의실"
+        titleLabel.text = "\(roomViewModel.participants.value.first?.name ?? "")'s Classroom"
         
         participantButton.setImage(UIImage(systemName: "person.2.fill"), for: .selected)
         participantButton.setImage(UIImage(systemName: "person.2"), for: .normal)
@@ -245,7 +247,8 @@ public final class RoomViewController: UIViewController {
         
         cameraPreviewView.previewLayer.cornerRadius = 8
         
-        whiteboardView.layer.cornerRadius = 8
+        whiteboardContainerView.layer.cornerRadius = 8
+        whiteboardContainerView.clipsToBounds = true
         
         grabberSlider.setThumbImage(UIImage(systemName: "poweron", withConfiguration: UIImage.SymbolConfiguration(pointSize: 64))?.withTintColor(.clear, renderingMode: .alwaysOriginal), for: .normal)
         grabberSlider.setThumbImage(UIImage(systemName: "poweron", withConfiguration: UIImage.SymbolConfiguration(pointSize: 64))?.withTintColor(.clear, renderingMode: .alwaysOriginal), for: .highlighted)
@@ -267,6 +270,9 @@ public final class RoomViewController: UIViewController {
         pdfView.isScrollEnabled = true
         pdfView.layer.cornerRadius = 8
         canvasProvider.setUserInteractionEnabled(false)
+//        pdfView.autoScales = true
+        pdfView.minScaleFactor = 0.01
+        Log.d(pdfView.minScaleFactor, pdfView.maxScaleFactor)
     }
     
     // MARK: - IBAction
@@ -379,10 +385,10 @@ extension RoomViewController {
                 let cell: ChatTableViewCell = tableView.dequeueReusableCell(ChatTableViewCell.self, indexPath: indexPath)
                 var description = ""
                 if chatEntity.name == self?.instructor {
-                    description = "강사"
+                    description = "instructor"
                 }
                 if chatEntity.name == self?.userName {
-                    description = "나"
+                    description = "me"
                 }
                 cell.configure(sender: chatEntity.name, description: description, message: chatEntity.message)
                 return cell
@@ -420,10 +426,10 @@ extension RoomViewController {
                 let cell: ParticipantTableViewCell = tableView.dequeueReusableCell(ParticipantTableViewCell.self, indexPath: indexPath)
                 var description = ""
                 if participantEntity.name == self?.instructor {
-                    description = "강사"
+                    description = "instructor"
                 }
                 if participantEntity.name == self?.userName {
-                    description = "나"
+                    description = "me"
                 }
                 cell.configure(name: participantEntity.name, description: description)
                 return cell
@@ -444,6 +450,9 @@ extension RoomViewController {
 extension RoomViewController: UIDocumentPickerDelegate {
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         pdfView.document = PDFDocument(url: urls.first!)
+        pdfView.autoScales = false
+        pdfView.minScaleFactor = 0.01
+        pdfView.scaleFactor = pdfView.scaleFactorForSizeToFit
     }
 }
 

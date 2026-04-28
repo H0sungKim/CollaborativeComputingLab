@@ -34,5 +34,6 @@ let package = Package(
         .target(name: "UseCase", dependencies: [
             "Repository",
         ]),
-    ]
+    ],
+    swiftLanguageModes: [.v5]
 )

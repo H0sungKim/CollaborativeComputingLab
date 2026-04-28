@@ -18,7 +18,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "Domain", path: "../Domain"),
-        .package(url: "https://github.com/HaishinKit/HaishinKit.swift.git", "0.0.0"..."2.2.3")
+        .package(url: "https://github.com/HaishinKit/HaishinKit.swift.git", exact: "2.2.5")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -41,5 +41,6 @@ let package = Package(
         .target(name: "RepositoryImpl", dependencies: [
             "Networking",
         ]),
-    ]
+    ],
+    swiftLanguageModes: [.v5]
 )

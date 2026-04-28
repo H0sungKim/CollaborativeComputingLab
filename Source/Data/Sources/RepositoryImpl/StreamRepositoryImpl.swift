@@ -103,6 +103,6 @@ public final class DefaultStreamRepository: StreamRepository {
     }
     
     public func configureAudio(audioEngine: sending AVAudioEngine) async {
-        await streamService.configureAudio(audioEngine: audioEngine)
+        await streamService.configureAudio(audioEngine: SendableAudioEngine(engine: audioEngine))
     }
 }
