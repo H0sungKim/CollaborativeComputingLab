@@ -250,6 +250,9 @@ public final class RoomViewController: UIViewController {
         whiteboardContainerView.layer.cornerRadius = 8
         whiteboardContainerView.clipsToBounds = true
         
+        whiteboardView.layer.cornerRadius = 8
+        whiteboardView.clipsToBounds = true
+        
         grabberSlider.setThumbImage(UIImage(systemName: "poweron", withConfiguration: UIImage.SymbolConfiguration(pointSize: 64))?.withTintColor(.clear, renderingMode: .alwaysOriginal), for: .normal)
         grabberSlider.setThumbImage(UIImage(systemName: "poweron", withConfiguration: UIImage.SymbolConfiguration(pointSize: 64))?.withTintColor(.clear, renderingMode: .alwaysOriginal), for: .highlighted)
         
@@ -349,6 +352,7 @@ public final class RoomViewController: UIViewController {
         pdfWhiteboardRatio = pdfWhiteboardRatio.setMultiplier(multiplier: CGFloat(value / (1 - value)))
         whiteboardView.setNeedsDisplay()
         whiteboardScrollView.zoomScale = CGFloat((10.0 - sender.value * 10.0) / 9.0)
+        whiteboardView.layer.cornerRadius = 8 / whiteboardScrollView.zoomScale
     }
     
     // MARK: - RoomClosed
