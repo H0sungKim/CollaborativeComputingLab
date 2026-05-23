@@ -21,7 +21,7 @@ public final actor RTMPService {
     private var stream: RTMPStream
     
     public init(uri: String) {
-        self.uri = "rtmp://\(uri)/hls"
+        self.uri = "rtmp://\(uri)/live"
         
         connection = RTMPConnection()
         stream = RTMPStream(connection: connection)

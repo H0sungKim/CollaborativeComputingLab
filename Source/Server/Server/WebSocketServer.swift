@@ -162,6 +162,133 @@ final class WebSocketServer {
         Log.i(message)
         guard let messageData = message.encode() else { return }
         broadcast(data: messageData, to: Set(chatRooms[id]?.clients ?? []))
+        DispatchQueue.global().async {
+            sleep(5)
+            do {
+                try self.processRecording(roomID: id)
+            } catch {
+                Log.e(error)
+            }
+        }
+    }
+    
+    private func processRecording(roomID: String) throws {
+
+        let root = URL(
+            fileURLWithPath:
+            "/Users/hosungkim/Source/CollaborativeComputingLab"
+        )
+
+        let flvURL = root
+            .appending(path: "recordings")
+            .appending(path: "\(roomID).flv")
+
+        //
+        // output mp4
+        //
+
+        let videosDirectory = root
+            .appending(path: "videos")
+
+        try FileManager.default.createDirectory(
+            at: videosDirectory,
+            withIntermediateDirectories: true
+        )
+
+        let mp4URL = videosDirectory
+            .appending(path: "\(roomID).mp4")
+
+        //
+        // vod directory
+        //
+
+        let vodDirectory = root
+            .appending(path: "vod")
+            .appending(path: roomID)
+
+        try FileManager.default.createDirectory(
+            at: vodDirectory,
+            withIntermediateDirectories: true
+        )
+
+        //
+        // flv -> mp4
+        //
+
+        try convertToMP4(
+            input: flvURL,
+            output: mp4URL
+        )
+
+        //
+        // mp4 -> vod hls
+        //
+
+        let m3u8URL = vodDirectory
+            .appending(path: "index.m3u8")
+
+        try createVODHLS(
+            input: mp4URL,
+            output: m3u8URL
+        )
+
+        Log.i("VOD generated: \(m3u8URL)")
+    }
+    
+    private func convertToMP4(
+        input: URL,
+        output: URL
+    ) throws {
+
+        let process = Process()
+
+        process.executableURL = URL(
+            fileURLWithPath: "/opt/homebrew/bin/ffmpeg"
+        )
+
+        process.arguments = [
+            "-i",
+            input.path(),
+            "-c",
+            "copy",
+            output.path()
+        ]
+
+        try process.run()
+
+        process.waitUntilExit()
+    }
+    
+    private func createVODHLS(
+        input: URL,
+        output: URL
+    ) throws {
+
+        let process = Process()
+
+        process.executableURL = URL(
+            fileURLWithPath: "/opt/homebrew/bin/ffmpeg"
+        )
+
+        process.arguments = [
+            "-i",
+            input.path(),
+            "-codec",
+            "copy",
+            "-start_number",
+            "0",
+            "-hls_time",
+            "6",
+            "-hls_list_size",
+            "0",
+            "-f",
+            "hls",
+            output.path()
+        ]
+
+        try process.run()
+
+        process.waitUntilExit()
     }
     
     private func broadcastMessage(message: MessageEntity, sender: WebSocketClient) {
