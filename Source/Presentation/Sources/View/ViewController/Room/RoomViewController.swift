@@ -116,7 +116,7 @@ public final class RoomViewController: UIViewController {
             var snapshot = NSDiffableDataSourceSnapshot<ParticipateTableViewSection, ParticipateTableViewItem>()
             snapshot.appendSections([.participant])
             snapshot.appendItems(participants.map({ ParticipateTableViewItem.participant($0) }), toSection: .participant)
-            snapshot.appendItems([ParticipateTableViewItem.participant(.init(name: "Jangho Lee")), ParticipateTableViewItem.participant(.init(name: "hoon"))], toSection: .participant)
+//            snapshot.appendItems([ParticipateTableViewItem.participant(.init(name: "Jangho Lee")), ParticipateTableViewItem.participant(.init(name: "hoon"))], toSection: .participant)
             participantTableViewDataSource?.apply(snapshot, animatingDifferences: true)
         })
         .store(in: &cancellable)

@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import FoundationModels
 import Network
+import Speech
 
 import DTO
 import Entity
@@ -197,7 +199,16 @@ final class WebSocketServer {
 
         let mp4URL = videosDirectory
             .appending(path: "\(roomID).mp4")
+        
+        let audiosDirectory = root.appending(path: "audios")
 
+        try FileManager.default.createDirectory(
+            at: audiosDirectory,
+            withIntermediateDirectories: true
+        )
+        
+        let m4aURL = audiosDirectory.appending(path: "\(roomID).m4a")
+        
         //
         // vod directory
         //
@@ -219,6 +230,17 @@ final class WebSocketServer {
             input: flvURL,
             output: mp4URL
         )
+        
+        try extractAudio(input: mp4URL, output: m4aURL)
+        
+        Task {
+            let transcript = try await transcribe(url: m4aURL)
+            Log.d(transcript)
+            try saveTranscript(text: transcript, roomID: roomID)
+            let response = try await summarize(transcript: transcript, roomId: roomID)
+            Log.d(response)
+            
+        }
 
         //
         // mp4 -> vod hls
@@ -289,6 +311,147 @@ final class WebSocketServer {
         try process.run()
 
         process.waitUntilExit()
+    }
+    
+    func extractAudio(
+        input: URL,
+        output: URL
+    ) throws {
+
+        let process = Process()
+
+        process.executableURL = URL(
+            fileURLWithPath: "/opt/homebrew/bin/ffmpeg"
+        )
+
+        process.arguments = [
+            "-i",
+            input.path(),
+            "-vn",
+            "-acodec",
+            "aac",
+            output.path()
+        ]
+
+        try process.run()
+
+        process.waitUntilExit()
+    }
+    
+    private func transcribe(url: URL) async throws -> String {
+
+        guard let recognizer = SFSpeechRecognizer(
+            locale: Locale(identifier: "ko-KR")
+        ) else {
+            throw NSError(domain: "Speech", code: -1)
+        }
+
+        let request = SFSpeechURLRecognitionRequest(url: url)
+
+        request.shouldReportPartialResults = true
+
+        return try await withCheckedThrowingContinuation { continuation in
+
+            var resumed = false
+            var latestText = ""
+
+            let task = recognizer.recognitionTask(with: request) {
+                result,
+                error in
+
+                if let result {
+                    latestText = result.bestTranscription.formattedString
+
+                    Log.d("""
+                    partial:
+                    \(latestText)
+                    """)
+                }
+
+                if let error, !resumed {
+                    resumed = true
+                    continuation.resume(throwing: error)
+                    return
+                }
+
+                if let result, result.isFinal, !resumed {
+                    resumed = true
+                    continuation.resume(returning: latestText)
+                }
+            }
+
+            _ = task
+        }
+    }
+    
+    private func summarize(transcript: String, roomId: String) async throws -> String {
+        let session = LanguageModelSession(
+            instructions: """
+            You are an AI assistant that summarizes lecture transcripts.
+
+            Your task:
+            - Summarize the lecture clearly and accurately.
+            - Focus on important concepts, definitions, explanations, and conclusions.
+            - Remove filler words, repeated sentences, casual conversation, and unnecessary speech.
+            - Preserve technical terms exactly as spoken.
+            - Do not invent information that was not mentioned in the lecture.
+            - Organize the summary into sections with concise bullet points.
+            - If the lecture explains a process or sequence, preserve the order.
+            - If examples are important for understanding, briefly include them.
+            - Keep the summary dense and informative.
+
+            Language rules:
+            - Detect the primary language of the lecture transcript.
+            - Write the summary in the same language as the lecture.
+            - Preserve technical terms, APIs, framework names, and code identifiers in their original form.
+            - If multiple languages are mixed, use the dominant language of the lecture.
+
+            Transcript handling:
+            - The transcript may contain speech recognition errors.
+            - Infer the intended meaning carefully from context.
+
+            Use concise and professional language.
+            """
+        )
+        
+        
+        let response = try await session.respond(
+            to: """
+            Please summarize the following lecture transcript.
+
+            Transcript:
+            \(transcript)
+            """
+        )
+        return response.content
+    }
+    
+    private func saveTranscript(
+        text: String,
+        roomID: String
+    ) throws {
+
+        let root = URL(
+            fileURLWithPath:
+            "/Users/hosungkim/Source/CollaborativeComputingLab"
+        )
+
+        let directory = root
+            .appending(path: "subtitles")
+            .appending(path: roomID)
+
+        try FileManager.default.createDirectory(
+            at: directory,
+            withIntermediateDirectories: true
+        )
+
+        let fileURL = directory.appending(path: "transcript.txt")
+
+        try text.write(
+            to: fileURL,
+            atomically: true,
+            encoding: .utf8
+        )
     }
     
     private func broadcastMessage(message: MessageEntity, sender: WebSocketClient) {

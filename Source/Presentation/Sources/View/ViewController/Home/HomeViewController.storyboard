@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="siy-IB-yfs">
-                                <rect key="frame" x="0.0" y="178.66666666666669" width="393" height="605.33333333333326"/>
+                                <rect key="frame" x="0.0" y="185" width="393" height="599"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dpt-Tf-6Na">
@@ -36,20 +36,28 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="강의실 목록" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="77P-BC-3On">
-                                <rect key="frame" x="15.999999999999993" y="134" width="109.33333333333331" height="28.666666666666657"/>
+                                <rect key="frame" x="15.999999999999993" y="134" width="109.33333333333331" height="35"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S4I-qT-S3f">
+                                <rect key="frame" x="302" y="134" width="75" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="siy-IB-yfs" firstAttribute="top" secondItem="77P-BC-3On" secondAttribute="bottom" constant="16" id="1qI-gW-HN0"/>
                             <constraint firstItem="siy-IB-yfs" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="8eP-mQ-Ihc"/>
+                            <constraint firstItem="siy-IB-yfs" firstAttribute="top" secondItem="S4I-qT-S3f" secondAttribute="bottom" constant="16" id="AJO-kg-ce1"/>
                             <constraint firstItem="77P-BC-3On" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="16" id="AZP-m1-Zc9"/>
                             <constraint firstItem="77P-BC-3On" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="16" id="C3G-fG-pWy"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="siy-IB-yfs" secondAttribute="trailing" id="L1Y-f3-YIX"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="S4I-qT-S3f" secondAttribute="trailing" constant="16" id="WoB-SV-HNW"/>
+                            <constraint firstItem="S4I-qT-S3f" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" constant="16" id="ciE-3n-aTz"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="siy-IB-yfs" secondAttribute="bottom" id="mdY-Cg-Hya"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="dpt-Tf-6Na" secondAttribute="bottom" constant="32" id="ojp-Rp-bzL"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="dpt-Tf-6Na" secondAttribute="trailing" constant="32" id="ya6-Pv-I5R"/>
