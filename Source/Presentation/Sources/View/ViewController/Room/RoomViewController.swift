@@ -350,6 +350,8 @@ public final class RoomViewController: UIViewController {
         let value = min(0.9, max(0.1, sender.value))
         sender.value = value
         pdfWhiteboardRatio = pdfWhiteboardRatio.setMultiplier(multiplier: CGFloat(value / (1 - value)))
+        pdfView.autoScales = true
+        pdfView.scaleFactor = pdfView.scaleFactorForSizeToFit
         whiteboardView.setNeedsDisplay()
         whiteboardScrollView.zoomScale = CGFloat((10.0 - sender.value * 10.0) / 9.0)
         whiteboardView.layer.cornerRadius = 8 / whiteboardScrollView.zoomScale
@@ -454,7 +456,7 @@ extension RoomViewController {
 extension RoomViewController: UIDocumentPickerDelegate {
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         pdfView.document = PDFDocument(url: urls.first!)
-        pdfView.autoScales = false
+        pdfView.autoScales = true
         pdfView.minScaleFactor = 0.01
         pdfView.scaleFactor = pdfView.scaleFactorForSizeToFit
     }
